@@ -77,7 +77,7 @@ function shoptypeLogout(){
 }
 
 function login_load_js_script() {
-	wp_enqueue_script( 'js-file', get_stylesheet_directory_uri() . '/assets/js/st-login-handler.min.js');
+	wp_enqueue_script( 'js-file', plugin_dir_url(__FILE__) . 'js/st-login-handler.min.js');
 }
 
 add_action('wp_enqueue_scripts', 'login_load_js_script');
