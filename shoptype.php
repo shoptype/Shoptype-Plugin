@@ -76,6 +76,7 @@ function shoptypeLogout(){
 	}
 }
 
+//Shopttype login handler
 function login_load_js_script() {
 	wp_enqueue_script( 'js-file', plugin_dir_url(__FILE__) . 'js/st-login-handler.min.js');
 }
@@ -84,6 +85,16 @@ add_action('wp_enqueue_scripts', 'login_load_js_script');
 add_action('wp_head', 'shoptype_header');
 add_action('wp_head', 'shoptypeLogout');
 
+
+//Enque Product and brand page css
+
+function theme_scripts() {
+	wp_enqueue_style( 'awake-prod-style', plugin_dir_url(__FILE__) . 'css/awake-prod-style.css' );
+	wp_enqueue_style( 'awake-prod-media-style', plugin_dir_url(__FILE__) . 'css/awake-prod-media-style.css' );
+}
+add_action( 'wp_enqueue_scripts', 'theme_scripts' );
+
+//Initialise the market
 function awakenthemarket(){
 	echo '<script>awakenTheMarket()</script>';
 }
