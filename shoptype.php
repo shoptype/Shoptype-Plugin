@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name:  Shoptype Integration
-Plugin URI:   https://www.shoptype.com 
+Plugin URI:    
 Description:  Integrate shoptype into your network with budypress features. 
 Version:      1.0
 Author:       astroajay 
-Author URI:   
+Author URI:   https://github.com/astroajay
 License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  shoptype
+Text Domain:  https://www.shoptype.com
 Domain Path:  /languages
 */
 
