@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name:  Shoptype Integration
-Plugin URI:   https://www.wpbeginner.com 
-Description:  A short little description of the plugin. It will be displayed on the Plugins page in WordPress admin area. 
+Plugin URI:   https://www.shoptype.com 
+Description:  Integrate shoptype into your network with budypress features. 
 Version:      1.0
 Author:       astroajay 
-Author URI:   https://www.wpbeginner.com
+Author URI:   
 License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  wpb-tutorial
+Text Domain:  shoptype
 Domain Path:  /languages
 */
 
