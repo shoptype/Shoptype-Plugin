@@ -28,55 +28,11 @@ function shoptype_header(){
 };
 
 
-function modal(){
-	echo '<script type="text/javascript">
-	const openModal = () => {
-		stLoginHandler.openSTLoginModal(
-			{
-				name: "us.awake.market",
-				url: "https://us.awake.market",
-				rid: "<?php global $stRefcode; echo $stRefcode; ?>",
-			},
-			(appRes) => {
-				switch (appRes.app.event) {
-					case "form rendered":
-					  break;
-					case "modal opened":
-					  break;
-					case "modal closed":
-					  break;
-					case "modal closed by user":
-					  break;
-					case "login success":
-					  stLoginHandler.closeSTLoginModal();
-					  window.location.search += "&token="+appRes.user.token;
-					  break;
-					case "login failed":
-					  break;
-					case "sign-up success":
-					  stLoginHandler.closeSTLoginModal();
-					  window.location.search += "&token="+appRes.user.token;
-					  break;
-					case "sign-up failed":
-						break;
-				  }
-			}
-		);
-	};
-</script>';
-}
-add_action('wp_head', 'modal');
 
 
-function shoptypeLogout(){
-	if ( !is_user_logged_in() ) {
-		unset( $_COOKIE["stToken"] );
-		setcookie( "stToken", '', time() - ( 15 * 60 ) );
-		echo '<script>setCookie("stToken",null,0);sessionStorage.removeItem("token");sessionStorage.removeItem("userId");</script>';
-	}
-}
 
-//Shopttype login handler
+
+//Shoptype login handler
 function login_load_js_script() {
 	wp_enqueue_script( 'js-file', plugin_dir_url(__FILE__) . 'js/st-login-handler.min.js');
 }
@@ -86,7 +42,7 @@ add_action('wp_head', 'shoptype_header');
 add_action('wp_head', 'shoptypeLogout');
 
 
-//Enque Product and brand page css
+//Enqueue Product and brand page css
 
 function theme_scripts() {
 	wp_enqueue_style( 'awake-prod-style', plugin_dir_url(__FILE__) . 'css/awake-prod-style.css' );
@@ -165,6 +121,15 @@ add_action('get_header', 'shoptype_login');
 
 
 /* Shoptype logout */
+function shoptypeLogout(){
+	if ( !is_user_logged_in() ) {
+		unset( $_COOKIE["stToken"] );
+		setcookie( "stToken", '', time() - ( 15 * 60 ) );
+		echo '<script>setCookie("stToken",null,0);sessionStorage.removeItem("token");sessionStorage.removeItem("userId");</script>';
+	}
+}
+
+
 add_action( 'wp_logout','ST_logout' );
 function ST_logout() { 
 	?>
@@ -173,6 +138,7 @@ function ST_logout() {
 	wp_safe_redirect( home_url() );
     exit();
 }
+
 
 
 
@@ -363,3 +329,84 @@ class PageTemplater {
 
 } 
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
+
+
+/**
+ * Get the Awake products
+ *  
+ * @author Jay Pagnis
+ */
+function renderAwakeProducts($atts = []){
+	ob_start(); ?>
+	<?php
+	$totalRows = 1;
+	$isSlider = $atts['slider'];
+	$slidesToShow = $slidesToScroll = 0;
+	$removeTemplate = "";
+	if($isSlider == 1){
+		$slidesToShow = $atts['slidestoshow'];
+		$slidesToScroll = $atts['slidestoscroll'];
+		$removeTemplate = "removeTemplate";
+	}
+	$loadMore = "";
+	if( isset($atts["loadmore"]) )
+		$loadMore = "loadmore='".$atts["loadmore"]."'";
+	$skip = "";
+	if( isset($atts["skip"]) )
+		$skip = "skip";
+	for($i=1;$i<=$totalRows;$i++) { ?>
+		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> <?php echo $skip;?> class="products-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
+			<div class="product-container single-product <?php echo $atts['product_classes']; ?>" style="display: none">
+				<a href="/view-product/?product-id={{productId}}" class="am-product-link">
+					<div class="product-image">
+						<img class="am-product-image" src="product-image.png" alt="">
+						<div class="market-product-price am-product-price">$ 48.00</div>
+					</div>
+					<div class="product-content">
+						<p class="am-product-vendor">Brand Name</p>
+						<h4 class="am-product-title">Product name</h4>
+					</div>
+				</a>
+			</div>
+		</div>
+	<?php }
+	return ob_get_clean();
+}
+add_shortcode('awake_products', 'renderAwakeProducts');
+
+/**
+ * Get the Awake brands
+ *  
+ * @author Jay Pagnis
+ */
+function renderAwakeBrands($atts = []){
+	ob_start();
+	$totalRows = 1;
+	$isSlider = $atts['slider'];
+	$slidesToShow = $slidesToScroll = 0;
+	$removeTemplate = "";
+	if($isSlider == 1){
+		$slidesToShow = $atts['slidestoshow'];
+		$slidesToScroll = $atts['slidestoscroll'];
+		$removeTemplate = "removeTemplate";
+	}
+	$loadMore = "";
+	if( isset($atts["loadmore"]) )
+		$loadMore = "loadmore='".$atts["loadmore"]."'";
+	for($i=1;$i<=$totalRows;$i++) { ?>
+		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> class="brands-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
+			<div class="brand-container single-brand <?php echo $atts['brand_classes']; ?>" style="display: none">
+				<a href="/view-brand/?brand-id={{brandId}}" class="am-brand-link">
+				<div class="brand-image">
+					<img class="am-brand-image" src="brand-image.png" alt="">
+				</div>
+				<div class="product-content">
+					<h4 class="am-brand-name">Brand Name</h4>
+				</div>
+				</a>
+			</div>
+		</div>
+	<?php }
+	return ob_get_clean();
+}
+add_shortcode('awake_brands', 'renderAwakeBrands');
