@@ -142,7 +142,7 @@ get_header(null, [ 'product' =>  $st_product]);
 
 				<div count="4" imagesize="250x0" vendorId="<?php echo $st_product->catalogId ?>" removetemplate class="products-container grid-two-by-two">
 					<div class="product-container single-product " style="display: none">
-						<a href="/view-product/?product-id={{productId}}" class="am-product-link">
+						<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
 							<div class="product-image">
 								<img class="am-product-image" src="product-image.png" alt="">
 								<div class="market-product-price am-product-price">$ 48.00</div>
