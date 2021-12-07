@@ -357,7 +357,7 @@ function renderAwakeProducts($atts = []){
 	for($i=1;$i<=$totalRows;$i++) { ?>
 		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> <?php echo $skip;?> class="products-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
 			<div class="product-container single-product <?php echo $atts['product_classes']; ?>" style="display: none">
-				<a href="/product/?product-id={{productId}}" class="am-product-link">
+				<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
 					<div class="product-image">
 						<img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
 						<div class="market-product-price am-product-price">$ 48.00</div>
@@ -396,7 +396,7 @@ function renderAwakeBrands($atts = []){
 	for($i=1;$i<=$totalRows;$i++) { ?>
 		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> class="brands-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
 			<div class="brand-container single-brand <?php echo $atts['brand_classes']; ?>" style="display: none">
-				<a href="/view-brand/?brand-id={{brandId}}" class="am-brand-link">
+				<a href="<?php '$brandUrl'?>/?brand-id={{brandId}}" class="am-brand-link">
 				<div class="brand-image">
 					<img class="am-brand-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
 				</div>
