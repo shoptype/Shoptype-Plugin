@@ -359,7 +359,7 @@ function renderAwakeProducts($atts = []){
 			<div class="product-container single-product <?php echo $atts['product_classes']; ?>" style="display: none">
 				<a href="/product/?product-id={{productId}}" class="am-product-link">
 					<div class="product-image">
-						<img class="am-product-image" src="product-image.png" alt="">
+						<img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
 						<div class="market-product-price am-product-price">$ 48.00</div>
 					</div>
 					<div class="product-content">
@@ -398,7 +398,7 @@ function renderAwakeBrands($atts = []){
 			<div class="brand-container single-brand <?php echo $atts['brand_classes']; ?>" style="display: none">
 				<a href="/view-brand/?brand-id={{brandId}}" class="am-brand-link">
 				<div class="brand-image">
-					<img class="am-brand-image" src="brand-image.png" alt="">
+					<img class="am-brand-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
 				</div>
 				<div class="product-content">
 					<h4 class="am-brand-name">Brand Name</h4>
