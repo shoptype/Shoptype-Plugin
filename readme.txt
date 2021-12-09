@@ -1,5 +1,5 @@
 === Shoptype ===
-Contributors: WPBeginner
+Contributors: astroajayWPBeginner
 Tags: shoptype, wordpress, network, cosell, awake market, 
 Requires at least: 5.5
 Tested up to: 5.8
