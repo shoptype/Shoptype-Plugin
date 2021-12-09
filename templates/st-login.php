@@ -6,7 +6,6 @@
  * @package BuddyBoss_Theme
  */
 
-wp_enqueue_script( 'js-file', get_template_directory_uri() . '/assets/js/st-login-handler.min.js');
 get_header();
 ?>
 
