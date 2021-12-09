@@ -27,7 +27,46 @@ function shoptype_header(){
 
 };
 
-
+//ST login modal script
+function shoptype_login_modal(){
+	echo '<script type="text/javascript">
+		const openModal = () => {
+			stLoginHandler.openSTLoginModal(
+				{
+					name: "us.awake.market",
+					url: "https://us.awake.market",
+					rid: "<?php global $stRefcode; echo $stRefcode; ?>",
+				},
+				(appRes) => {
+					switch (appRes.app.event) {
+						case "form rendered":
+						  break;
+						case "modal opened":
+						  break;
+						case "modal closed":
+						  break;
+						case "modal closed by user":
+						  break;
+						case "login success":
+						  stLoginHandler.closeSTLoginModal();
+						  window.location.search += "&token="+appRes.user.token;
+						  break;
+						case "login failed":
+						  break;
+						case "sign-up success":
+						  stLoginHandler.closeSTLoginModal();
+						  window.location.search += "&token="+appRes.user.token;
+						  break;
+						case "sign-up failed":
+							break;
+					  }
+				}
+			);
+		};
+	</script>';
+	}
+	add_action('wp_head', 'shoptype_login_modal');
+	
 
 
 
@@ -247,6 +286,7 @@ class PageTemplater {
 		$this->templates = array(
 			'templates/page-product.php' => 'Product Details Page',
 			'templates/page-brand.php' => 'Brand Details Page',
+			'templates/st-login.php' => 'Shoptype Login Page',
 		);
 			
 	} 
