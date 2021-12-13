@@ -3,7 +3,7 @@
  * Template name: Shoptype Login
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  *
- * @package BuddyBoss_Theme
+ * @package shoptype
  */
 
 get_header();

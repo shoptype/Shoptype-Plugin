@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name:  Shoptype Integration
+Plugin Name:  Shoptype
 Plugin URI:    
-Description:  Integrate shoptype into your network with budypress features. 
+Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
 Version:      1.0
-Author:       astroajay 
-Author URI:   https://github.com/astroajay
+Author:       shoptype 
+Author URI:   https://www.shoptype.com
 License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  https://www.shoptype.com
