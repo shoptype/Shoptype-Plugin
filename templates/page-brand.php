@@ -20,6 +20,22 @@ try {
 	if( !empty( $result ) ) {
 		$st_brands = json_decode($result);
 		$st_brand = $st_brands[0];
+
+		add_filter('pre_get_document_title', function() use ($st_brand) {
+			return $st_brand->name;
+		});
+		
+		add_action( 'wp_head', function() use ($st_brand) {
+			$description = $st_brand->name;
+			if($st_brand->productCategories){
+				$description = $st_brand->name . " specializes in " . join(", ",$st_brand->productCategories);
+			}
+			
+			echo "<meta name='description' content='$description'>";
+			echo "<meta property='og:title' content='$st_brand->name' />";
+			echo "<meta property='og:description' content='$description' />";
+			echo "<meta property='og:image' content='$st_brand->logo' />";
+		},1 );
 	}
 }
 catch(Exception $e) {
