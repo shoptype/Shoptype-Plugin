@@ -65,7 +65,7 @@ get_header(null, [ 'brand' =>  $st_brand]);
 			<h2 class="kt-adv-heading_2ea420-ff wp-block-kadence-advancedheading" data-kb-block="kb-adv-heading_2ea420-ff">Brand&#8217;s Products</h2>
 			<div count="4" imageSize="250x0" vendorId="<?php echo $st_brand->id ?>" removeTemplate class="products-container grid-two-by-two" >
 				<div class="product-container single-product " style="display: none">
-					<a href="/view-product/?product-id={{productId}}" class="am-product-link">
+					<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
 						<div class="product-image">
 							<img class="am-product-image" src="product-image.png" alt="">
 							<div class="market-product-price am-product-price">$ 48.00</div>

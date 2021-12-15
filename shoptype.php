@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name:  Shoptype Integration
-Plugin URI:   https://www.wpbeginner.com 
-Description:  A short little description of the plugin. It will be displayed on the Plugins page in WordPress admin area. 
+Plugin Name:  Shoptype
+Plugin URI:    
+Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
 Version:      1.0
-Author:       astroajay 
-Author URI:   https://www.wpbeginner.com
+Author:       shoptype 
+Author URI:   https://www.shoptype.com
 License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  wpb-tutorial
+Text Domain:  https://www.shoptype.com
 Domain Path:  /languages
 */
 
@@ -23,67 +23,73 @@ function shoptype_header(){
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.6/shoptype.js"></script>';
   echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='.wcmenucart-details' platformid='$stPlatformId'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
-  echo '<script src="https://firebasestorage.googleapis.com/v0/b/pinkim.appspot.com/o/awakeMarket.js?alt=media"></script>';
+  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS/awakeMarket.min.js"></script>';
 
 };
 
-
-function modal(){
+//ST login modal script
+function shoptype_login_modal(){
 	echo '<script type="text/javascript">
-	const openModal = () => {
-		stLoginHandler.openSTLoginModal(
-			{
-				name: "us.awake.market",
-				url: "https://us.awake.market",
-				rid: "<?php global $stRefcode; echo $stRefcode; ?>",
-			},
-			(appRes) => {
-				switch (appRes.app.event) {
-					case "form rendered":
-					  break;
-					case "modal opened":
-					  break;
-					case "modal closed":
-					  break;
-					case "modal closed by user":
-					  break;
-					case "login success":
-					  stLoginHandler.closeSTLoginModal();
-					  window.location.search += "&token="+appRes.user.token;
-					  break;
-					case "login failed":
-					  break;
-					case "sign-up success":
-					  stLoginHandler.closeSTLoginModal();
-					  window.location.search += "&token="+appRes.user.token;
-					  break;
-					case "sign-up failed":
-						break;
-				  }
-			}
-		);
-	};
-</script>';
-}
-add_action('wp_head', 'modal');
-
-
-function shoptypeLogout(){
-	if ( !is_user_logged_in() ) {
-		unset( $_COOKIE["stToken"] );
-		setcookie( "stToken", '', time() - ( 15 * 60 ) );
-		echo '<script>setCookie("stToken",null,0);sessionStorage.removeItem("token");sessionStorage.removeItem("userId");</script>';
+		const openModal = () => {
+			stLoginHandler.openSTLoginModal(
+				{
+					name: "us.awake.market",
+					url: "https://us.awake.market",
+					rid: "<?php global $stRefcode; echo $stRefcode; ?>",
+				},
+				(appRes) => {
+					switch (appRes.app.event) {
+						case "form rendered":
+						  break;
+						case "modal opened":
+						  break;
+						case "modal closed":
+						  break;
+						case "modal closed by user":
+						  break;
+						case "login success":
+						  stLoginHandler.closeSTLoginModal();
+						  window.location.search += "&token="+appRes.user.token;
+						  break;
+						case "login failed":
+						  break;
+						case "sign-up success":
+						  stLoginHandler.closeSTLoginModal();
+						  window.location.search += "&token="+appRes.user.token;
+						  break;
+						case "sign-up failed":
+							break;
+					  }
+				}
+			);
+		};
+	</script>';
 	}
-}
+	add_action('wp_head', 'shoptype_login_modal');
+	
 
+
+
+
+//Shoptype login handler
 function login_load_js_script() {
-	wp_enqueue_script( 'js-file', get_stylesheet_directory_uri() . '/assets/js/st-login-handler.min.js');
+	wp_enqueue_script( 'js-file', plugin_dir_url(__FILE__) . 'js/st-login-handler.min.js');
 }
 
 add_action('wp_enqueue_scripts', 'login_load_js_script');
 add_action('wp_head', 'shoptype_header');
 add_action('wp_head', 'shoptypeLogout');
 
+
+//Enqueue Product and brand page css
+
+function theme_scripts() {
+	wp_enqueue_style( 'awake-prod-style', plugin_dir_url(__FILE__) . 'css/awake-prod-style.css' );
+	wp_enqueue_style( 'awake-prod-media-style', plugin_dir_url(__FILE__) . 'css/awake-prod-media-style.css' );
+}
+add_action( 'wp_enqueue_scripts', 'theme_scripts' );
+
+//Initialise the market
 function awakenthemarket(){
 	echo '<script>awakenTheMarket()</script>';
 }
@@ -154,6 +160,15 @@ add_action('get_header', 'shoptype_login');
 
 
 /* Shoptype logout */
+function shoptypeLogout(){
+	if ( !is_user_logged_in() ) {
+		unset( $_COOKIE["stToken"] );
+		setcookie( "stToken", '', time() - ( 15 * 60 ) );
+		echo '<script>setCookie("stToken",null,0);sessionStorage.removeItem("token");sessionStorage.removeItem("userId");</script>';
+	}
+}
+
+
 add_action( 'wp_logout','ST_logout' );
 function ST_logout() { 
 	?>
@@ -162,6 +177,7 @@ function ST_logout() {
 	wp_safe_redirect( home_url() );
     exit();
 }
+
 
 
 
@@ -270,6 +286,7 @@ class PageTemplater {
 		$this->templates = array(
 			'templates/page-product.php' => 'Product Details Page',
 			'templates/page-brand.php' => 'Brand Details Page',
+			'templates/st-login.php' => 'Shoptype Login Page',
 		);
 			
 	} 
@@ -352,3 +369,84 @@ class PageTemplater {
 
 } 
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
+
+
+/**
+ * Get the Awake products
+ *  
+ * @author Jay Pagnis
+ */
+function renderAwakeProducts($atts = []){
+	ob_start(); ?>
+	<?php
+	$totalRows = 1;
+	$isSlider = $atts['slider'];
+	$slidesToShow = $slidesToScroll = 0;
+	$removeTemplate = "";
+	if($isSlider == 1){
+		$slidesToShow = $atts['slidestoshow'];
+		$slidesToScroll = $atts['slidestoscroll'];
+		$removeTemplate = "removeTemplate";
+	}
+	$loadMore = "";
+	if( isset($atts["loadmore"]) )
+		$loadMore = "loadmore='".$atts["loadmore"]."'";
+	$skip = "";
+	if( isset($atts["skip"]) )
+		$skip = "skip";
+	for($i=1;$i<=$totalRows;$i++) { ?>
+		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> <?php echo $skip;?> class="products-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
+			<div class="product-container single-product <?php echo $atts['product_classes']; ?>" style="display: none">
+				<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
+					<div class="product-image">
+						<img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
+						<div class="market-product-price am-product-price">$ 48.00</div>
+					</div>
+					<div class="product-content">
+						<p class="am-product-vendor">Brand Name</p>
+						<h4 class="am-product-title">Product name</h4>
+					</div>
+				</a>
+			</div>
+		</div>
+	<?php }
+	return ob_get_clean();
+}
+add_shortcode('awake_products', 'renderAwakeProducts');
+
+/**
+ * Get the Awake brands
+ *  
+ * @author Jay Pagnis
+ */
+function renderAwakeBrands($atts = []){
+	ob_start();
+	$totalRows = 1;
+	$isSlider = $atts['slider'];
+	$slidesToShow = $slidesToScroll = 0;
+	$removeTemplate = "";
+	if($isSlider == 1){
+		$slidesToShow = $atts['slidestoshow'];
+		$slidesToScroll = $atts['slidestoscroll'];
+		$removeTemplate = "removeTemplate";
+	}
+	$loadMore = "";
+	if( isset($atts["loadmore"]) )
+		$loadMore = "loadmore='".$atts["loadmore"]."'";
+	for($i=1;$i<=$totalRows;$i++) { ?>
+		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> class="brands-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
+			<div class="brand-container single-brand <?php echo $atts['brand_classes']; ?>" style="display: none">
+				<a href="<?php '$brandUrl'?>/?brand-id={{brandId}}" class="am-brand-link">
+				<div class="brand-image">
+					<img class="am-brand-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
+				</div>
+				<div class="product-content">
+					<h4 class="am-brand-name">Brand Name</h4>
+				</div>
+				</a>
+			</div>
+		</div>
+	<?php }
+	return ob_get_clean();
+}
+add_shortcode('awake_brands', 'renderAwakeBrands');
