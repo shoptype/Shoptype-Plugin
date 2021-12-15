@@ -6,6 +6,12 @@
  *@package shoptype
  */
 
+function add_custom_meta_des(){
+	echo '<meta name="description" content="test" />';
+	echo '<meta name="description" content="test" />';
+}
+
+
 global $stApiKey;
 global $stPlatformId;
 global $stRefcode;
@@ -23,12 +29,24 @@ try {
 		$st_product = $st_products->products[0];
 		$commission = $st_product->variants[0]->discountedPriceAsMoney->amount * $st_product->productCommission->percentage / 100;
 		$prodCurrency = $stCurrency[$st_product->currency];
+
+		add_filter('pre_get_document_title', function() use ($st_product) {
+			return $st_product->title;
+		});
+		
+		add_action( 'wp_head', function() use ($st_product) {
+			$description = substr($st_product->description,0,160);
+			echo "<meta name='description' content='$description'>";
+			echo "<meta property='og:title' content='$st_product->title' />";
+			echo "<meta property='og:description' content='$st_product->description' />";
+			echo "<meta property='og:image' content='{$st_product->primaryImageSrc->imageSrc}' />";
+		},1 );
 	}
 }
 catch(Exception $e) {
 }
 
-get_header(null, [ 'product' =>  $st_product]);
+get_header(null);
 ?>
 <div id="primary" class="content-area bb-grid-cell">
 	<main id="main" class="site-main">
@@ -136,13 +154,13 @@ get_header(null, [ 'product' =>  $st_product]);
 				<h2 class="kt-adv-heading_ae42d3-d6 wp-block-kadence-advancedheading" data-kb-block="kb-adv-heading_ae42d3-d6">Related Products</h2>
 				</div></div>
 				<div class="wp-block-kadence-column inner-column-2 kadence-column_28a730-ab"><div class="kt-inside-inner-col">
-				<div class="wp-block-kadence-advancedbtn kt-btn-align-right kt-btn-tablet-align-inherit kt-btn-mobile-align-inherit kt-btns-wrap kt-btns_b0010a-ce kt-force-btn-fullwidth"><div class="kt-btn-wrap kt-btn-wrap-0"><a class="kt-button button kt-btn-0-action kt-btn-size-standard kt-btn-style-basic kt-btn-svg-show-always kt-btn-has-text-true kt-btn-has-svg-false" href="/marketplace/"><span class="kt-btn-inner-text">MARKETPLACE</span></a></div></div>
+				<div class="wp-block-kadence-advancedbtn kt-btn-align-right kt-btn-tablet-align-inherit kt-btn-mobile-align-inherit kt-btns-wrap kt-btns_b0010a-ce kt-force-btn-fullwidth"><div class="kt-btn-wrap kt-btn-wrap-0"><a class="kt-button button kt-btn-0-action kt-btn-size-standard kt-btn-style-basic kt-btn-svg-show-always kt-btn-has-text-true kt-btn-has-svg-false" href="https://us.awake.market/marketplace/"><span class="kt-btn-inner-text">MARKETPLACE</span></a></div></div>
 				</div></div>
 				</div></div></div>
 
 				<div count="4" imagesize="250x0" vendorId="<?php echo $st_product->catalogId ?>" removetemplate class="products-container grid-two-by-two">
 					<div class="product-container single-product " style="display: none">
-						<a href="/view-product/?product-id={{productId}}" class="am-product-link">
+						<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
 							<div class="product-image">
 								<img class="am-product-image" src="product-image.png" alt="">
 								<div class="market-product-price am-product-price">$ 48.00</div>
