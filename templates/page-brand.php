@@ -10,6 +10,7 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+
 try {
 	$brandId = $_GET['id'];
 	$ch = curl_init();
@@ -20,22 +21,14 @@ try {
 	if( !empty( $result ) ) {
 		$st_brands = json_decode($result);
 		$st_brand = $st_brands[0];
-
-		add_filter('pre_get_document_title', function() use ($st_brand) {
-			return $st_brand->name;
-		});
+		$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
+		$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
+		$groupSlug = strtolower($groupSlug);
+		$group_id = groups_get_id( $groupSlug );
+		$group = groups_get_group( array( 'group_id' => (int) $group_id ) );
+		$user_id = get_current_user_id();
+		$isInGroup = groups_is_user_member( $user_id, $group_id );
 		
-		add_action( 'wp_head', function() use ($st_brand) {
-			$description = $st_brand->name;
-			if($st_brand->productCategories){
-				$description = $st_brand->name . " specializes in " . join(", ",$st_brand->productCategories);
-			}
-			
-			echo "<meta name='description' content='$description'>";
-			echo "<meta property='og:title' content='$st_brand->name' />";
-			echo "<meta property='og:description' content='$description' />";
-			echo "<meta property='og:image' content='$st_brand->logo' />";
-		},1 );
 	}
 }
 catch(Exception $e) {
@@ -58,15 +51,17 @@ get_header(null, [ 'brand' =>  $st_brand]);
 						<div class="brand-details brand-info">
 							<div class="info-title">
 								<h1 class="brand-name am-brand-name"><?php echo $st_brand->name ?></h1>
-								<!-- <a href="javascript:void()" class="btn btn-standard">follow</a> -->
+								<?php if( !empty( $group_id ) ) : ?>
+									<a href="<?php echo "/communities/$group->slug"?>" class="btn btn-standard">follow<?php if($isInGroup){echo "ing";} ?>  </a>
+								<?php endif; ?>
 							</div>
 							<div class="brand-speciality">
 								<!-- <p><span>Available in:</span> Global Shipping</p> -->
-								<p><span>Specializes in:</span> <span class="am-brand-categories"><?php echo join(", ",$st_brand->productCategories); ?></span></p>
+								<p><span>Specializes in:</span> <span class="am-brand-categories"><?php echo join(", ",$st_brand->productCategories)?></span></p>
 							</div>
 							<div class="brand-about">
 								<h4>ABOUT US</h4>
-								<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Asperiores ratione voluptas ex quo doloremque possimus, provident ab voluptatem dolorem quibusdam eum ullam perferendis praesentium ipsa. Maxime quis optio veritatis placeat?</p>
+								<p><?php echo $group->description; ?></p>
 							</div>
 						</div>
 					</div>
@@ -84,7 +79,7 @@ get_header(null, [ 'brand' =>  $st_brand]);
 					<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
 						<div class="product-image">
 							<img class="am-product-image" src="product-image.png" alt="">
-							<div class="market-product-price am-product-price">$ 48.00</div>
+							<div class="market-product-price am-product-price"></div>
 						</div>
 						<div class="product-content">
 							<p class="am-product-vendor">Brand Name</p>
@@ -98,12 +93,6 @@ get_header(null, [ 'brand' =>  $st_brand]);
 		</div>
 	</div>
 </div>
-
-
-
-
-
-
 
 					<!-- ends brand header section -->
 					<?php
