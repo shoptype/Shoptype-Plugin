@@ -151,16 +151,16 @@
   .brandProducts-container {
     margin-bottom: 25px;
   }
-	.am-brands-selector {
-		width: 100%;
-		margin-bottom: 20px;
-	}
-	.market-product {
-		width: 100% !important;
-	}
-	.market-product.product-container {
-		margin: 0 !important;
-	}
+  .am-brands-selector {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .market-product {
+    width: 100% !important;
+  }
+  .market-product.product-container {
+    margin: 0 !important;
+  }
 
 }
 

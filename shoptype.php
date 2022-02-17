@@ -24,7 +24,6 @@ function shoptype_header(){
   echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='.wcmenucart-details' platformid='$stPlatformId'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS/awakeMarket.min.js"></script>';
-
 };
 
 //ST login modal script
@@ -67,9 +66,33 @@ function shoptype_login_modal(){
 	}
 	add_action('wp_head', 'shoptype_login_modal');
 	
+//Add Product Route
+add_action('init', function(){
+    add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?product=$matches[1]', 'top' );
+	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
+});
 
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'product';
+    return $query_vars;
+} );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'brand';
+    return $query_vars;
+} );
 
-
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'product' ) == false || get_query_var( 'product' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/page-product.php';
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'brand' ) == false || get_query_var( 'brand' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/page-brand.php';
+} );
 
 //Shoptype login handler
 function login_load_js_script() {
@@ -370,83 +393,11 @@ class PageTemplater {
 } 
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 
+define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-/**
- * Get the Awake products
- *  
- * @author Jay Pagnis
- */
-function renderAwakeProducts($atts = []){
-	ob_start(); ?>
-	<?php
-	$totalRows = 1;
-	$isSlider = $atts['slider'];
-	$slidesToShow = $slidesToScroll = 0;
-	$removeTemplate = "";
-	if($isSlider == 1){
-		$slidesToShow = $atts['slidestoshow'];
-		$slidesToScroll = $atts['slidestoscroll'];
-		$removeTemplate = "removeTemplate";
-	}
-	$loadMore = "";
-	if( isset($atts["loadmore"]) )
-		$loadMore = "loadmore='".$atts["loadmore"]."'";
-	$skip = "";
-	if( isset($atts["skip"]) )
-		$skip = "skip";
-	for($i=1;$i<=$totalRows;$i++) { ?>
-		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> <?php echo $skip;?> class="products-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
-			<div class="product-container single-product <?php echo $atts['product_classes']; ?>" style="display: none">
-				<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
-					<div class="product-image">
-						<img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
-						<div class="market-product-price am-product-price">$ 48.00</div>
-					</div>
-					<div class="product-content">
-						<p class="am-product-vendor">Brand Name</p>
-						<h4 class="am-product-title">Product name</h4>
-					</div>
-				</a>
-			</div>
-		</div>
-	<?php }
-	return ob_get_clean();
-}
-add_shortcode('awake_products', 'renderAwakeProducts');
-
-/**
- * Get the Awake brands
- *  
- * @author Jay Pagnis
- */
-function renderAwakeBrands($atts = []){
-	ob_start();
-	$totalRows = 1;
-	$isSlider = $atts['slider'];
-	$slidesToShow = $slidesToScroll = 0;
-	$removeTemplate = "";
-	if($isSlider == 1){
-		$slidesToShow = $atts['slidestoshow'];
-		$slidesToScroll = $atts['slidestoscroll'];
-		$removeTemplate = "removeTemplate";
-	}
-	$loadMore = "";
-	if( isset($atts["loadmore"]) )
-		$loadMore = "loadmore='".$atts["loadmore"]."'";
-	for($i=1;$i<=$totalRows;$i++) { ?>
-		<div count="<?php echo $atts['per_row']; ?>" imageSize="250x0" <?php echo $removeTemplate;?> class="brands-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
-			<div class="brand-container single-brand <?php echo $atts['brand_classes']; ?>" style="display: none">
-				<a href="<?php '$brandUrl'?>/?brand-id={{brandId}}" class="am-brand-link">
-				<div class="brand-image">
-					<img class="am-brand-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" alt="">
-				</div>
-				<div class="product-content">
-					<h4 class="am-brand-name">Brand Name</h4>
-				</div>
-				</a>
-			</div>
-		</div>
-	<?php }
-	return ob_get_clean();
-}
-add_shortcode('awake_brands', 'renderAwakeBrands');
+require_once(ST__PLUGIN_DIR.'/shortcodes/products.php');
+require_once(ST__PLUGIN_DIR.'/shortcodes/cosellers.php');
+require_once(ST__PLUGIN_DIR.'/shortcodes/brands.php');
+require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
+require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');

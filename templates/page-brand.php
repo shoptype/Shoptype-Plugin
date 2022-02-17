@@ -1,18 +1,12 @@
-<?php
-/*
- * Template name: Brand Detail template
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package shoptype
- */
+<?php /* Template Name: Brand Detail Template */
 global $stApiKey;
-global $stPlatformId;
+// global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
-
+$st_brand = [];
 try {
-	$brandId = $_GET['id'];
+	$brandId = get_query_var( 'brand' );
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/vendors?vendorId=$brandId");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -21,6 +15,8 @@ try {
 	if( !empty( $result ) ) {
 		$st_brands = json_decode($result);
 		$st_brand = $st_brands[0];
+		$productCategories = join(", ",$st_brand->productCategories);
+		$store = $st_brand->store;
 		$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
 		$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
 		$groupSlug = strtolower($groupSlug);
@@ -28,108 +24,113 @@ try {
 		$group = groups_get_group( array( 'group_id' => (int) $group_id ) );
 		$user_id = get_current_user_id();
 		$isInGroup = groups_is_user_member( $user_id, $group_id );
-		
 	}
 }
 catch(Exception $e) {
 }
-
-get_header(null, [ 'brand' =>  $st_brand]);
+// wp_enqueue_style( 'awake-prod-style', get_template_directory_uri() . '/css/awake-prod-style.css' );
+// wp_enqueue_style( 'awake-prod-media-style', get_template_directory_uri() . '/css/awake-prod-media-style.css' );
+get_header(); ?>
+<?php
 ?>
-<div id="primary" class="content-area bb-grid-cell">
-	<main id="main" class="site-main">
-		<!-- PDP Custom page -->
-		<div class="page-wrapper">
-			<div class="outer-container">
-				<!-- ============== PAGE CONTENT ============== -->
-				<!-- brand header section -->
-				<div class="am-brand-display-container">
-					<div class="brand-header">
-						<div class="brand-logo brand-image-block">
-							<img src="<?php echo $st_brand->logo ?>" loading="lazy" alt="" class="brand-image am-brand-logo">
+<!-- ===================================== -->
+<div class="main-content">
+	<!-- ================= COSELLER DETAILS SECTION FOR DESKTOP ================= -->
+	<div class="coseller-info-section d-none d-sm-block">
+		<!-- -------------- coseller intro section -------------- -->
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="coseller-profile">
+						<div class="coseller-image-container">
+							<img style="width:100%;" src="<?php echo $st_brand->logo ?>" loading="lazy" alt="" class="brand-image am-brand-logo">
+							<div class="follow-link"><a href="javascript:void()" class="btn-blueRounded">Follow</a></div>
 						</div>
-						<div class="brand-details brand-info">
-							<div class="info-title">
-								<h1 class="brand-name am-brand-name"><?php echo $st_brand->name ?></h1>
-								<?php if( !empty( $group_id ) ) : ?>
-									<a href="<?php echo "/communities/$group->slug"?>" class="btn btn-standard">follow<?php if($isInGroup){echo "ing";} ?>  </a>
+						<div class="intro-box">
+							<h1 class="brand-name am-brand-name"><?php echo $st_brand->name; ?></h1>
+							<!-- <p class="brand-statue">Status:<span>Brand Elite</span></p> -->
+							<!-- <p class="brand-since">Member since:<span>28 April 2020</span></p> -->
+							<!-- <p class="brand-fame">Brand Fame:<span>10K</span></p> -->
+							<p class="brand-location">Located in:<span><?php echo (!empty($store->countryState) ? $store->countryState : "Not Specified"); ?></span></p>
+							<p class="brand-speciality am-brand-categories">Specialises in:<span><?php echo (!empty($productCategories) ? $productCategories : "Not Specified"); ?></span></p>
+							<div class="coseller-bio">
+								<p class="bio-heading">Personal Bio:
+									<?php if(empty($group->description)) : ?>
+										<span>Not Specified</span>
+									<?php endif; ?>
+								</p>
+								<?php if(!empty($group->description)) : ?>
+									<p class="bio-desc">
+										<?php echo$group->description; ?>
+									</p>
 								<?php endif; ?>
-							</div>
-							<div class="brand-speciality">
-								<!-- <p><span>Available in:</span> Global Shipping</p> -->
-								<p><span>Specializes in:</span> <span class="am-brand-categories"><?php echo join(", ",$st_brand->productCategories)?></span></p>
-							</div>
-							<div class="brand-about">
-								<h4>ABOUT US</h4>
-								<p><?php echo $group->description; ?></p>
 							</div>
 						</div>
 					</div>
-
-
-
-<div class="wp-block-kadence-rowlayout alignnone">
-	<div id="kt-layout-id_57c52b-1b" class="kt-row-layout-inner kt-layout-id_57c52b-1b">
-		<div class="kt-row-column-wrap kt-has-1-columns kt-gutter-default kt-v-gutter-default kt-row-valign-top kt-row-layout-equal kt-tab-layout-inherit kt-m-colapse-left-to-right kt-mobile-layout-row">
-			<div class="wp-block-kadence-column inner-column-1 kadence-column_5d2256-83">
-			<div class="kt-inside-inner-col">
-			<h2 class="kt-adv-heading_2ea420-ff wp-block-kadence-advancedheading" data-kb-block="kb-adv-heading_2ea420-ff">Brand&#8217;s Products</h2>
-			<div count="4" imageSize="250x0" vendorId="<?php echo $st_brand->id ?>" removeTemplate class="products-container grid-two-by-two" >
-				<div class="product-container single-product " style="display: none">
-					<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
-						<div class="product-image">
-							<img class="am-product-image" src="product-image.png" alt="">
-							<div class="market-product-price am-product-price"></div>
-						</div>
-						<div class="product-content">
-							<p class="am-product-vendor">Brand Name</p>
-							<h4 class="am-product-title">Product name</h4>
-						</div>
-					</a>
 				</div>
 			</div>
+		</div>
+		<!-- -------------- end coseller intro section -------------- -->
+		<!-- -------------- preferences section -------------- -->
+		<!-- <div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="preferences-container">
+						<h2>Brand Key Tags</h2>
+						<ul class="preferences-list">
+							<li><a href="#">Fashion</a></li>
+							<li><a href="#">Wine & Spirits</a></li>
+							<li><a href="#">Vegan Diet</a></li>
+							<li><a href="#">Home Decor</a></li>
+							<li><a href="#">Lifestyle</a></li>
+							<li><a href="#">Products for Women</a></li>
+							<li><a href="#">Photography</a></li>
+							<li><a href="#">Travel</a></li>
+							<li><a href="#">Action Figures / Collectibles</a></li>
+						</ul>
+					</div>
+				</div>
 			</div>
+		</div> -->
+		<!-- -------------- end preferences section -------------- -->
+		<!-- -------------- brands section -------------- -->
+		<div class="section">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="section-header">
+							<h1 class="section-title">Products by Brand</h1>
+							<a href="<?php echo home_url('all-products'); ?>" class="btn-blueRounded">See All</a>
+						</div>
+						<?php echo do_shortcode( '[awake_products per_row="8" slider="0" vendor_id="'.$st_brand->id.'" product_classes="product-container  single-product"]' ); ?>
+					</div>
+				</div>
 			</div>
 		</div>
+		<!-- -------------- end brands section -------------- -->
+		<!-- -------------- content section -------------- -->
+		<div class="section">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="section-header">
+							<h1 class="section-title">Content Created by Brand</h1>
+							<a href="javascript:void()" class="btn-blueRounded">See All</a>
+						</div>
+						<div class="blogs-container">
+							<div class="row">
+								<?php echo do_shortcode('[awake_editors_picks display_layout="1"]'); ?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- -------------- end content section -------------- -->
 	</div>
+	<!-- ================= END COSELLER DETAILS SECTION FOR DESKTOP ================= -->
 </div>
-
-					<!-- ends brand header section -->
-					<?php
-					while ( have_posts() ) :
-						the_post();
-						the_content();
-					endwhile;
-					?>
-				</div>
-				<!-- ============== ENDS PAGE CONTENT ============== -->
-			</div>
-		</div>
-		<!-- End PDP Custom page -->
-	</main><!-- #main -->
-</div><!-- #primary -->
-<script>
-	let currentBrandId = currentUrl.searchParams.get("id");
-	document.addEventListener('marketLoaded', function (e) {
-		initMarket();
-		loadBrand(currentBrandId, function(brand){
-			console.info(brand);
-		},
-		function(e){
-			console.info("error: " + e)
-		});
-	}, false);
+<!-- ===================================== -->
 
 
-	jQuery(function($){
-
-		document.addEventListener('amProductsLoadFailed', function (e) {
-			$(".products-container").append("<h5>No Products found</h5>");
-		}, false);
-
-		$(document).ready(function(){
-		});
-	});
-</script>
-<?php
-get_footer();
+<?php get_footer(); ?>
