@@ -18,18 +18,28 @@ global $stRefcode;
 global $stCurrency;
 global $brandUrl;
 try {
-	$productId = $_GET['id'];
+	$vendorId = 0;
+	$vendorName = $vendorDescription = $vendorUrl = "";
+	$productId = get_query_var( 'product' );
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/products?productIds=$productId");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($ch);
+	$pluginUrl = plugin_dir_url( __FILE__ );
 	curl_close($ch);
 	if( !empty( $result ) ) {
 		$st_products = json_decode($result);
 		$st_product = $st_products->products[0];
 		$commission = $st_product->variants[0]->discountedPriceAsMoney->amount * $st_product->productCommission->percentage / 100;
 		$prodCurrency = $stCurrency[$st_product->currency];
-
+		$vendorId = $st_product->catalogId;
+		$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
+		$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
+		$groupSlug = strtolower($groupSlug);
+		$group_id = groups_get_id( $groupSlug );
+		$group = groups_get_group( array( 'group_id' => (int) $group_id ) );
+		$user_id = get_current_user_id();
+		$isInGroup = groups_is_user_member( $user_id, $group_id );
 		add_filter('pre_get_document_title', function() use ($st_product) {
 			return $st_product->title;
 		});
@@ -41,6 +51,20 @@ try {
 			echo "<meta property='og:description' content='$st_product->description' />";
 			echo "<meta property='og:image' content='{$st_product->primaryImageSrc->imageSrc}' />";
 		},1 );
+	}
+	// Get vendor details
+	if(!empty($vendorId)) {
+		$vendorch = curl_init();
+		curl_setopt($vendorch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/vendors?vendorId=$vendorId");
+		curl_setopt($vendorch, CURLOPT_RETURNTRANSFER, true);
+		$vendorChResponse = curl_exec($vendorch);
+		curl_close($vendorch);
+		if( !empty( $vendorChResponse ) ) {
+			$vendorDetails = json_decode($vendorChResponse);
+			$vendor = $vendorDetails[0];
+			$vendorName = $vendor->name;
+			$vendorUrl = str_replace("{{brandId}}",$vendorId,$brandUrl);
+		}
 	}
 }
 catch(Exception $e) {
