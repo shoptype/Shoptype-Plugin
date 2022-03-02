@@ -23,7 +23,7 @@ function shoptype_header(){
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.6/shoptype.js"></script>';
   echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='.wcmenucart-details' platformid='$stPlatformId'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
-  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS/awakeMarket.min.js"></script>';
+  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS@1.6/awakeMarket.min.js"></script>';
 };
 
 //ST login modal script
