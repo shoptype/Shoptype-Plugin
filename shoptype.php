@@ -150,7 +150,9 @@ function shoptype_login(){
 			'user_email' => $st_user->email,
 			'first_name' => $st_user->name,
 			'display_name' => $st_user->name,
-			'role' => 'subscriber'
+			'role' => 'subscriber',
+			'show_admin_bar_front' => false
+
 		));
 		$wp_user = wp_set_current_user($user_id, $st_user->email);
 		wp_set_auth_cookie( $user->ID , true);
