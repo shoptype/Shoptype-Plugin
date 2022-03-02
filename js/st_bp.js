@@ -1,5 +1,5 @@
 function callBpApi(dataUri, callBack, type, data){
-	bp.apiRequest( {
+	wp.apiRequest( {
 		path: "buddypress/v1/"+dataUri,
 		type: type,
 		data: data,
@@ -11,7 +11,7 @@ function callBpApi(dataUri, callBack, type, data){
 }
 
 function pushBpApi(dataUri, callBack, type, data){
-	bp.apiRequest( {
+	wp.apiRequest( {
 		path: "buddypress/v1/"+dataUri,
 		type: type,
 		data: data,
