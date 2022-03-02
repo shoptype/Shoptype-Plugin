@@ -219,6 +219,65 @@ get_header(null);
 			searchProducts();
 		}
 	});
+
+	function addToShop(shopProducts){
+		let selectorNodes = document.getElementsByClassName("st-shop-select");
+		let products = shopProducts[0].value.unserialized[0]??"";
+		let newProducts = {};
+		for (var i = 0; i < selectorNodes.length; i++) {
+			if(selectorNodes[i].checked && !products.includes(selectorNodes[i].value)){
+				newProducts[selectorNodes[i].value] = st_selectedProducts[selectorNodes[i].value];
+			}
+		}
+		callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,x=>addProductByIdToShop(x, newProducts,x=>loadShopProducts(currentBpUser.user_login)),'get');
+	}
+
+	function loadShopProducts(userName) {
+		let productTemplate = document.getElementById("st-product-template");
+		let productsContainer = document.getElementById("st-myshop-main");
+		removeChildren(productsContainer, productTemplate)
+		fetch('/wp-json/shoptype/v1/shop/' + userName)
+			.then(response => response.json())
+			.then(productsJson => {
+				for (var i = 0; i < productsJson.products.length; i++) {
+					let newProduct = productTemplate.cloneNode(true);
+					addProductDetails(newProduct, productsJson.products[i],".st-product-img",".st-product-cost");
+					newProduct.querySelector(".st-product-link").href= "<?php echo $productUrl ?>".replace("{{productId}}",productsJson.products[i].id)+"&tid="+productsJson.products[i].tid;
+					newProduct.id = productsJson.products[i].id;
+					if(userId=='me'){
+						newProduct.querySelector(".st-remove-product").setAttribute("onclick",`event.stopPropagation(); removeProductFromShop("${productsJson.products[i].id}")`);
+					}
+					productsContainer.appendChild(newProduct);
+				}
+			});
+	}
+
+
+	function removeProductFromShop(productId){
+		let products = {};
+		products[productId]='';
+		callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,x=>addProductByIdToShop(x,products,x=>loadShopProducts(currentBpUser.user_login),true),'get');
+	}
+
+	
+	function searchProducts() {
+		let text = document.getElementById('st-search-box').value;
+		let productTemplate = document.getElementById("st-product-select-template");
+		let productsContainer = document.getElementById("st-product-search-results");
+		removeChildren(productsContainer,productTemplate);
+		fetch(st_backend + "/platforms/<?php echo $stPlatformId?>/products?text="+text)
+			.then(response => response.json())
+			.then(productsJson => {
+				for (var i = 0; i < productsJson.products.length; i++) {
+					let newProduct = productTemplate.cloneNode(true);
+					addProductDetails(newProduct, productsJson.products[i],".st-product-img-select",".st-product-cost-select");
+					newProduct.id = "search-" + productsJson.products[i].id;
+					newProduct.querySelector("input").id = "select-" + productsJson.products[i].id;
+					newProduct.querySelector("input").value = productsJson.products[i].id;
+					productsContainer.appendChild(newProduct);
+				}
+			})
+	}
 </script>
 
 <?php
