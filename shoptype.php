@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:    
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:      1.0
+Version:      1.2.0
 Author:       shoptype 
 Author URI:   https://www.shoptype.com
 License:      GPL2
@@ -20,10 +20,12 @@ function shoptype_header(){
 	global $stRefcode;
 	global $productUrl;
 	global $brandUrl;
+	global $siteUrl;
+	global $siteName;
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.6/shoptype.js"></script>';
   echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='.wcmenucart-details' platformid='$stPlatformId'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
-  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS/awakeMarket.min.js"></script>';
+  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS@1.6/awakeMarket.min.js"></script>';
 };
 
 //ST login modal script
