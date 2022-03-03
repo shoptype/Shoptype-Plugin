@@ -41,7 +41,7 @@ function renderAwakeProducts($atts = []){
             <?php for($i=1;$i<=$totalRows;$i++) { ?>
                 <div count="<?php echo $perRow; ?>" imageSize="150x150" vendorid="<?php echo $vendorId; ?>" <?php echo $tags; ?> class="products-container <?php echo ($showSliderDiv ? "m-product" : ""); ?>">
                     <?php if($showSliderDiv) : ?><div><?php endif; ?>
-                        <div class="product-container <?php echo $atts['product_classes']; ?>">
+                        <div class="product-container <?php echo $atts['product_classes']; ?>" style="display: none;">
                             <div class="product-image">
                                 <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
                                     <img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">

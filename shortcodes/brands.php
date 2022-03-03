@@ -26,7 +26,7 @@ function renderAwakeBrands($atts = []){
             <?php for($i=1;$i<=$totalRows;$i++) { ?>
                 <div count="<?php echo $atts['per_row']; ?>" imageSize="150x150" <?php echo $removeTemplate;?> class="brands-container <?php echo $atts['container_classes']; ?>" <?php echo $loadMore;?>>
                     <?php if($isSlider == 1) : ?><div><?php endif; ?>
-                        <div class="brand-container <?php echo $atts['brand_classes']; ?>">
+                        <div class="brand-container <?php echo $atts['brand_classes']; ?>" style="display: none;">
                             <?php if($isSlider == 1) : ?>
                                 <a href="demo/awake/bdp/?brand-id={{brandId}}" class="am-brand-link">
                                     <img class="am-brand-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">
