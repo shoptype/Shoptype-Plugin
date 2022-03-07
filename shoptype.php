@@ -314,6 +314,14 @@ class PageTemplater {
 			'templates/page-product.php' => 'Product Details Page',
 			'templates/page-brand.php' => 'Brand Details Page',
 			'templates/st-login.php' => 'Shoptype Login Page',
+			'templates/page-all-groups.php' => 'All Groups Page',
+			'templates/page-allbrands.php' => 'All Brands Page',
+			'templates/page-allcosellers.php' => 'All Cosellers Page',
+			'templates/page-allproducts.php' => 'All Products Page',
+			'templates/page-coseller.php' => 'Coseller Details Page',
+			'templates/page-products-home.php' => 'Products Home Page',
+			'templates/page-shop.php' => 'Shop Page',
+			'templates/st-profile.php' => 'Shoptype Profile Page',
 		);
 			
 	} 
