@@ -5,13 +5,6 @@
  *
  *@package shoptype
  */
-
-function add_custom_meta_des(){
-	echo '<meta name="description" content="test" />';
-	echo '<meta name="description" content="test" />';
-}
-
-
 global $stApiKey;
 global $stPlatformId;
 global $stRefcode;
@@ -33,13 +26,16 @@ try {
 		$commission = $st_product->variants[0]->discountedPriceAsMoney->amount * $st_product->productCommission->percentage / 100;
 		$prodCurrency = $stCurrency[$st_product->currency];
 		$vendorId = $st_product->catalogId;
-		$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
-		$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
-		$groupSlug = strtolower($groupSlug);
-		$group_id = groups_get_id( $groupSlug );
-		$group = groups_get_group( array( 'group_id' => (int) $group_id ) );
-		$user_id = get_current_user_id();
-		$isInGroup = groups_is_user_member( $user_id, $group_id );
+
+		try{
+			$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
+			$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
+			$groupSlug = strtolower($groupSlug);
+
+		}
+		catch(Exception $ex) {
+		}
+		
 		add_filter('pre_get_document_title', function() use ($st_product) {
 			return $st_product->title;
 		});
@@ -69,8 +65,7 @@ try {
 }
 catch(Exception $e) {
 }
-
-get_header(null);
+get_header();
 ?>
 <div id="primary" class="content-area bb-grid-cell">
 	<main id="main" class="site-main">
@@ -120,7 +115,7 @@ get_header(null);
 												</div>
 											</div>
 											<div class="addButton-container">
-												<a class="btn btn-standard am-product-add-cart-btn" href="javascript:void()" role="button"  onclick="addToCart(this)" variantid="<?php echo $st_product->variants[0]->id ?>" productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</a>
+												<a class="btn btn-standard am-product-add-cart-btn" href="javascript:void()" role="button"  onclick="addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</a>
 											</div>
 										</div>
 										<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency".number_format($commission,2) ?></button>
@@ -184,10 +179,10 @@ get_header(null);
 
 				<div count="4" imagesize="250x0" vendorId="<?php echo $st_product->catalogId ?>" removetemplate class="products-container grid-two-by-two">
 					<div class="product-container single-product " style="display: none">
-						<a href="<?php>'$productUrl'?>/?product-id={{productId}}" class="am-product-link">
+						<a href="" class="am-product-link">
 							<div class="product-image">
 								<img class="am-product-image" src="product-image.png" alt="">
-								<div class="market-product-price am-product-price">$ 48.00</div>
+								<div class="market-product-price am-product-price">$ 00.00</div>
 							</div>
 							<div class="product-content">
 								<p class="am-product-vendor">Brand Name</p>
@@ -196,12 +191,6 @@ get_header(null);
 						</a>
 					</div>
 				</div>
-				<?php
-				while ( have_posts() ) :
-					the_post();
-					the_content();
-				endwhile;
-				?>
 			</div>
 		</div>
 		<!-- End PDP Custom page -->
@@ -272,3 +261,4 @@ get_header(null);
 </script>
 <?php
 get_footer();
+

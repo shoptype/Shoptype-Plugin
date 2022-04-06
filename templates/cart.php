@@ -1,0 +1,182 @@
+<?php
+/*
+ * Template name: Shoptype Cart
+ * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
+ *
+ *@package shoptype
+ */
+global $stApiKey;
+global $stPlatformId;
+global $stRefcode;
+global $stCurrency;
+global $brandUrl;
+$path = dirname(plugin_dir_url( __FILE__ ));
+wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
+wp_enqueue_script('https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js');
+$cartId = get_query_var( 'cart' );
+
+try {
+  $headers = array(
+    "X-Shoptype-Api-Key: ".$stApiKey,
+    "X-Shoptype-PlatformId: ".$stPlatformId
+  );
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/cart/$cartId");
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $result = curl_exec($ch);
+
+  curl_close($ch);
+
+  if( !empty( $result ) ) {
+    $st_cart = json_decode($result);
+    $prodCurrency = $stCurrency[$st_cart->sub_total->currency];
+  }
+}
+catch(Exception $e) {
+  echo "Cart not found";
+}
+
+get_header(null);
+?>
+  <div class="st-cart">
+    <div class="st-cart-head">
+      <h1>Cart</h1>
+    </div>
+    <div class="st-cart-main">
+      <div class="st-cart-products">
+        <?php foreach($st_cart->cart_lines as $key=>$value): ?>
+          <div id="st-cart-product" class="st-cart-product">
+            <div class="st-cart-product-details">
+              <div class="st-cart-product-img-div"><img src="<?php echo $value->image_src ?>" loading="lazy" alt="" class="st-cart-product-img"></div>
+              <div class="st-cart-product-sum">
+                <h2 class="st-cart-product-title"><?php echo $value->name ?></h2>
+                <div>
+                  <div id="st-cart-product-var" class="st-cart-product-var">
+                    <div class="st-cart-product-var-title">Variant:</div>
+                    <div class="st-cart-product-var-val"><?php echo $value->variant_name_value->title ?></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="st-cart-product-pricing">
+              <div class="st-cart-product-price"><?php echo $prodCurrency.$value->price->amount ?></div>
+              <input type="number" pid="<?php echo $value->product_id ?>" vid="<?php echo $value->product_variant_id ?>" name="<?php echo $value->product_id."_qty" ?>" class="st-cart-product-qty" value="<?php echo $value->quantity ?>" onchange="cartUpdateProductQuant(this)">
+              <div class="st-cart-product-tot-price"><?php echo $prodCurrency.($value->price->amount*$value->quantity) ?></div>
+            </div>
+            <div class="st-cart-product-remove" onclick="removeProduct(this)"><img src="<?php echo $path ?>/images/delete.png" loading="lazy" alt=""></div>
+          </div>
+        <?php endforeach; ?>
+
+      </div>
+      <div class="st-cart-details">
+        <div class="st-cart-top">
+          <h3 class="st-cart-sum-title">CART TOTALS</h3>
+        </div>
+        <div>
+          <div class="st-cart-details-title">
+            <div class="st-cart-subtitle">Subtotal</div>
+            <div class="st-cart-subtotal"><?php echo $prodCurrency.$st_cart->sub_total->amount ?></div>
+          </div>
+          <div class="st-cart-shipping">
+            <div class="st-cart-subtitle">Shipping</div>
+            <div class="st-shipping-details">
+              <div class="st-shipping-cost">Calculated at Checkout</div>
+              <div class="st-shipping-add"></div>
+            </div>
+          </div>
+          <div class="st-cart-details-title">
+            <div class="st-cart-subtitle">Total</div>
+            <div class="st-cart-total"><?php echo $prodCurrency.$st_cart->sub_total->amount ?></div>
+          </div>
+        </div>
+        <div class="st-cart-checkout-btn" onclick="checkout()">
+          <div class="st-cart-checkout-btn-txt">Proceed to Checkout</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+  const st_cartId = "<?php echo $st_cart->id ?>";
+  const myCurrency = "<?php echo $prodCurrency ?>";
+
+  function cartUpdateProductQuant(qtyInput){
+    var productId = qtyInput.getAttribute("pid");
+    var variantId = qtyInput.getAttribute("vid");
+    var quantity = parseInt(qtyInput.value);
+    let payload = {
+            "product_id": productId,
+            "product_variant_id": variantId,
+            "quantity": quantity
+          }
+    headerOptions.method = 'put';
+    headerOptions.body = JSON.stringify(payload);
+    stShowLoader();
+    fetch(st_backend + "/cart/" + st_cartId,headerOptions)
+      .then(response => response.json())
+      .then(cartJson => {
+        document.querySelector(".st-cart-subtotal").innerHTML = myCurrency+cartJson.sub_total.amount;
+        document.querySelector(".st-cart-total").innerHTML = myCurrency+cartJson.sub_total.amount
+        if(quantity==0){
+          qtyInput.parentElement.parentElement.remove();
+        }else{
+          var parent = qtyInput.parentElement;
+          var prodVal = parent.querySelector(".st-cart-product-price").innerHTML.replace(myCurrency,"");
+          prodVal = parseFloat(prodVal);
+          parent.querySelector(".st-cart-product-tot-price").innerHTML = myCurrency + (quantity*prodVal);
+        }
+        stHideLoader();
+      })
+      .catch(err => console.info(err));
+  }
+
+  function checkout(){
+    stShowLoader();
+    if(typeof fingerprintExcludeOptions=== 'undefined'){
+      st_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", checkout);
+    }else{
+      getDeviceId().
+        then(deviceId=>{
+        headerOptions.method = 'post';
+        let data = {
+          "deviceId": deviceId,
+          "cartId": st_cartId
+        }
+        headerOptions.body = JSON.stringify(data);
+        headerOptions.headers['X-Shoptype-PlatformId']=st_platformId;
+        fetch(st_backend + "/checkout", headerOptions)
+          .then(response => response.json())
+          .then(checkoutJson => {
+            if(checkoutJson.message){
+              stHideLoader();
+              showError(checkoutJson.message);
+            }else if(checkout.external_url){
+              let childWindow = null;
+              let st_redirect_uri = checkout.redirect_uri;
+              if(st_hostDomain && st_hostDomain!=""){
+                let st_checkoutUrl = new URL(st_redirect_uri);
+                st_redirect_uri = st_checkoutUrl.href.replace(st_checkoutUrl.host,st_hostDomain)
+              }
+
+              if(stCheckoutType == "newWindow"){
+                childWindow = window.open(st_redirect_uri);
+              }else{
+                window.location.href = st_redirect_uri;           
+              }
+            }else{
+              window.location.href = "/checkout/" + checkoutJson.checkout_id; 
+            }
+          });
+        });
+    }
+  }
+  function removeProduct(removeBtn){
+    var quantity = removeBtn.parentElement.querySelector(".st-cart-product-qty");
+    quantity.value = 0;
+    cartUpdateProductQuant(quantity)
+  }
+
+</script>
+<?php
+get_footer();

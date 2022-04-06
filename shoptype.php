@@ -22,7 +22,7 @@ function shoptype_header(){
 	global $brandUrl;
 	global $siteUrl;
 	global $siteName;
-  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.3/shoptype.js"></script>';
+  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.6/shoptype.js"></script>';
   echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='.wcmenucart-details' platformid='$stPlatformId'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS@1.6/awakeMarket.min.js"></script>';
@@ -72,6 +72,8 @@ function shoptype_login_modal(){
 add_action('init', function(){
     add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?product=$matches[1]', 'top' );
 	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
+	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
+	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -80,6 +82,14 @@ add_filter( 'query_vars', function( $query_vars ) {
 } );
 add_filter( 'query_vars', function( $query_vars ) {
     $query_vars[] = 'brand';
+    return $query_vars;
+} );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'cart';
+    return $query_vars;
+} );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'checkout';
     return $query_vars;
 } );
 
@@ -94,6 +104,18 @@ add_action( 'template_include', function( $template ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/page-brand.php';
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'cart' ) == false || get_query_var( 'cart' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/cart.php';
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'checkout' ) == false || get_query_var( 'checkout' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/checkout.php';
 } );
 
 //Shoptype login handler
