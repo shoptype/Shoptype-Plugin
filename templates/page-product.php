@@ -178,7 +178,7 @@ get_header(null);
 				<h2 class="kt-adv-heading_ae42d3-d6 wp-block-kadence-advancedheading" data-kb-block="kb-adv-heading_ae42d3-d6">Related Products</h2>
 				</div></div>
 				<div class="wp-block-kadence-column inner-column-2 kadence-column_28a730-ab"><div class="kt-inside-inner-col">
-				<div class="wp-block-kadence-advancedbtn kt-btn-align-right kt-btn-tablet-align-inherit kt-btn-mobile-align-inherit kt-btns-wrap kt-btns_b0010a-ce kt-force-btn-fullwidth"><div class="kt-btn-wrap kt-btn-wrap-0"><a class="kt-button button kt-btn-0-action kt-btn-size-standard kt-btn-style-basic kt-btn-svg-show-always kt-btn-has-text-true kt-btn-has-svg-false" href="https://us.awake.market/marketplace/"><span class="kt-btn-inner-text">MARKETPLACE</span></a></div></div>
+				<div class="wp-block-kadence-advancedbtn kt-btn-align-right kt-btn-tablet-align-inherit kt-btn-mobile-align-inherit kt-btns-wrap kt-btns_b0010a-ce kt-force-btn-fullwidth"><div class="kt-btn-wrap kt-btn-wrap-0"><a class="kt-button button kt-btn-0-action kt-btn-size-standard kt-btn-style-basic kt-btn-svg-show-always kt-btn-has-text-true kt-btn-has-svg-false" href="/marketplace/"><span class="kt-btn-inner-text">MARKETPLACE</span></a></div></div>
 				</div></div>
 				</div></div></div>
 

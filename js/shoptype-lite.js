@@ -112,10 +112,9 @@ function registerCheckout(){
 	let checkoutId = getCookie("st_checkoutid");
 	let productId = createUUID();
 	if(checkoutId!=null){
-		setCookie("st_checkoutid", null,0);
 		sendUserEvent(deviceId=>{sendCheckoutEvent(checkoutId, productId, deviceId);});
+		setCookie("st_checkoutid", null,0);
 	}
-	
 }
 
 function sendUserEvent(callback){
