@@ -116,8 +116,6 @@ get_header(null);
     fetch(st_backend + "/cart/" + st_cartId,headerOptions)
       .then(response => response.json())
       .then(cartJson => {
-        document.querySelector(".st-cart-subtotal").innerHTML = myCurrency+cartJson.sub_total.amount;
-        document.querySelector(".st-cart-total").innerHTML = myCurrency+cartJson.sub_total.amount
         if(quantity==0){
           qtyInput.parentElement.parentElement.remove();
         }else{
@@ -126,11 +124,18 @@ get_header(null);
           prodVal = parseFloat(prodVal);
           parent.querySelector(".st-cart-product-tot-price").innerHTML = myCurrency + (quantity*prodVal);
         }
-
-        let shoptypeCartCountChanged =new CustomEvent('shoptypeCartCountChanged', {'detail': {
-          "count": cartJson.total_quantity
-        }});
-        document.dispatchEvent(shoptypeCartCountChanged);
+    var totQuant = 0;
+    var totSum = myCurrency+"0";
+    if(cartJson.sub_total){
+      totQuant = cartJson.total_quantity;
+      totSum = myCurrency+cartJson.sub_total.amount;
+    }
+      let shoptypeCartCountChanged =new CustomEvent('shoptypeCartCountChanged', {'detail': {
+        "count": totQuant
+      }});
+      document.dispatchEvent(shoptypeCartCountChanged);
+      document.querySelector(".st-cart-subtotal").innerHTML = totSum;
+      document.querySelector(".st-cart-total").innerHTML = totSum;
         stHideLoader();
       })
       .catch(err => console.info(err));
