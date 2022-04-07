@@ -25,10 +25,6 @@
     width: 100%;
     padding: 20px;
   }
-  .product-info .product-title {
-    font-size: 20px;
-    line-height: 25px;
-  }
   .options-container .single-option {
     flex-direction: column;
   }

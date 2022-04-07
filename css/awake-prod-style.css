@@ -35,7 +35,7 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  justify-content: center;
 }
 .single-product, .single-brand {
   border: 1px solid var(--tertiary-color-2);
@@ -43,7 +43,9 @@
   flex: 1 1 calc(25% - 12px);
   max-width: calc(25% - 12px);
   background-color: white;
+  margin: 6px;
   border-radius: 3px;
+  min-width: 250px;
 }
 .product-image {
   position: relative;
@@ -285,6 +287,11 @@ PDP PAGE
   font-size: 24px;
   line-height: 29px;
   font-weight: 500;
+}
+.product-info .product-title {
+  font-size: 18px;
+  line-height: 22px;
+  height: 42px;
 }
 .product-info .am-product-vendor {
   margin-top: 0px;
@@ -2841,4 +2848,25 @@ li:focus ul li a {
 }
 .brandsSlider .slick-dots li.slick-active button {
   background-color: #4C74F2;
+}
+.stCartBtn{
+  position:relative;
+}
+.stCartBtn img{
+    width:34px;
+    height:34px;
+}
+.st-cart-count{
+    position: absolute;
+    z-index: 100;
+    top: 15px;
+    background: #ffffffc0;
+    left: 20px;
+    font-size: 14px;
+    font-weight:700;
+    padding: 1px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    min-width: 24px;
+    text-align: center;
 }
