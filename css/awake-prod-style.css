@@ -1,7 +1,4 @@
 /* ============== commom css =============== */
-#header-search form, .site-header{
-  background-color: white !important;
-}
 .page-wrapper {
   max-width: 1170px;
   margin: 0 auto;
@@ -23,22 +20,8 @@
   color: var(--primary-comp);
 }
 
-.bb-close-panel{
-  background: rgba(100, 100, 100, .9) !important;
-}
-.bb-mobile-panel-inner{
-  background: var(--primary-bg) !important;
-}
-.bb-mobile-panel-inner .bb-primary-menu a{
-  color: var(--tertiary-color-1) !important;
-}
-.bb-login-section .sign-in{
-  color: var(--tertiary-color-1) !important;
-  border-color: var(--tertiary-color-1) !important;
-}
 /* ============================= */
 .site-title, .site-title a{
-  color: var(--primary-color) !important;
   font-size: 24px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
@@ -88,7 +71,7 @@
   padding: 15px;
 }
 .product-content p, .brand-content p {
-  font-family: 'Montserrat', sans-serif !important;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   font-weight: 500;
   margin-top: 0px;
@@ -96,7 +79,7 @@
   line-height: 1.5em;
 }
 .product-content h4, .brand-content h4 {
-  font-family: 'Montserrat', sans-serif !important;
+  font-family: 'Montserrat', sans-serif;
   font-size: 16px;
   font-weight: 500;
   margin: 0;
@@ -117,11 +100,11 @@
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
   border-radius: 2px 0px 0px 2px;
   padding: 3px 6px;
-  color: var(--primary-comp) !important;
+  color: var(--primary-comp);
   font-size: 13px;
-  font-family: 'Montserrat', sans-serif !important;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 500;
-  width: 85px !important;
+  width: 85px;
   text-align: center;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
@@ -136,14 +119,14 @@
   gap: 6px;
 }
 .slick-dots li button::before{
-  font-size: 40px !important;
-  color: #959595 !important;
+  font-size: 40px;
+  color: #959595;
 }
 .slick-dots li.slick-active button::before {
-  color: #0208e7 !important
+  color: #0208e7
 }
 .slick-slide{
-  display: flex !important;
+  display: flex;
   align-items: stretch;
   height: auto;
 }
@@ -151,8 +134,8 @@
   width: 100%;
 }
 .slick-slide div .single-product, .slick-slide div .single-brand{
-  flex: 1 1 100% !important;
-  max-width: 100% !important;
+  flex: 1 1 100%;
+  max-width: 100%;
 }
 .slick-slide .single-product{
   height: 100%;
@@ -240,19 +223,19 @@ ul.slick-dots{
   transform: rotate(180deg);
 }
 .gutentor-module-carousel-row .slick-next {
-  right: -13px !important;
+  right: -13px;
   background: var(--primary-bg);
-  padding: 25px 15px !important;
-  top: 50% !important;
+  padding: 25px 15px;
+  top: 50%;
   left: auto;
 }
 .gutentor-module-carousel-row .slick-prev {
-  left: -11px !important;
-  transform: rotate(180deg) !important;
-  z-index: 1 !important;
+  left: -11px;
+  transform: rotate(180deg);
+  z-index: 1;
   background: var(--primary-bg);
-  padding: 25px 15px !important;
-  top: 44% !important;
+  padding: 25px 15px;
+  top: 44%;
 }
 .gutentor-module-carousel-row .fa-angle-left:before {
   transform: rotate(0deg);
@@ -405,7 +388,7 @@ div.add-box > div {
 div.add-box > div > input {
   margin:0;
   font-size:18px;
-  max-width:25%;
+  max-width:35%;
   height: 40px;
   border:1px solid var(--tertiary-color-2);
   border-left: 0px;
@@ -509,13 +492,6 @@ ul.tabs li.active {
   display: block;
   text-align: center;
 }
-/*
-.product-container {
-  margin-top: 100px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}*/
 .eqWrap {
   display: flex;
   flex-wrap: wrap;
@@ -756,7 +732,6 @@ SINGLE BRAND PAGE
 }
 .btn-blueCornered::-moz-focus-inner {
   border: 0;
-  /* Removes dotted line in Firefox */
 }
 .btn-blueCornered:hover, .btn-blueCornered:focus {
   box-shadow: none;
@@ -818,7 +793,6 @@ SINGLE BRAND PAGE
 }
 .btn-yellowRounded::-moz-focus-inner {
   border: 0;
-  /* Removes dotted line in Firefox */
 }
 .btn-yellowRounded:hover, .btn-yellowRounded:focus {
   box-shadow: none;
@@ -850,7 +824,6 @@ SINGLE BRAND PAGE
 }
 .btn-whiteRounded::-moz-focus-inner {
   border: 0;
-  /* Removes dotted line in Firefox */
 }
 .btn-whiteRounded:hover, .btn-whiteRounded:focus {
   box-shadow: none;
@@ -869,7 +842,6 @@ SINGLE BRAND PAGE
 .select-wrap {
   position: relative;
   color: inherit;
-  /* Target IE9 and IE10 */
 }
 .select-wrap::after {
   font-family: "FontAwesome";
@@ -1865,7 +1837,7 @@ li:focus ul li a {
   overflow: hidden;
 }
 .section .m-product-container .m-product .slick-list {
-  padding-left: 0px !important;
+  padding-left: 0px;
 }
 .section .m-product-container .m-product .slick-list .slick-slide {
   margin: 0 10px;
@@ -1933,7 +1905,7 @@ li:focus ul li a {
   background-color: #4C74F2;
 }
 .section .dBrandSlider .slick-list {
-  padding-left: 0px !important;
+  padding-left: 0px;
 }
 .section .dBrandSlider .slick-list .slick-slide {
   margin: 0 10px;
@@ -2074,7 +2046,7 @@ li:focus ul li a {
   text-transform: uppercase;
 }
 .section .m-cosellers .slick-list {
-  padding-left: 0px !important;
+  padding-left: 0px;
 }
 .section .m-cosellers .slick-list .slick-slide {
   margin: 0 10px;
@@ -2128,7 +2100,7 @@ li:focus ul li a {
   margin: 0 5px;
 }
 .section .communities .slick-list {
-  padding-left: 0px !important;
+  padding-left: 0px;
 }
 .section .communities .slick-list .slick-slide {
   margin: 0 10px;
@@ -2339,7 +2311,7 @@ li:focus ul li a {
   margin-bottom: 22px;
 }
 .product-details-container .slick-list {
-  padding-left: 0px !important;
+  padding-left: 0px;
 }
 .product-details-container .slick-slide {
   margin: 10px 5px 0 5px;
@@ -2869,127 +2841,4 @@ li:focus ul li a {
 }
 .brandsSlider .slick-dots li.slick-active button {
   background-color: #4C74F2;
-}
-
-/*# sourceMappingURL=awake.css.map */
-.st-cart-form{
-  flex-direction:row !important;
-  flex-wrap: wrap !important;
-}
-.st-cart-input-field {
-  height: 30px;
-  margin: 5px 5px !important;
-  width: calc(100% - 10px) !important;
-    max-width: calc(100% - 10px) !important;
-  padding: 5px 0px 4px 12px;
-  font-size: 16px;
-    flex: 1 0 100% !important;
-  border-radius: 0px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #e5e5e5;
-  max-width: 100%;
-}
-.st-select-field {
-  width: 100%;
-  height: 30px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin: 5px 0px;
-  border-radius: 0px;
-    background-color: transparent;
-    color: var(--secondary-color-comp);
-}
-.st-cart-delivery {
-  display: none;
-  margin-top: 20px;
-  margin-right: 10px;
-  margin-left: 10px;
-  padding: 20px 10px;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  background-color: #fff;
-  max-height: calc(100% - 300px);
-  overflow: auto;
-}
-.st-cart-summary {
-  overflow: hidden;
-  margin-right: 10px;
-  margin-left: 10px;
-  border-radius: 0px;
-  background-color: var(--primary-color-comp);
-}
-.st-cart-next-btn {
-  min-width: 200px;
-  margin-bottom: 20px;
-  padding-right: 20px;
-  padding-left: 20px;
-  background-color: var(--primary-color-selected);
-  color: var(--primary-color-selected-comp);
-  font-size: 16px;
-  line-height: 30px;
-  text-align: center;
-  cursor: pointer;
-  border-radius: 0px;
-}
-.st-vendor-cart {
-  display: none;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding: 10px 5px;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  background-color: var(--background-color);
-}
-.st-cart-radio-btn {
-  width: 24px;
-  height: 24px;
-  margin-top: 0px;
-  margin-right: 5px;
-  margin-bottom: 0px;
-  padding-left: 10px;
-}
-.st-cart-back {
-  margin-bottom: 20px;
-  padding-right: 20px;
-  padding-left: 20px;
-  background-color: var(--primary-color);
-  color: var(--primary-color-comp);
-  font-size: 16px;
-  line-height: 30px;
-  text-align: center;
-  display: none;
-  cursor: pointer;
-}
-.st-cosell-sharelink-url-txt {
-    height: 30px;
-    line-height: 30px;
-    font-size: 12px;
-    border: none;
-    max-width: 100%;
-}
-.st-cosell-link-copy-btn {
-    font-size: 12px;
-    border-radius: 0px;
-}
-.st-cosell-sharelink-url {
-  height: 32px;
-}
-.st-cart-iframe-block{
-  top: 108px !important;
-    height: calc(100% - 108px) !important;
-    z-index: 9999 !important;
-}
-.cart-input-half {
-  flex: 0 0 calc(50% - 10px) !important;
-    width: calc(50% - 10px) !important;
-    background-color: #FFFFFF !important;
-    color: #333333 !important;
-    margin: 5px !important;
-    height: 40px !important;
-    border-radius: 4px !important;
 }
