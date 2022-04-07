@@ -12,7 +12,7 @@ global $stCurrency;
 global $brandUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
-wp_enqueue_script('https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js');
+wp_enqueue_script('triggerUserEvent','https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js');
 $cartId = get_query_var( 'cart' );
 
 try {
@@ -126,6 +126,11 @@ get_header(null);
           prodVal = parseFloat(prodVal);
           parent.querySelector(".st-cart-product-tot-price").innerHTML = myCurrency + (quantity*prodVal);
         }
+
+        let shoptypeCartCountChanged =new CustomEvent('shoptypeCartCountChanged', {'detail': {
+          "count": cartJson.total_quantity
+        }});
+        document.dispatchEvent(shoptypeCartCountChanged);
         stHideLoader();
       })
       .catch(err => console.info(err));
@@ -133,43 +138,39 @@ get_header(null);
 
   function checkout(){
     stShowLoader();
-    if(typeof fingerprintExcludeOptions=== 'undefined'){
-      st_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", checkout);
-    }else{
-      getDeviceId().
-        then(deviceId=>{
-        headerOptions.method = 'post';
-        let data = {
-          "deviceId": deviceId,
-          "cartId": st_cartId
-        }
-        headerOptions.body = JSON.stringify(data);
-        headerOptions.headers['X-Shoptype-PlatformId']=st_platformId;
-        fetch(st_backend + "/checkout", headerOptions)
-          .then(response => response.json())
-          .then(checkoutJson => {
-            if(checkoutJson.message){
-              stHideLoader();
-              showError(checkoutJson.message);
-            }else if(checkout.external_url){
-              let childWindow = null;
-              let st_redirect_uri = checkout.redirect_uri;
-              if(st_hostDomain && st_hostDomain!=""){
-                let st_checkoutUrl = new URL(st_redirect_uri);
-                st_redirect_uri = st_checkoutUrl.href.replace(st_checkoutUrl.host,st_hostDomain)
-              }
-
-              if(stCheckoutType == "newWindow"){
-                childWindow = window.open(st_redirect_uri);
-              }else{
-                window.location.href = st_redirect_uri;           
-              }
-            }else{
-              window.location.href = "/checkout/" + checkoutJson.checkout_id; 
+    getDeviceId().
+      then(deviceId=>{
+      headerOptions.method = 'post';
+      let data = {
+        "deviceId": deviceId,
+        "cartId": st_cartId
+      }
+      headerOptions.body = JSON.stringify(data);
+      headerOptions.headers['X-Shoptype-PlatformId']=st_platformId;
+      fetch(st_backend + "/checkout", headerOptions)
+        .then(response => response.json())
+        .then(checkoutJson => {
+          if(checkoutJson.message){
+            stHideLoader();
+            showError(checkoutJson.message);
+          }else if(checkout.external_url){
+            let childWindow = null;
+            let st_redirect_uri = checkout.redirect_uri;
+            if(st_hostDomain && st_hostDomain!=""){
+              let st_checkoutUrl = new URL(st_redirect_uri);
+              st_redirect_uri = st_checkoutUrl.href.replace(st_checkoutUrl.host,st_hostDomain)
             }
-          });
+
+            if(stCheckoutType == "newWindow"){
+              childWindow = window.open(st_redirect_uri);
+            }else{
+              window.location.href = st_redirect_uri;           
+            }
+          }else{
+            window.location.href = "/checkout/" + checkoutJson.checkout_id; 
+          }
         });
-    }
+      });
   }
   function removeProduct(removeBtn){
     var quantity = removeBtn.parentElement.querySelector(".st-cart-product-qty");
