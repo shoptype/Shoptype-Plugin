@@ -40,6 +40,10 @@ The following code will need to be added into the functions.php file of your the
 		$productUrl = "/product?id={{productId}}";
 		global $brandUrl;
 		$brandUrl = "/view-brand?id={{brandId}}";
+		global $siteName;
+		$siteName = "YOUR SITE NAME";
+		global $siteUrl;
+		$siteUrl = "YOUR SITE URL";
     }
     add_action( 'after_setup_theme', 'shoptypeSettings' );
 
