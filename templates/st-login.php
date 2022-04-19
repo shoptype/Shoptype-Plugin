@@ -23,9 +23,9 @@ get_header();
 			stLoginHandler.renderSTLoginForm(
 				"login-form",
 				{
-					name: "us.awake.market",
-					url: "https://us.awake.market",
-					rid: "<?php global $stRefcode; echo $stRefcode; ?>",
+				name: "<?php global $siteName; echo $siteName; ?>",
+				url: "<?php global $siteUrl; echo $siteUrl; ?>",
+				rid: "<?php global $stRefcode; echo $stRefcode; ?>",
 				},
 				(appRes) => {
 					switch (appRes.app.event) {

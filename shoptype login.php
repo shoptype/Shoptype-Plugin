@@ -3,8 +3,8 @@
 	const openModal = () => {
 		stLoginHandler.openSTLoginModal(
 			{
-				name: "us.awake.market",
-				url: "https://us.awake.market",
+				name: "<?php global $siteName; echo $siteName; ?>",
+				url: "<?php global $siteUrl; echo $siteUrl; ?>",
 				rid: "<?php global $stRefcode; echo $stRefcode; ?>",
 			},
 			(appRes) => {
