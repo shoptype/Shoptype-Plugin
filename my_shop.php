@@ -92,11 +92,11 @@ function my_shop_tab_content() {
 	<div class="st-profile-subtitle">Shop</div>
 	<div class="st-profile-content-block">
 		<div class="st-add-product-drawer" id="st-add-product-drawer" style="right: -300px;">
-			<div class="st-product-drawer" onclick="toggleAddProducts()"><img src="<?php echo $path?>/images/shop.svg" loading="lazy" alt="" class="st-product-drawer-img"></div>
+			<div class="st-product-drawer" onclick="toggleAddProducts()"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/shop.svg" loading="lazy" alt="" class="st-product-drawer-img"></div>
 			<div class="st-product-add-drawer">
 				<div class="st-product-search">
 					<input class="st-product-search-box" id="st-search-box" name="Search" >
-					<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo $path?>/images/Search.svg" loading="lazy" alt="" class="st-product-search-img"></div>
+					<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/search.svg" loading="lazy" alt="" class="st-product-search-img"></div>
 				</div>
 				<div class="st-product-search-results" id="st-product-search-results">
 					<div class="st-product-select" id="st-product-select-template" style="display: none;">
