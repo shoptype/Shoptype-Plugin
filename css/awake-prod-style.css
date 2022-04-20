@@ -292,6 +292,7 @@ PDP PAGE
   font-size: 18px;
   line-height: 22px;
   height: 42px;
+  overflow: hidden;
 }
 .product-info .am-product-vendor {
   margin-top: 0px;

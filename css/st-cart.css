@@ -32,7 +32,7 @@
   justify-content: center;
 }
 
-.st-cart-product {
+.st-ncart-product {
   position: relative;
   display: -webkit-box;
   display: -webkit-flex;
@@ -682,7 +682,7 @@
 }
 
 @media screen and (max-width: 767px) {
-  .st-cart-product {
+  .st-ncart-product {
     flex-direction: column !important;
   }
 

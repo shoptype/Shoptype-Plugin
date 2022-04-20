@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:    
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:      1.2.0
+Version:      1.3.1
 Author:       shoptype 
 Author URI:   https://www.shoptype.com
 License:      GPL2
@@ -228,9 +228,6 @@ function ST_logout() {
 }
 
 
-
-
-
 /*Adding shoptype products to search results*/
 function have_posts_override(){
     if ( is_search() ) {
@@ -435,3 +432,5 @@ require_once(ST__PLUGIN_DIR.'/shortcodes/cosellers.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/brands.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');
+require_once(ST__PLUGIN_DIR.'/admin_settings.php');
+require_once(ST__PLUGIN_DIR.'/my_shop.php');
