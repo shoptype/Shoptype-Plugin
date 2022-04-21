@@ -12,7 +12,6 @@ Text Domain:  https://www.shoptype.com
 Domain Path:  /languages
 */
 
-
 /* Initialisation of the shopype JS and adding the cart+profile buttons to the header */
 function shoptype_header(){
 	global $stApiKey;
@@ -341,6 +340,7 @@ class PageTemplater {
 			'templates/page-products-home.php' => 'Products Home Page',
 			'templates/page-shop.php' => 'Shop Page',
 			'templates/st-profile.php' => 'Shoptype Profile Page',
+			'templates/cart.php' => 'Shoptype Cart Page',
 		);
 			
 	} 

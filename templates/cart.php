@@ -2,8 +2,7 @@
 /*
  * Template name: Shoptype Cart
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- *@package shoptype
+ * @package shoptype
  */
 global $stApiKey;
 global $stPlatformId;
@@ -15,6 +14,11 @@ wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
 wp_enqueue_script('triggerUserEvent','https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js');
 $cartId = get_query_var( 'cart' );
 
+if(empty($cartId)){
+  $cartstr = stripslashes($_COOKIE["carts"]);
+  $cartsParsed = json_decode($cartstr);
+  $cartId = $cartsParsed->shoptypeCart;
+}
 try {
   $headers = array(
     "X-Shoptype-Api-Key: ".$stApiKey,
@@ -25,7 +29,6 @@ try {
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $result = curl_exec($ch);
-
   curl_close($ch);
 
   if( !empty( $result ) ) {
@@ -46,7 +49,7 @@ get_header(null);
     <div class="st-cart-main">
       <div class="st-cart-products">
         <?php foreach($st_cart->cart_lines as $key=>$value): ?>
-          <div id="<?php echo $value->id ?>" class="st-ncart-product">
+          <div id="st-cart-product" class="st-cart-product">
             <div class="st-cart-product-details">
               <div class="st-cart-product-img-div"><img src="<?php echo $value->image_src ?>" loading="lazy" alt="" class="st-cart-product-img"></div>
               <div class="st-cart-product-sum">

@@ -72,7 +72,6 @@ function my_shop_screen() {
 	add_action( 'bp_template_title', 'my_shop_tab_title' );
 	add_action( 'bp_template_content', 'my_shop_tab_content' );
 	bp_core_load_template( 'buddypress/members/single/plugins' );
-
 }
 
 /**
@@ -128,7 +127,6 @@ function my_shop_tab_content() {
 		</div>
 	</div>
 </div>
-
 
 <script type="text/javascript">
 	function callBpApi(dataUri, callBack, type, data){
