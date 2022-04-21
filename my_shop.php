@@ -193,7 +193,7 @@ function my_shop_tab_content() {
 				for (var i = 0; i < productsJson.products.length; i++) {
 					let newProduct = productTemplate.cloneNode(true);
 					addProductDetails(newProduct, productsJson.products[i],".st-product-img",".st-product-cost");
-					newProduct.querySelector(".st-product-link").href= "<?php echo $productUrl ?>".replace("{{productId}}",productsJson.products[i].id)+"&tid="+productsJson.products[i].tid;
+					newProduct.querySelector(".st-product-link").href= "/products/"+productsJson.products[i].id+"/?tid="+productsJson.products[i].tid;
 					newProduct.id = productsJson.products[i].id;
 					if(userId=='me'){
 						newProduct.querySelector(".st-remove-product").setAttribute("onclick",`event.stopPropagation(); removeProductFromShop("${productsJson.products[i].id}")`);
