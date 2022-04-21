@@ -1,10 +1,23 @@
 .st-groups {
-	display: none;
+	position: relative;
 	-webkit-box-orient: vertical;
 	-webkit-box-direction: normal;
 	-webkit-flex-direction: column;
 	-ms-flex-direction: column;
 	flex-direction: column;
+}
+
+.st-groups-main {
+	display: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
 }
 
 .st-group-menu {
@@ -100,7 +113,8 @@
 }
 
 .st-add-product-drawer {
-	position: absolute;
+	position: fixed;
+	right:-300px;
 	left: auto;
 	top: 120px;
 	right: 0px;
