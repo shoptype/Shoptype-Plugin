@@ -38,7 +38,7 @@ add_action( 'rest_api_init', function () {
 function buddyboss_my_shop_tab() {
 	wp_enqueue_script( 'my-script-handle', 'url-to/my-script.js', array( 'bp-api-request' ) );
 	$path = dirname(plugin_dir_url( __FILE__ ));
-	wp_enqueue_style( 'new-market', plugin_dir_url( __FILE__ ) . '/css/st-my-shop.css' );
+	wp_enqueue_style( 'my-shop-css', plugin_dir_url( __FILE__ ) . '/css/st-my-shop.css' );
 	// Avoid fatal errors when plugin is not available.
 	if ( ! function_exists( 'bp_core_new_nav_item' ) ||
 		 ! function_exists( 'bp_loggedin_user_domain' ) ||

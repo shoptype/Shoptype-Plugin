@@ -103,6 +103,7 @@
 .st-product-name {
 	height: 50px;
 	padding: 5px;
+	overflow: hidden;
 }
 
 .st-product-img {
@@ -119,7 +120,7 @@
 	top: 120px;
 	right: 0px;
 	bottom: 10px;
-	z-index: 99;
+	z-index: 9999;
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;
@@ -310,6 +311,7 @@
 	font-size: 16px;
 	border-radius: 50%;
 	text-align: center;
+	cursor: pointer;
 }
 
 .st-remove-product {

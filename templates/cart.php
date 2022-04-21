@@ -46,7 +46,7 @@ get_header(null);
     <div class="st-cart-main">
       <div class="st-cart-products">
         <?php foreach($st_cart->cart_lines as $key=>$value): ?>
-          <div id="st-cart-product" class="st-cart-product">
+          <div id="<?php echo $value->id ?>" class="st-ncart-product">
             <div class="st-cart-product-details">
               <div class="st-cart-product-img-div"><img src="<?php echo $value->image_src ?>" loading="lazy" alt="" class="st-cart-product-img"></div>
               <div class="st-cart-product-sum">
