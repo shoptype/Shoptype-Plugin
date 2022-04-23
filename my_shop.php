@@ -22,6 +22,8 @@ function getUserProducts( $data ) {
 	foreach ($products->products as $product) {
 		$product->tid=$valuesParsed[$product->id];
 	}
+	$products->avatar = get_avatar_url ( $the_user->id);
+	$products->cover = bp_attachments_get_attachment( 'url', array( 'item_id' => $the_user->id ) );
 	return $products;
 }
 

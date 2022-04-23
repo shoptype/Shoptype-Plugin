@@ -168,14 +168,9 @@ get_header();
 					<!-- ends product description section -->
 				</div>
 				
-				<div class="wp-block-kadence-rowlayout alignnone"><div id="kt-layout-id_a4d92d-16" class="kt-row-layout-inner kt-layout-id_a4d92d-16"><div class="kt-row-column-wrap kt-has-2-columns kt-gutter-none kt-v-gutter-default kt-row-valign-top kt-row-layout-left-golden kt-tab-layout-inherit kt-m-colapse-left-to-right kt-mobile-layout-row">
-				<div class="wp-block-kadence-column inner-column-1 kadence-column_8c25f3-ec"><div class="kt-inside-inner-col">
-				<h2 class="kt-adv-heading_ae42d3-d6 wp-block-kadence-advancedheading" data-kb-block="kb-adv-heading_ae42d3-d6">Related Products</h2>
-				</div></div>
-				<div class="wp-block-kadence-column inner-column-2 kadence-column_28a730-ab"><div class="kt-inside-inner-col">
-				<div class="wp-block-kadence-advancedbtn kt-btn-align-right kt-btn-tablet-align-inherit kt-btn-mobile-align-inherit kt-btns-wrap kt-btns_b0010a-ce kt-force-btn-fullwidth"><div class="kt-btn-wrap kt-btn-wrap-0"><a class="kt-button button kt-btn-0-action kt-btn-size-standard kt-btn-style-basic kt-btn-svg-show-always kt-btn-has-text-true kt-btn-has-svg-false" href="/marketplace/"><span class="kt-btn-inner-text">MARKETPLACE</span></a></div></div>
-				</div></div>
-				</div></div></div>
+				<div>
+				<h2 >Related Products</h2>
+				</div>
 
 				<div count="4" imagesize="250x0" vendorId="<?php echo $st_product->catalogId ?>" removetemplate class="products-container grid-two-by-two">
 					<div class="product-container single-product " style="display: none">

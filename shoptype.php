@@ -73,6 +73,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
 	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
+	add_rewrite_rule( 'shop/([a-z0-9\-]+)[/]?$', 'index.php?shopName=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -89,6 +90,10 @@ add_filter( 'query_vars', function( $query_vars ) {
 } );
 add_filter( 'query_vars', function( $query_vars ) {
     $query_vars[] = 'checkout';
+    return $query_vars;
+} );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'shopName';
     return $query_vars;
 } );
 
@@ -115,6 +120,12 @@ add_action( 'template_include', function( $template ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/checkout.php';
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'shopName' ) == false || get_query_var( 'shopName' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
 } );
 
 //Shoptype login handler

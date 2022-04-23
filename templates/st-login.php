@@ -53,16 +53,16 @@ get_header();
 				}
 			);
 		};
-		renderForm();
-	</script>
 
-<?php
-if ( is_search() ) {
-	get_sidebar( 'search' );
-} else {
-	get_sidebar( 'page' );
-}
-?>
+		function renderLogin(){
+			if(typeof stLoginHandler !== "undefined"){
+				renderForm();
+			}else{
+				setTimeout(renderLogin, 200);
+			}
+		}
+		renderLogin();
+	</script>
 
 <?php
 get_footer();
