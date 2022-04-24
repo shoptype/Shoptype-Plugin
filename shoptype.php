@@ -73,7 +73,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
 	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
-	add_rewrite_rule( 'shop/([a-z0-9\-]+)[/]?$', 'index.php?shopName=$matches[1]', 'top' );
+	add_rewrite_rule( 'shop/([a-zA-Z0-9\-]+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -93,7 +93,7 @@ add_filter( 'query_vars', function( $query_vars ) {
     return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'shopName';
+    $query_vars[] = 'shop';
     return $query_vars;
 } );
 
@@ -122,7 +122,7 @@ add_action( 'template_include', function( $template ) {
     return plugin_dir_path( __FILE__ ) . '/templates/checkout.php';
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'shopName' ) == false || get_query_var( 'shopName' ) == '' ) {
+    if ( get_query_var( 'shop' ) == false || get_query_var( 'shop' ) == '' ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
@@ -136,7 +136,6 @@ function login_load_js_script() {
 add_action('wp_enqueue_scripts', 'login_load_js_script');
 add_action('wp_head', 'shoptype_header');
 add_action('wp_head', 'shoptypeLogout');
-
 
 //Enqueue Product and brand page css
 
