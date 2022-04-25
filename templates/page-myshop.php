@@ -16,7 +16,9 @@ if(empty($userName)){
 }
 try {
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, "https://in.she.shopping/wp-json/shoptype/v1/shop/".$userName);
+  $urlparts = parse_url(home_url());
+  $domain = $urlparts['host'];
+  curl_setopt($ch, CURLOPT_URL, "https://$domain/wp-json/shoptype/v1/shop/".$userName);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $result = curl_exec($ch);
   curl_close($ch);

@@ -151,13 +151,15 @@ class Shoptype_Settings {
         register_setting("shoptype_settings", "vendorId");
         register_setting("shoptype_settings", "networkId");
 		register_setting("shoptype_settings", "refCode");
-		
+		register_setting("shoptype_settings", "cartCountMatch");
+
         add_settings_section("shoptype_settings", "Network Settings: ", array($this, 'section_callback'), "shoptype_settings");
         add_settings_field( 'shoptype_api_key', 'ST API Key: ', array( $this, 'field_callback' ), 'shoptype_settings', 'shoptype_settings', array("id"=>"shoptype_api_key","name"=>"ST API Key") );
         add_settings_field("platformID", "ST Platform ID: ", array($this, 'field_callback'), "shoptype_settings", 'shoptype_settings', array("id"=>"platformID","name"=>"ST Platform ID"));
         add_settings_field("vendorId", "ST Vendor ID: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"vendorId","name"=>"ST Vendor ID") );
         add_settings_field("networkId", "ST Network ID: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"networkId","name"=>"ST Network ID") );
 		add_settings_field("refCode", "ST Referral Code: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"refCode","name"=>"ST Referral Code") );
+        add_settings_field("refCode", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );        
     }
     /* Create input fields*/
     public function field_callback ( $arguments ) {
@@ -177,11 +179,10 @@ function shoptypeSettings() {
 	$stApiKey = get_option('shoptype_api_key');
 	global $stRefcode;
 	$stRefcode = get_option('refCode');
+    global $cartCountMatch;
+    $cartCountMatch = get_option('cartCountMatch');
 	global $stCurrency;
 	$stCurrency["USD"] = "$";
-	global $networkName;
-	$networkName = "Ukrainomy";
-	global $networkUrl;
-	$networkUrl = "https://ukrainomy.com";
+    $stCurrency["INR"] = "₹";
 }
 add_action( 'after_setup_theme', 'shoptypeSettings' );
