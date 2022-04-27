@@ -105,6 +105,9 @@
 	padding: 5px;
 	overflow: hidden;
 }
+.st-myshop-prod-name{
+	overflow: hidden;
+}
 
 .st-product-img {
 	width: 180px;
