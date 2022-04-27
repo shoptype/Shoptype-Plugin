@@ -152,6 +152,7 @@ class Shoptype_Settings {
         register_setting("shoptype_settings", "networkId");
 		register_setting("shoptype_settings", "refCode");
 		register_setting("shoptype_settings", "cartCountMatch");
+        register_setting("shoptype_settings", "loginUrl");
 
         add_settings_section("shoptype_settings", "Network Settings: ", array($this, 'section_callback'), "shoptype_settings");
         add_settings_field( 'shoptype_api_key', 'ST API Key: ', array( $this, 'field_callback' ), 'shoptype_settings', 'shoptype_settings', array("id"=>"shoptype_api_key","name"=>"ST API Key") );
@@ -159,7 +160,8 @@ class Shoptype_Settings {
         add_settings_field("vendorId", "ST Vendor ID: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"vendorId","name"=>"ST Vendor ID") );
         add_settings_field("networkId", "ST Network ID: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"networkId","name"=>"ST Network ID") );
 		add_settings_field("refCode", "ST Referral Code: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"refCode","name"=>"ST Referral Code") );
-        add_settings_field("refCode", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );        
+        add_settings_field("cartCountMatch", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );
+        add_settings_field("loginUrl", "ST Login Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"loginUrl","name"=>"ST Login Page URL") );               
     }
     /* Create input fields*/
     public function field_callback ( $arguments ) {
@@ -181,6 +183,8 @@ function shoptypeSettings() {
 	$stRefcode = get_option('refCode');
     global $cartCountMatch;
     $cartCountMatch = get_option('cartCountMatch');
+    global $loginUrl;
+    $loginUrl = get_option('loginUrl');
 	global $stCurrency;
 	$stCurrency["USD"] = "$";
     $stCurrency["INR"] = "₹";

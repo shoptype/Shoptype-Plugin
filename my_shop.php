@@ -294,8 +294,17 @@ function my_shop_tab_content() {
 	var currentBpUser = null;
 	let st_selectedProducts = {};
 	let productsDataId = null;
-	callBpApi("members/"+userId, addUserDetails, 'get',{populate_extras:true});
-	callBpApi("xprofile/fields", data=>productsDataId = data.find(field=>field.name=="st_products").id, 'get',{populate_extras:true});
+
+	function initMyShop(){
+		if (typeof wp !== "undefined") { 
+		    callBpApi("members/"+userId, addUserDetails, 'get',{populate_extras:true});
+			callBpApi("xprofile/fields", data=>productsDataId = data.find(field=>field.name=="st_products").id, 'get',{populate_extras:true});
+		}else{
+			setTimeout(initMyShop,200);
+		}
+
+	}
+
 	if(userId=='me'){
 		document.getElementById("st-product-template").setAttribute('onmouseover','showRemoveBtn(this)');
 	}
@@ -306,6 +315,7 @@ function my_shop_tab_content() {
 			searchProducts();
 		}
 	});
+	initMyShop();
 </script>
 <?php
 }
