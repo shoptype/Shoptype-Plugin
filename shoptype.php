@@ -23,6 +23,9 @@ function shoptype_header(){
 	global $siteName;
 	global $loginUrl;
 
+	$siteUrl = get_site_url();
+	$siteName = get_bloginfo('name');
+	
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.6.1/shoptype.js"></script>';
   echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='.wcmenucart-details' platformid='$stPlatformId' loginUrl='$loginUrl'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
