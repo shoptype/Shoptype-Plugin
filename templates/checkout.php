@@ -164,7 +164,7 @@ get_header(null);
 					option.text = countriesJson.data[i].name;
 					option.value = countriesJson.data[i].iso2;
 					if(selectedCntry==countriesJson.data[i].name){
-						selectedVal = countriesJson.data[i].iso2
+						option.setAttribute("selected","");
 					}
 					countryField.add(option);
 				}
@@ -188,7 +188,8 @@ get_header(null);
 							}
 						});
 				});
-				countryField.value = selectedVal;
+        countryField.dispatchEvent(new Event('change'));
+
 			});
 		}
 
