@@ -185,6 +185,10 @@ function shoptypeSettings() {
     $cartCountMatch = get_option('cartCountMatch');
     global $loginUrl;
     $loginUrl = get_option('loginUrl');
+    global $productUrl;
+    $productUrl = "/products/{{productId}}";
+    global $brandUrl;
+    $brandUrl = "/brands/{{brandId}}";
 	global $stCurrency;
 	$stCurrency["USD"] = "$";
     $stCurrency["INR"] = "₹";
