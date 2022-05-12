@@ -31,17 +31,19 @@ function renderAwakeProducts($atts = []){
         $showSliderDiv = true;
         $perRow = 5;
     }
-    $vendorId = $tags = "";
+    $vendorId = $tags = $loadmore = "";
     $imgSize = "200x200";
+
     // Need to add other attributes here such as is_slider, slides_to_show
     if(isset($atts['vendor_id']) && !empty($atts['vendor_id'])) $vendorId = $atts['vendor_id'];
     if(isset($atts['imgSize']) && !empty($atts['imgSize'])) $imgSize = $atts['imgSize'];
     if(isset($atts['tags']) && !empty($atts['tags'])) $tags = "tags=".$atts['tags'];
+    if(isset($atts['loadmore']) && !empty($atts['loadmore'])) $loadmore = "loadmore=".$atts['loadmore'];
     $totalRows = 1; ?>
     <div class="<?php echo $outerClass; ?>"> <!-- Outer Section -->
         <?php if(!$showSliderDiv) : ?><div class="<?php echo $wrapperClass; ?>"><?php endif; ?> <!-- Wrapper Section -->
             <?php for($i=1;$i<=$totalRows;$i++) { ?>
-                <div count="<?php echo $perRow; ?>" imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo $tags; ?> class="products-container<?php echo ($showSliderDiv ? " m-product" : ""); ?>">
+                <div count="<?php echo $perRow; ?>" imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container<?php echo ($showSliderDiv ? " m-product" : ""); ?>">
                     <?php if($showSliderDiv) : ?><div><?php endif; ?>
                         <div class="product-container <?php echo $atts['product_classes']; ?>" style="display: none;">
                             <div class="product-image">

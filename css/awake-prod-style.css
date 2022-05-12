@@ -2984,6 +2984,40 @@ li:focus ul li a {
   padding-left: 10px;
 }
 
+.communities {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+}
+.single-community {
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    flex-flow: column;
+    color: #000;
+}
+.thmbnail-box img {
+    width: 100%;
+}
+.content-header {
+    text-align: center;
+}
+.list-inline.members-list {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+}
+.list-inline-item {
+    margin: 0px -5px 0px;
+}
+.list-inline-item img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
 @media screen and (max-width: 767px) {
   .st-myshop-top {
     margin-left: 0px;

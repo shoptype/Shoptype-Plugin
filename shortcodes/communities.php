@@ -22,7 +22,7 @@ function renderAwakeCommunities($atts = []){
                 endif;
                 if(!empty($groupCoverImage)) $coverImgUrl = $groupCoverImage; ?>
                 <div>
-                    <div class="single-community">
+                    <a href="<?php echo bp_get_group_permalink($group) ?>" class="single-community">
                         <div class="bg-container">
                             <img src="<?php echo $coverImgUrl; ?>" alt="">
                             <div class="thmbnail-box">
@@ -32,25 +32,24 @@ function renderAwakeCommunities($atts = []){
                         </div>
                         <div class="community-content">
                             <h4 class="content-header"><?php bp_group_name() ?></h4>
-                            <p><?php bp_group_type() ?></p>
 
                             <?php if ( bp_group_has_members( 'group_id='.bp_get_group_id().'&per_page=3') ) : ?>
                                 <div class="members-container">
-                                    <ul class="list-inline members-list">
+                                    <div class="list-inline members-list">
                                         <?php while ( bp_group_members() ) : bp_group_the_member(); ?>
-                                            <li class="list-inline-item">
+                                            <div class="list-inline-item">
                                                 <?php bp_group_member_avatar(); ?>
                                                 <!-- <img src="<?php //echo get_template_directory_uri(); ?>/img/member-image.jpg" alt=""> -->
-                                            </li>
+                                            </div>
                                         <?php endwhile; ?>
-                                    </ul>
-                                    <?php if($totalMembers > 3) : ?>
-                                        <p>+ <?php echo ($totalMembers - 3); ?> members</p>
-                                    <?php endif; ?>
+                                        <?php if($totalMembers > 3) : ?>
+                                            <div class="list-inline-item" style="margin: 0px 10px;">+ <?php echo ($totalMembers - 3); ?></div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             <?php endif; ?>
                         </div>
-                    </div>
+                    </a>
                 </div>
             <?php endwhile;?>
         </div>
