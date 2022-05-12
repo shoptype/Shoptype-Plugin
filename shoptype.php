@@ -243,36 +243,56 @@ function ST_logout() {
 
 
 /*Adding shoptype products to search results*/
+function search_filter($query) {
+    if ( is_search() ) {
+		$post = new stdClass();
+		$post->ID = 113;
+		$wp_post = new WP_Post( $post );
+        array_push( $query->posts, $wp_post );
+    }
+}
+add_action('posts_search','search_filter');    
+
 function have_posts_override(){
     if ( is_search() ) {
-        global $stApiKey;
-        global $stPlatformId;
-        global $stRefcode;
-        global $stCurrency;
-        global $brandUrl;
+		global $stPlatformId;
         global $wp_query;
-        try {
-            $productId = $_GET['id'];
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/products?text={$wp_query->query}");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            if( !empty( $result ) ) {
-                $st_products = json_decode($result);
-                foreach ($st_products->products as $st_product){
-                    $st_product->displayCurrency = $stCurrency[$st_product->currency];
-                    array_push($wp_query->posts, $st_product); 
-                }    
-            }
-			$wp_query->found_posts = 20;
-        }
-        catch(Exception $e) {
-        }
+		$q = $wp_query->query_vars;
+		$searchTxt="";
+		foreach ((array)$q['search_terms'] as $term) {
+			$searchTxt .= "$term%20";
+		}
+		$url = "https://backend.shoptype.com/platforms/$stPlatformId/products?count=20&text=$searchTxt";
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		curl_close($ch);
+
+		if( !empty( $result ) ) {
+			$st_products = json_decode($result);
+			for (end($st_products->products); key($st_products->products)!==null; prev($st_products->products)){
+				$stProduct = current($st_products->products);
+				$post = new stdClass();
+				$post->ID = $stProduct->id;
+				$post->post_author = 1;
+				$post->post_date = current_time( 'mysql' );
+				$post->post_date_gmt = current_time( 'mysql', 1 );
+				$post->post_title = $stProduct->title;
+				$post->post_content = $stProduct->description;
+				$post->post_status = 'publish';
+				$post->comment_status = 'closed';
+				$post->ping_status = 'closed';
+				$post->post_name = "products/{$stProduct->id}"; // append random number to avoid clash
+				$post->post_type = 'post';
+				$post->filter = 'raw';
+				$wp_post = new WP_Post( $post );
+				array_unshift($wp_query->posts, $wp_post); 
+			}
+		}
     }
 }
 add_action( 'found_posts', 'have_posts_override' );
-
 
 /*Add page templates*/
 
