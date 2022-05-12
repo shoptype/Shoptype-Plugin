@@ -92,18 +92,32 @@ get_header();
 									<div class="product-info">
 										<h1 class="am-product-title"><?php echo $st_product->title ?></h1>
 										<h5 class="am-product-vendor"><a href="<?php echo str_replace("{{brandId}}",$st_product->catalogId,$brandUrl); ?>"><?php echo $st_product->vendorName ?></a></h5>
-										<h4 class="am-product-price"><span class="currency-symbol"><?php echo $prodCurrency ?></span><?php echo number_format($st_product->variants[0]->discountedPrice,2) ?></h4>
-										<div class="options-container" style="display: none;">
-											<div class="single-option">
+										<h4 class="am-product-price"><span class="currency-symbol"><?php echo $prodCurrency ?></span><span id="productprice"><?php echo number_format($st_product->variants[0]->discountedPrice,2) ?></span></h4>
+										<div class="options-container">
+											<div class="single-option"><form method="post" class="single-option" id="varientform">
+											<?php if(count($st_product->options)>0){foreach ($st_product->options as $optionName) 
+													{
+														if($optionName->name != 'title'){?>
 												<div class="product-option-text">
-													<h4>size</h4>
+												<?php
+													echo '<h4>'.$optionName->name.'</h4>';
+													
+													?>
 												</div>
 												<div class="custom-select">
 													<div class="form-group">
-														<select class="form-control product-option-select">
+														<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="varientChang()">
+														<?php foreach ($optionName->values as $optionValue)
+														{
+															echo '<option value="'.$optionValue.'">'.$optionValue.'</option>';
+
+														}
+														?>
 														</select>
 													</div>
 												</div>
+												<?php }}}?>
+													</form>
 											</div>
 										</div>
 										<div class="addToCart-container">
@@ -253,7 +267,53 @@ get_header();
 			document.querySelector(".product-slider").style.overflow="";
 		});
 	});
+	
 </script>
+<script>
+	const product= <?php echo $result;?>;
+	
+	var productjson=product.products;
+	productjson=productjson[0];
+	productjson=productjson['variants'];
+	
+	var json = { };
+	function varientChang()
+	{
+		var varients = document.getElementsByClassName("product-option-select");
+		for (var i = 0; i < varients.length; i++) {
+		console.log();
+		json[varients[i].getAttribute('id')] = varients[i].value;
+   		}
+		   for (var key in productjson) {
+  var obj1=productjson[key]['variantNameValue'];
+   if(JSON.stringify(obj1) === JSON.stringify(json))
+   {
+	   var varientid=productjson[key]['id'];
+	   var productprice=productjson[key]['discountedPrice'];
+	   
+	   if(productjson[key].hasOwnProperty('primaryImageSrc'))
+	   {
+		   var imagesrc=productjson[key]['primaryImageSrc'];
+		   imagesrc=imagesrc['imageSrc']
+		   
+		   var productimage = document.getElementsByClassName("am-product-image");
+		for (var i = 0; i < productimage.length; i++) {
+			productimage[i].src(imagesrc);
+		}
+	   }
+	   var addtocart = document.getElementsByClassName("am-product-add-cart-btn");
+		for (var i = 0; i < addtocart.length; i++) {
+			addtocart[i].setAttribute("variantid", varientid);
+		}
+		document.getElementById("productprice").innerHTML = productprice;
+		
+   }
+}
+		    
+		   	
+	}
+	varientChang();
+	</script>
 <?php
 get_footer();
 
