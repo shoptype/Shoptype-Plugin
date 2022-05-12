@@ -12,7 +12,13 @@ Text Domain:  https://www.shoptype.com
 Domain Path:  /languages
 */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+
 /* Initialisation of the shopype JS and adding the cart+profile buttons to the header */
+
 function shoptype_header(){
 	global $stApiKey;
 	global $stPlatformId;
@@ -458,7 +464,42 @@ class PageTemplater {
 
 } 
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
+//Create hook for creating page with shoptype shortcode
+function add_shop_page() {
+    // Create Page object
+    $shop_page = array(
+      'post_title'    => wp_strip_all_tags('Marketplace'),
+      'post_content'  => '[awake_products per_row="6"]',
+      'post_status'   => 'publish',
+      'post_author'   => 1,
+      'post_type'     => 'page',
+    );
 
+    // Insert the Page into the database
+    wp_insert_post( $shop_page );
+}
+
+register_activation_hook(__FILE__, 'add_shop_page');
+
+// Add post state to the Shop page
+
+add_filter( 'display_post_states', 'ecs_add_post_state', 10, 2 );
+
+function ecs_add_post_state( $post_states, $post ) {
+
+	if( $post->post_name == 'marketplace' ) {
+		$post_states[] = ' Marketplace page';
+	}
+
+	return $post_states;
+}
+//Admin notice for buddypress requirement
+	if ( ! class_exists( 'BuddyPress' ) ) {
+		add_action( 'admin_notices', function() {
+			echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'Shoptype requires BuddyPress to be installed and active. You can download %s here.', 'Shoptype' ), '<a href="https://wordpress.org/plugins/buddypress/" target="_blank">BuddyPress</a>' ) . '</strong></p></div>';
+		} );
+		return;
+}
 define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -469,3 +510,4 @@ require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');
 require_once(ST__PLUGIN_DIR.'/admin_settings.php');
 require_once(ST__PLUGIN_DIR.'/my_shop.php');
+
