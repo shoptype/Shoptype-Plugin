@@ -500,6 +500,19 @@ function ecs_add_post_state( $post_states, $post ) {
 		} );
 		return;
 }
+//Add custom Search templet templates/search.php
+add_filter('template_include','custom_search_template', 10, 3);
+
+function custom_search_template($template){
+    global $wp_query;
+    if (!$wp_query->is_search)
+        return $template;
+    
+	$search_template = untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/templates/search.php';
+    return $search_template;
+
+} 
+
 define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
