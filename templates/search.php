@@ -83,7 +83,7 @@ $massage='';
             $st_products = json_decode($result);
 
         ?>
-            <div class="product-container">
+            <div class="products-container">
 
                 <?php
                 foreach ((array) $st_products->products as $products) { ?>
@@ -116,8 +116,6 @@ $massage='';
                 <?php
                 /* loping for each post */
                 if (have_posts()) {$massage=''; ?>
-                
-
                     <?php while (have_posts()) {
                         the_post(); ?>
                         <div class="single-product">
@@ -130,18 +128,12 @@ $massage='';
                             <div class="product-description"><?php echo substr(get_the_excerpt(), 0, 200); ?> </div>
                         </div>
 
-
-
-
                     <?php } ?>
 
 
                     <?php echo paginate_links(); ?>
 
             <?php }
-             else { 
-                $massage='No result Found';
-             }
             ?>
             </div>
 
