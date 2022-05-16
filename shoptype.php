@@ -85,6 +85,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
 	add_rewrite_rule( 'shop/(.+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
+	add_rewrite_rule( 'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -105,6 +106,10 @@ add_filter( 'query_vars', function( $query_vars ) {
 } );
 add_filter( 'query_vars', function( $query_vars ) {
     $query_vars[] = 'shop';
+    return $query_vars;
+} );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'collection';
     return $query_vars;
 } );
 
@@ -137,6 +142,12 @@ add_action( 'template_include', function( $template ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'collection' ) == false || get_query_var( 'collection' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/page-collection.php';
 } );
 
 //Shoptype login handler
@@ -523,4 +534,4 @@ require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');
 require_once(ST__PLUGIN_DIR.'/admin_settings.php');
 require_once(ST__PLUGIN_DIR.'/my_shop.php');
-
+require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');
