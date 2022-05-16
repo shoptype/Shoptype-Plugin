@@ -72,7 +72,7 @@ $massage='';
         global $wp_query;
         $q = $wp_query->query_vars;
         $searchTearms = preg_replace('/\s+/', '%20', $searchTearm);
-        $url = "https://backend.shoptype.com/platforms/$stPlatformId/products?count=20&text=$searchTearms";
+        $url = "https://backend.shoptype.com/platforms/$stPlatformId/products?count=30&text=$searchTearms";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -88,10 +88,11 @@ $massage='';
                 <?php
                 foreach ((array) $st_products->products as $products) { ?>
                     <div class="single-product">
+                        <a href="/products/<?php echo $products->id ?>">
                         <div class="product-image"><img src="<?php echo $products->primaryImageSrc->imageSrc ?>" /></div>
 
                         <div class="product-title">
-                            <h3><a href="/products/<?php echo $products->id ?>"><?php echo $products->title  ?></a>
+                            <h3><?php echo $products->title  ?>
                                 <h3>
                         </div>
                         <div class="product-price">
@@ -99,6 +100,7 @@ $massage='';
                         </div>
 
                         <div class="product-description"><?php echo $products->description ?> </div>
+                        </a>
                     </div>
 
 
@@ -119,13 +121,14 @@ $massage='';
                     <?php while (have_posts()) {
                         the_post(); ?>
                         <div class="single-product">
+                            <a href="/products/<?php echo get_permalink(); ?>">
                             <div class="product-image"><?php the_post_thumbnail('medium') ?></div>
 
                             <div class="product-title">
-                                <h3><a href="/products/<?php echo get_permalink(); ?>"><?php the_title();  ?></a>
-                                    <h3>
+                                <h3><?php the_title();  ?><h3>
                             </div>
                             <div class="product-description"><?php echo substr(get_the_excerpt(), 0, 200); ?> </div>
+                            </a>
                         </div>
 
                     <?php } ?>

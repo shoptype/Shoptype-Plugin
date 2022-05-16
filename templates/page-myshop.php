@@ -43,7 +43,7 @@ get_header(null);
     </div>
     <div class="st-myshop-prods">
         <?php foreach($st_user_products->products as $key=>$value): ?>
-          <a href="<?php echo "/products/{$value->id}" ?>" class="st-myshop-prod">
+          <a href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>" class="st-myshop-prod">
             <div><img src="<?php echo $value->primaryImageSrc->imageSrc ?>" loading="lazy" alt="" class="st-myshop-prod-img"></div>
             <div class="st-myshop-prod-price"><?php echo "{$stCurrency[$value->variants[0]->discountedPriceAsMoney->currency]} {$value->variants[0]->discountedPriceAsMoney->amount}" ?></div>
             <div class="st-myshop-prod-details">

@@ -5,6 +5,7 @@ function getUserProducts( $data ) {
 	$count=isset($data['count'])?$data['count']:10;
 	$offset=isset($data['offset'])?$data['offset']:0;
 	$values = xprofile_get_field_data( 'st_products' , $the_user->id );
+	$shop_name = xprofile_get_field_data( 'st_shop_name' , $the_user->id );
 	$valuesJson = str_replace(' ', ',', $values);
 	$valuesParsed = json_decode($valuesJson, true);
 	if(empty($values)){$values = 'nothing';}
@@ -24,6 +25,7 @@ function getUserProducts( $data ) {
 	}
 	$products->avatar = get_avatar_url ( $the_user->id);
 	$products->cover = bp_attachments_get_attachment( 'url', array( 'item_id' => $the_user->id ) );
+	$products->shop_name = $shop_name;
 	return $products;
 }
 
