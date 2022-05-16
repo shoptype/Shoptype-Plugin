@@ -7,16 +7,6 @@
 */
 function renderAwakeProducts($atts = []){
     ob_start(); ?>
-    <style media="screen">
-    .brand-image img {
-        width: 70%;
-    }
-    .products-container {
-        display: flex;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-    }
-    </style>
     <?php
     // We need to handle this since desktop and mobile have different layouts.
     if(!wp_is_mobile()) {
