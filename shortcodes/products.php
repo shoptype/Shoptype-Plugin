@@ -19,8 +19,8 @@ function renderAwakeProducts($atts = []){
     if(isset($atts['tags']) && !empty($atts['tags'])) $tags = "tags=".$atts['tags'];
     if(isset($atts['loadmore']) && !empty($atts['loadmore'])) $loadmore = "loadmore=".$atts['loadmore']; ?>
 
-    <div count="<?php echo $perRow; ?>" imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container<?php echo ($showSliderDiv ? " m-product" : ""); ?>">
-        <div class="product-container <?php echo $atts['product_classes']; ?>" style="display: none;">
+    <div count="<?php echo $perRow; ?>" myshop="<?php echo $atts['my_shop']; ?>" imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
+        <div class="product-container single-product <?php echo $atts['product_classes']; ?>" style="display: none;">
             <div class="product-image">
                 <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
                     <img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">
