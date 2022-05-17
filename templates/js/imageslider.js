@@ -18,7 +18,7 @@ window.requestAnimFrame = (function(){
 
 function detect_old_ie() {
   if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)) {
-   var ieversion=new Number(RegExp.$1);
+   var ieversion=new Number(RegExp.jQuery1);
    if (ieversion>=9)
     return false
    else if (ieversion>=8)
@@ -32,10 +32,10 @@ function detect_old_ie() {
   } else return false;
 }
 
-(function ($) {
+(function (jQuery) {
   //Compatibility between old and new versions of jQuery
-  $.fn.xon = $.fn.on || $.fn.bind;
-  $.fn.xoff = $.fn.off || $.fn.bind;
+  jQuery.fn.xon = jQuery.fn.on || jQuery.fn.bind;
+  jQuery.fn.xoff = jQuery.fn.off || jQuery.fn.bind;
 
   function xobject(mObj, opts) {
     //Properties
@@ -66,8 +66,8 @@ function detect_old_ie() {
       }
 
       xremove();
-      wsw = $(window).width();
-      wsh = $(window).height();
+      wsw = jQuery(window).width();
+      wsh = jQuery(window).height();
 
       tsw = mObj.width();
       tsh = mObj.height();
@@ -100,7 +100,7 @@ function detect_old_ie() {
       if (current.options.zoomWidth == 'auto') mw = tsw; else mw = current.options.zoomWidth; //tsw/osw * current.options.zoomWidth;
       if (current.options.zoomHeight == 'auto') mh = tsh; else mh = current.options.zoomHeight; //tsw/osh * current.options.zoomHeight;
 
-      if (current.options.position.substr(0,1) == '#') xzoomID = $(current.options.position); else xzoomID.length = 0;
+      if (current.options.position.substr(0,1) == '#') xzoomID = jQuery(current.options.position); else xzoomID.length = 0;
       if (xzoomID.length != 0) return true;
 
       switch(oposition) {
@@ -299,8 +299,8 @@ function detect_old_ie() {
 
     function prepare_zoom(x, y) {
       if (current.options.position == 'fullscreen') {
-        sw = $(window).width();
-        sh = $(window).height();
+        sw = jQuery(window).width();
+        sh = jQuery(window).height();
       } else {
         sw = mObj.width();
         sh = mObj.height();
@@ -361,7 +361,7 @@ function detect_old_ie() {
       stop -= source.outerHeight() / 2;
       sleft -= source.outerWidth() / 2;
 
-      if (current.options.position.substr(0,1) == '#') xzoomID = $(current.options.position); else xzoomID.length = 0;
+      if (current.options.position.substr(0,1) == '#') xzoomID = jQuery(current.options.position); else xzoomID.length = 0;
       if (xzoomID.length == 0 && current.options.position != 'inside' && current.options.position!= 'fullscreen') {
 
         if (!current.options.adaptive || !osw || !osh) {osw = sw; osh = sh;}
@@ -429,7 +429,7 @@ function detect_old_ie() {
       if (aie) timestamp = '?r='+(new Date()).getTime();
       img.src = mObj.attr('xoriginal')+timestamp;
 
-      imgObj = $(img);
+      imgObj = jQuery(img);
       imgObj.css('position', 'absolute');
       //debug
       //imgObj.css('opacity', '0.5');
@@ -437,7 +437,7 @@ function detect_old_ie() {
       img = new Image();
       img.src = mObj.attr('src');
 
-      lensImg = $(img);
+      lensImg = jQuery(img);
       lensImg.css('position', 'absolute');
       lensImg.width(sw);
 
@@ -464,28 +464,28 @@ function detect_old_ie() {
         scale = current.options.defaultScale; flag = false;
 
         //Source container
-        source = $('<div></div>');
+        source = jQuery('<div></div>');
         if (current.options.sourceClass != '') source.addClass(current.options.sourceClass);
         source.css('position', 'absolute');
 
         //Loading container
-        loading = $('<div></div>');
+        loading = jQuery('<div></div>');
         if (current.options.loadingClass != '') loading.addClass(current.options.loadingClass);
         loading.css('position', 'absolute');
 
-        tint = $('<div style="position: absolute; top: 0; left: 0;"></div>');
+        tint = jQuery('<div style="position: absolute; top: 0; left: 0;"></div>');
 
         source.append(loading);
 
         //Preview container
-        preview = $('<div></div>');
+        preview = jQuery('<div></div>');
         if (current.options.zoomClass != '' && current.options.position != 'fullscreen') preview.addClass(current.options.zoomClass);
         preview.css({position: 'absolute', overflow: 'hidden', opacity: 1});
 
         //Caption
         if (current.options.title && title != '') {
-          caption_container = $('<div></div>');
-          caption = $('<div></div>');
+          caption_container = jQuery('<div></div>');
+          caption = jQuery('<div></div>');
           caption_container.css({position: 'absolute', opacity: 1});
           if (current.options.titleClass) caption.addClass(current.options.titleClass);
           caption.html('<span>'+title+'</span>');
@@ -494,13 +494,13 @@ function detect_old_ie() {
         }
 
         //Lens object
-        lens = $('<div></div>');
+        lens = jQuery('<div></div>');
         if (current.options.lensClass != '') lens.addClass(current.options.lensClass);
         lens.css({position: 'absolute', overflow: 'hidden'});
 
         //Lens tint
         if (current.options.lens) {
-          lenstint = $('<div></div>');
+          lenstint = jQuery('<div></div>');
           lenstint.css({position: 'absolute', background: current.options.lens, opacity: current.options.lensOpacity, width: '100%', height: '100%', top: 0, left: 0, 'z-index': 9999});
           lens.append(lenstint);
         }
@@ -716,10 +716,10 @@ function detect_old_ie() {
 
     this.init = function (options) {
       //Default options
-      current.options = $.extend({},$.fn.xzoom.defaults, options);
+      current.options = jQuery.extend({},jQuery.fn.xzoom.defaults, options);
 
       if (current.options.rootOutput) {
-        parent = $("body");
+        parent = jQuery("body");
       } else {
         parent = mObj.parent();
       }
@@ -737,12 +737,12 @@ function detect_old_ie() {
 
       //Adaptive
       if (current.options.adaptive) {
-        $(window).xon('load',function(){
+        jQuery(window).xon('load',function(){
           osw = mObj.width();
           osh = mObj.height();
 
           current.adaptive();
-          $(window).resize(current.adaptive);
+          jQuery(window).resize(current.adaptive);
         });
       }
       current.eventdefault();
@@ -810,13 +810,13 @@ function detect_old_ie() {
           active = Obj;
           active.addClass(current.options.activeClass);
         }
-        cindex = $(this).data('xindex');
+        cindex = jQuery(this).data('xindex');
         if (current.options.fadeTrans) {
           transImg = new Image();
           transImg.src = mObj.attr('src');
-          trans = $(transImg);
+          trans = jQuery(transImg);
           trans.css({position: 'absolute', top: mObj.offset().top, left: mObj.offset().left, width: mObj.width(), height: mObj.height()});
-          $(document.body).append(trans);
+          jQuery(document.body).append(trans);
           trans.fadeOut(200, function() {trans.remove()});
         }
         var _xorig = link.attr('href');
@@ -846,34 +846,34 @@ function detect_old_ie() {
     this.init(opts);
   }
 
-    $.fn.xzoom = function(options) {
+    jQuery.fn.xzoom = function(options) {
       var mainObj;
       var secObj;
 
       if (this.selector) {
         var el = this.selector.split(",");
-        for (var i in el) el[i] = $.trim(el[i]);
+        for (var i in el) el[i] = jQuery.trim(el[i]);
         this.each(function(index) {
           if (el.length == 1) {
             if (index == 0) {
               //Main window element
-              mainObj = $(this);
+              mainObj = jQuery(this);
             if (typeof(mainObj.data('xzoom')) !== 'undefined') return mainObj.data('xzoom');
               mainObj.x = new xobject(mainObj, options);
             } else if(typeof(mainObj.x) !== 'undefined') {
               //Thumbs
-              secObj = $(this);
+              secObj = jQuery(this);
               mainObj.x.xappend(secObj);
             }
           } else {
-            if ($(this).is(el[0]) && index == 0) {
+            if (jQuery(this).is(el[0]) && index == 0) {
               //Main window element
-              mainObj = $(this);
+              mainObj = jQuery(this);
             if (typeof(mainObj.data('xzoom')) !== 'undefined') return mainObj.data('xzoom');
               mainObj.x = new xobject(mainObj, options);
-            } else if(typeof(mainObj.x) !== 'undefined' && !$(this).is(el[0])) {
+            } else if(typeof(mainObj.x) !== 'undefined' && !jQuery(this).is(el[0])) {
               //Thumbs
-              secObj = $(this);
+              secObj = jQuery(this);
               mainObj.x.xappend(secObj);
             }
           }
@@ -881,12 +881,12 @@ function detect_old_ie() {
       } else this.each(function(index) {
         if (index == 0) {
           //Main window element
-          mainObj = $(this);
+          mainObj = jQuery(this);
           if (typeof(mainObj.data('xzoom')) !== 'undefined') return mainObj.data('xzoom');
           mainObj.x = new xobject(mainObj, options);
         } else if(typeof(mainObj.x) !== 'undefined') {
           //Thumbs
-          secObj = $(this);
+          secObj = jQuery(this);
           mainObj.x.xappend(secObj);
         }
       });
@@ -894,11 +894,11 @@ function detect_old_ie() {
       mainObj.data('xzoom', mainObj.x);
 
       //Fire event xzoom init
-      $(mainObj).trigger('xzoom_ready');
+      jQuery(mainObj).trigger('xzoom_ready');
       return mainObj.x;
     }
 
-  $.fn.xzoom.defaults = {
+  jQuery.fn.xzoom.defaults = {
     position: 'right', //top, left, right, bottom, inside, lens, fullscreen, #ID
     mposition: 'inside', //inside, fullscreen
     rootOutput: true,
