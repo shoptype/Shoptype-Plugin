@@ -250,14 +250,7 @@ get_header();
 					$(".add-box > div > input").val("1");
 				}
 			})
-			$(".btn-plus").on("click", function() {
-				var now = $(".add-box > div > input").val();
-				if ($.isNumeric(now)) {
-					$(".add-box > div > input").val(parseInt(now) + 1);
-				} else {
-					$(".add-box > div > input").val("1");
-				}
-			});
+			
 
 			$(".tab_content").hide();
 			$(".tab_content:first").show();
@@ -300,9 +293,49 @@ get_header();
 	var productjson = product.products;
 	productjson = productjson[0];
 	productjson = productjson['variants'];
-
 	var json = {};
+function novarientproduct()
+{
+	var varients = document.getElementsByClassName("product-option-select");
+		for (var i = 0; i < varients.length; i++) {
+					json[varients[i].getAttribute('id')] = varients[i].value;
+		}
+		for (var key in productjson) {
+			
+				var varientquntity=productjson[key]['quantity'];
+				document.getElementById("quantity").max =varientquntity;
+				jQuery(".btn-plus").on("click", function() {
+				var now = jQuery(".add-box > div > input").val();
+				if (jQuery.isNumeric(now)) {
+					if(parseInt(now)<varientquntity){
+						jQuery(".add-box > div > input").val(parseInt(now) + 1);
+					}
+				} else {
+					jQuery(".add-box > div > input").val("1");
+				}
+			});
+				if(varientquntity<=0)
+				{
+					const addtocart = document.getElementsByClassName("addToCart-container");
+					const addtocartbtn = document.getElementsByClassName("am-product-add-cart-btn");
+					addtocart[0].style.opacity='60%';
+					document.getElementById("quantity").max =1;
+					document.getElementById("quantity").disabled = true;
+					addtocartbtn[0].style.pointerEvents = "none";
+				
+					jQuery("<p style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'>Sold Out</p>").insertAfter(".addToCart-container");
+						
+					jQuery('.am-product-add-cart-btn').on('click', function(e) {
+					e.preventDefault();
+					jQuery(this).off("click").attr('href', "javascript: void(0);");
+				//add .off() if you don't want to trigger any event associated with this link
+				});
+				}
+			
 
+
+}
+}
 	function varientChang() {
 		var varients = document.getElementsByClassName("product-option-select");
 		for (var i = 0; i < varients.length; i++) {
@@ -314,8 +347,36 @@ get_header();
 				var varientid = productjson[key]['id'];
 				var productprice = productjson[key]['discountedPrice'];
 				var varientquntity=productjson[key]['quantity'];
-				console.log(varientquntity);
-
+				document.getElementById("quantity").max =varientquntity;
+				jQuery(".btn-plus").on("click", function() {
+				var now = jQuery(".add-box > div > input").val();
+				if (jQuery.isNumeric(now)) {
+					if(parseInt(now)<varientquntity){
+						jQuery(".add-box > div > input").val(parseInt(now) + 1);
+					}
+				} else {
+					jQuery(".add-box > div > input").val("1");
+				}
+			});
+				if(varientquntity<=0)
+				{
+					const addtocart = document.getElementsByClassName("addToCart-container");
+					const addtocartbtn = document.getElementsByClassName("am-product-add-cart-btn");
+					addtocart[0].style.opacity='60%';
+					document.getElementById("quantity").max =1;
+					document.getElementById("quantity").disabled = true;
+					addtocartbtn[0].style.pointerEvents = "none";
+				
+					jQuery("<p style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'> Sold Out</p>").insertAfter(".addToCart-container");
+						
+					jQuery('.am-product-add-cart-btn').on('click', function(e) {
+					e.preventDefault();
+					jQuery(this).off("click").attr('href', "javascript: void(0);");
+				//add .off() if you don't want to trigger any event associated with this link
+				});
+				}
+				
+				
 				if (productjson[key].hasOwnProperty('primaryImageSrc')) {
 					var imagesrc = productjson[key]['primaryImageSrc'];
 					imagesrc = imagesrc['imageSrc']
@@ -337,6 +398,8 @@ get_header();
 
 	}
 	varientChang();
+	novarientproduct();
+	window.onload =novarientproduct;
 </script>
 
 
