@@ -64,6 +64,29 @@ try {
 }
 get_header();
 ?>
+<style>
+.single-product-image-main
+{
+	max-height: 300px;
+
+}
+.single-product-image-list
+{
+	display: flex;
+	gap:10px;
+	margin-top:15px;
+	margin-bottom: 15px;
+}	
+.xactive
+{
+	border:1px solid var(--primary-color);
+}
+.single-product-image-container
+{
+	min-height: 320px;
+	clear: both;
+}
+</style>
 <div id="primary" class="content-area bb-grid-cell">
 	<main id="main" class="site-main">
 		<!-- PDP Custom page -->
@@ -76,13 +99,13 @@ get_header();
 							<div class="product-section">
 								<div class="details-box">
 									<!-- product slider -->
-									<div class="product-slider product-image-slider show" style="overflow:hidden;">
-										<a herf="#"><img src="<?php echo $st_product->primaryImageSrc->imageSrc ?>" xoriginal="<?php echo $st_product->primaryImageSrc->imageSrc ?>" class="xzoom am-product-image am-product-other-image am-product-main-image" alt="" /></a>
-										<div class="xzoom-thumbs">
-
+									<div class="xzoom-container single-product-image" >
+										<div class="single-product-image-container"><img src="<?php echo $st_product->primaryImageSrc->imageSrc ?>" xoriginal="<?php echo $st_product->primaryImageSrc->imageSrc ?>" id="xzoom-default single-product-image-main" class="xzoom " alt="" /></div>
+										<div class="xzoom-thumbs single-product-image-list">
+										
 											<?php
 											foreach ($st_product->secondaryImageSrc as $img) {
-												echo "<a herf='{$img->imageSrc}'><img src='{$img->imageSrc}' data-full='$img->imageSrc' class='xzoom-gallery am-product-image am-product-other-image am-product-main-image' alt=''/></a>";
+												echo "<a href='{$img->imageSrc}'><img src='{$img->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
 											}
 											?>
 										</div>
@@ -121,8 +144,6 @@ get_header();
 												</form>
 											</div>
 										</div>
-										<?php if (count($st_product->options) > 0) {
-											if ($optionName->name != 'title') { ?>
 												<div class="addToCart-container">
 													<div class="add-box">
 														<div>
@@ -140,11 +161,8 @@ get_header();
 											<h4>specs</h4>
 											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae commodi dolorem voluptate quisquam, quasi illo iste mollitia ex maiores facilis reprehenderit ipsa quod veritatis. Animi, eaque ipsa! Nihil, mollitia nisi?</p>
 										</div> -->
-										<?php }
-										} else {
-											echo '<p style="color:red;margin-top:20px;margin-bottom:20px;">Product not contain any verient</p>';
-										}
-										?>
+										
+										
 									</div>
 									<!-- ends product details -->
 								</div>
@@ -218,6 +236,7 @@ get_header();
 <script>
 	sendUserEvent();
 	jQuery(function($) {
+
 		$(document).ready(function() {
 			//-- Click on QUANTITY
 			$(".btn-minus").on("click", function() {
@@ -270,13 +289,10 @@ get_header();
 				$("ul.tabs li").removeClass("active");
 				$("ul.tabs li[rel^='" + d_activeTab + "']").addClass("active");
 			});
-			$(".product-image-slider").slick({
-				dots: true,
-				arrows: true
-			});
-			document.querySelector(".product-slider").style.overflow = "";
 		});
 	});
+			
+
 </script>
 <script>
 	const product = <?php echo $result; ?>;
@@ -290,14 +306,15 @@ get_header();
 	function varientChang() {
 		var varients = document.getElementsByClassName("product-option-select");
 		for (var i = 0; i < varients.length; i++) {
-			console.log();
-			json[varients[i].getAttribute('id')] = varients[i].value;
+					json[varients[i].getAttribute('id')] = varients[i].value;
 		}
 		for (var key in productjson) {
 			var obj1 = productjson[key]['variantNameValue'];
 			if (JSON.stringify(obj1) === JSON.stringify(json)) {
 				var varientid = productjson[key]['id'];
 				var productprice = productjson[key]['discountedPrice'];
+				var varientquntity=productjson[key]['quantity'];
+				console.log(varientquntity);
 
 				if (productjson[key].hasOwnProperty('primaryImageSrc')) {
 					var imagesrc = productjson[key]['primaryImageSrc'];
@@ -321,130 +338,15 @@ get_header();
 	}
 	varientChang();
 </script>
-<!-- XZOOM JQUERY PLUGIN  -->
-<script type="text/javascript" src="./js/imageslider.js"></script>
+
+
+<script type="text/javascript" src="<?php echo untrailingslashit( plugin_dir_url( __FILE__ ) ) ;?>/js/imageslider.js"></script>
 <script>
 	jQuery(".xzoom, .xzoom-gallery").xzoom({
 		tint: '#333',
 		Xoffset: 15
 	});
 </script>
-<style>
-	/* Compatibility styles for frameworks like bootstrap, foundation e.t.c */
-	.xzoom-source img,
-	.xzoom-preview img,
-	.xzoom-lens img {
-		display: block;
-		max-width: none;
-		max-height: none;
-		-webkit-transition: none;
-		-moz-transition: none;
-		-o-transition: none;
-		transition: none;
-	}
 
-	/* --------------- */
-
-	/* xZoom Styles below */
-	.xzoom-container {
-		display: inline-block;
-	}
-
-	.xzoom-thumbs {
-		text-align: center;
-		margin-bottom: 10px;
-	}
-
-	.xzoom {
-		-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-		-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-		box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-	}
-
-	.xzoom2,
-	.xzoom3,
-	.xzoom4,
-	.xzoom5 {
-		-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-		-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-		box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-	}
-
-	/* Thumbs */
-	.xzoom-gallery,
-	.xzoom-gallery2,
-	.xzoom-gallery3,
-	.xzoom-gallery4,
-	.xzoom-gallery5 {
-		border: 1px solid #cecece;
-		margin-left: 5px;
-		margin-bottom: 10px;
-	}
-
-	.xzoom-source,
-	.xzoom-hidden {
-		display: block;
-		position: static;
-		float: none;
-		clear: both;
-	}
-
-	/* Everything out of border is hidden */
-	.xzoom-hidden {
-		overflow: hidden;
-	}
-
-	/* Preview */
-	.xzoom-preview {
-		border: 1px solid #888;
-		background: #2f4f4f;
-		box-shadow: -0px -0px 10px rgba(0, 0, 0, 0.50);
-	}
-
-	/* Lens */
-	.xzoom-lens {
-		border: 1px solid #555;
-		box-shadow: -0px -0px 10px rgba(0, 0, 0, 0.50);
-		cursor: crosshair;
-	}
-
-	/* Loading */
-	.xzoom-loading {
-		background-position: center center;
-		background-repeat: no-repeat;
-		border-radius: 100%;
-		opacity: .7;
-		background: url(../example/images/xloading.gif);
-		width: 48px;
-		height: 48px;
-	}
-
-	/* Additional class that applied to thumb when it is active */
-	.xactive {
-		-webkit-box-shadow: 0px 0px 3px 0px rgba(74, 169, 210, 1);
-		-moz-box-shadow: 0px 0px 3px 0px rgba(74, 169, 210, 1);
-		box-shadow: 0px 0px 3px 0px rgba(74, 169, 210, 1);
-		border: 1px solid #4aaad2;
-	}
-
-	/* Caption */
-	.xzoom-caption {
-		position: absolute;
-		bottom: -43px;
-		left: 0;
-		background: #000;
-		width: 100%;
-		text-align: left;
-	}
-
-	.xzoom-caption span {
-		color: #fff;
-		font-family: Arial, sans-serif;
-		display: block;
-		font-size: 0.75em;
-		font-weight: bold;
-		padding: 10px;
-	}
-</style>
 <?php
 get_footer();
