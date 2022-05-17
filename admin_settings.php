@@ -97,6 +97,15 @@ class Shoptype_Settings {
                     }
                     settings_fields("shoptype_settings");
                     do_settings_sections("shoptype_settings");
+                    $options = get_option( 'myshopUrl' );
+
+                    $storeJson = str_replace("shop","wp-json/shoptype/v1/shop",$options);
+
+
+                    $storeValue = empty($storeJson)?"": "[awake_products loadmore=\"true\" my_shop=\"{$storeJson}\" per_row=\"12\" container_classes=\"grid-two-by-two\"]";
+
+                    echo "<table class=\"form-table\"><tbody><tr><th>My Shop Shortcode: </th><td><input name=\"myshopShortcode\" id=\"myshopShortcode\" type=\"text\" value='$storeValue'></td></tr></tbody></table>";
+
                     submit_button();
                 ?>
             </form>
@@ -166,10 +175,11 @@ class Shoptype_Settings {
 		add_settings_field("refCode", "ST Referral Code: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"refCode","name"=>"ST Referral Code") );
         add_settings_field("cartCountMatch", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );
         add_settings_field("loginUrl", "ST Login Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"loginUrl","name"=>"ST Login Page URL") );               
-        add_settings_section( 'channel_champion', 'Channel Champion', array( $this, 'section_callback' ), 'shoptype_settings' );
-        add_settings_field("myshopUrl", "MyShop URL: ", array( $this, 'field_callback' ), "shoptype_settings", "channel_champion", array("id"=>"myshopURL","name"=>"MyShop URL:") );   
         add_settings_section( 'buddypress_groups_products', 'Buddypress group settings', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("productsInGroup", "Display products in Buddypress groups", array( $this, 'sandbox_checkbox_element_callback' ), "shoptype_settings", "buddypress_groups_products", array("id"=>"productsInGroup","name"=>"productsInGroup"));               
+        add_settings_section( 'channel_champion', 'Channel Champion', array( $this, 'section_callback' ), 'shoptype_settings' );
+        add_settings_field("myshopUrl", "My Shop URL: ", array( $this, 'field_callback' ), "shoptype_settings", "channel_champion", array("id"=>"myshopURL","name"=>"My Shop URL:") );   
+        
 
     }
     /* Create input fields*/
@@ -192,11 +202,9 @@ function sandbox_checkbox_element_callback() {
 }
 }
 
-$options = get_option( 'myshopUrl' );
 
- $storeJson = str_replace("shop","/wp-json/shoptype/v1/shop",$options);
 
-  //echo str_replace("my_shop=","[awake_products loadmore="true" my_shop= per_row="12" container_classes="grid-two-by-two"]",$storeJson);
+
 
 $options = get_option( 'productsInGroup' );
 
