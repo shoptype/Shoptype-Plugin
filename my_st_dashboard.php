@@ -55,7 +55,6 @@ function st_dashboard_tab_content() {
 	global $stPlatformId;
 	global $stDefaultCurrency;
 	global $stCurrency;
-	$stDefaultCurrency="INR";
 	$stToken = $_COOKIE['stToken'];
 	$count = 10;
 	$offset = $_GET['offset'];
@@ -201,4 +200,18 @@ function st_dashboard_tab_content() {
  * @return void
  */
 function buddyboss_add_st_dashboard_menu() {
+
+	// Bail, if anything goes wrong.
+	if ( ! function_exists( 'bp_loggedin_user_domain' ) ) {
+		return;
+	}
+
+	printf(
+		"<li class='logout-link'><a href='%s'>%s</a></li>",
+		trailingslashit( bp_loggedin_user_domain() ) . 'st-dashboard/',
+		esc_html__( 'Dashboard', 'default' )
+	);
+}
+
+add_action( 'buddyboss_theme_after_bb_profile_menu', 'buddyboss_add_st_dashboard_menu' );
 
