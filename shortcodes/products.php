@@ -17,7 +17,7 @@ function renderAwakeProducts($atts = []){
     if(isset($atts['vendor_id']) && !empty($atts['vendor_id'])) $vendorId = $atts['vendor_id'];
     if(isset($atts['imgSize']) && !empty($atts['imgSize'])) $imgSize = $atts['imgSize'];
     if(isset($atts['tags']) && !empty($atts['tags'])) $tags = "tags=".$atts['tags'];
-    if(isset($atts['loadmore']) && !empty($atts['loadmore'])) $loadmore = "loadmore=".$atts['loadmore']; ?>
+    if(isset($atts['loadmore']) && !empty($atts['loadmore'])) $loadmore = "loadmore=".$atts['loadmore'];
     if(isset($atts['my_shop']) && !empty($atts['my_shop'])) $my_shop = "myshop=".$atts['my_shop']; ?>
 
     <div count="<?php echo $perRow; ?>" <?php echo $my_shop; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">

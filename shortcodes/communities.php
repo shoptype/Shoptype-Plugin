@@ -26,7 +26,6 @@ function renderAwakeCommunities($atts = []){
                         <div class="bg-container">
                             <img src="<?php echo $coverImgUrl; ?>" alt="">
                             <div class="thmbnail-box">
-                                <!-- <img src="<?php //echo get_template_directory_uri(); ?>/img/communities-thumbnail.jpg" alt=""> -->
                                 <?php bp_group_avatar(); ?>
                             </div>
                         </div>
@@ -39,7 +38,6 @@ function renderAwakeCommunities($atts = []){
                                         <?php while ( bp_group_members() ) : bp_group_the_member(); ?>
                                             <div class="list-inline-item">
                                                 <?php bp_group_member_avatar(); ?>
-                                                <!-- <img src="<?php //echo get_template_directory_uri(); ?>/img/member-image.jpg" alt=""> -->
                                             </div>
                                         <?php endwhile; ?>
                                         <?php if($totalMembers > 3) : ?>

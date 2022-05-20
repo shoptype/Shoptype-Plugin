@@ -3140,3 +3140,40 @@ li:focus ul li a {
     flex-basis: 100%;
   }
 }
+
+.blogs-container .row {
+    display: flex;
+}
+.col-sm-8 {
+    flex: 0 0 calc(60% - 20px);
+    margin: 0px 10px 0px 0px;
+}
+.col-sm-4 {
+    flex: 0 0 40%;
+    margin: 0px 0px 0px 10px;
+}
+
+.col-sm-4 .blog-image img {
+    height: 300px;
+    object-fit: cover;
+}
+
+.col-sm-8 .blog-image {
+    height: calc(100% - 60px);
+}
+
+.col-sm-8 .single-blog {
+    height: calc(100% - 20px);
+}
+
+@media only screen and (max-width: 1200px) {
+  .blogs-container .row {
+      flex-direction: column;
+  }
+  .col-sm-8 {
+    margin: 0px 0px 0px 0px;
+  }
+  .col-sm-4 {
+      margin: 0px 0px 0px 0px;
+  }
+}
