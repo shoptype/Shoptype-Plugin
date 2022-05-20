@@ -546,4 +546,5 @@ require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');
 require_once(ST__PLUGIN_DIR.'/admin_settings.php');
 require_once(ST__PLUGIN_DIR.'/my_shop.php');
+require_once(ST__PLUGIN_DIR.'/my_st_dashboard.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');
