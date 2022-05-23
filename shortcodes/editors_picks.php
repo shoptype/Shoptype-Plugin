@@ -12,6 +12,7 @@ function renderEditorsPicks($atts = []) {
         'post_status' => 'publish',
         'orderby' => 'date',
         'order' => 'DESC',
+        's' => $atts['search'],
         'posts_per_page' => 3
     );
     if(isset($atts['display_layout']) && !empty($atts['display_layout'])) {

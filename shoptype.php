@@ -28,12 +28,13 @@ function shoptype_header(){
 	global $siteUrl;
 	global $siteName;
 	global $loginUrl;
+	global $cartCountMatch;
 
 	$siteUrl = get_site_url();
 	$siteName = get_bloginfo('name');
 	
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.8/shoptype.js"></script>';
-  echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='.wcmenucart-details' platformid='$stPlatformId' loginUrl='$loginUrl'></awakesetup>";
+  echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='$cartCountMatch' platformid='$stPlatformId' loginUrl='$loginUrl'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS@1.6/awakeMarket.min.js"></script>';
 };
@@ -549,4 +550,5 @@ require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');
 require_once(ST__PLUGIN_DIR.'/admin_settings.php');
 require_once(ST__PLUGIN_DIR.'/my_shop.php');
+require_once(ST__PLUGIN_DIR.'/my_st_dashboard.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');

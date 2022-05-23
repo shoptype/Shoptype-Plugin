@@ -1,6 +1,6 @@
 <?php /* Template Name: Brand Detail Template */
 global $stApiKey;
-// global $stPlatformId;
+global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
@@ -42,7 +42,7 @@ get_header(); ?>
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="coseller-profile">
-						<div class="coseller-image-container">
+						<div class="brand-image-container">
 							<img style="width:100%;" src="<?php echo $st_brand->logo ?>" loading="lazy" alt="" class="brand-image am-brand-logo">
 							<div class="follow-link"><a href="javascript:void()" class="btn-blueRounded">Follow</a></div>
 						</div>
@@ -53,18 +53,14 @@ get_header(); ?>
 							<!-- <p class="brand-fame">Brand Fame:<span>10K</span></p> -->
 							<p class="brand-location">Located in:<span><?php echo (!empty($store->countryState) ? $store->countryState : "Not Specified"); ?></span></p>
 							<p class="brand-speciality am-brand-categories">Specialises in:<span><?php echo (!empty($productCategories) ? $productCategories : "Not Specified"); ?></span></p>
-							<div class="coseller-bio">
-								<p class="bio-heading">Personal Bio:
-									<?php if(empty($group->description)) : ?>
-										<span>Not Specified</span>
-									<?php endif; ?>
-								</p>
-								<?php if(!empty($group->description)) : ?>
+							<?php if(!empty($group->description)) : ?>
+								<div class="coseller-bio">
+									<p class="bio-heading">About:</p>
 									<p class="bio-desc">
 										<?php echo$group->description; ?>
 									</p>
-								<?php endif; ?>
-							</div>
+								</div>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
@@ -99,10 +95,10 @@ get_header(); ?>
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="section-header">
-							<h1 class="section-title">Products by Brand</h1>
+							<h1 class="section-title">Products by <?php echo $st_brand->name; ?></h1>
 							<a href="<?php echo home_url('all-products'); ?>" class="btn-blueRounded">See All</a>
 						</div>
-						<?php echo do_shortcode( '[awake_products per_row="8" slider="0" vendor_id="'.$st_brand->id.'" product_classes="product-container  single-product"]' ); ?>
+						<?php echo do_shortcode( '[awake_products per_row="12" slider="0" vendor_id="'.$st_brand->id.'" product_classes="product-container  single-product"]' ); ?>
 					</div>
 				</div>
 			</div>
@@ -114,12 +110,12 @@ get_header(); ?>
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="section-header">
-							<h1 class="section-title">Content Created by Brand</h1>
+							<h1 class="section-title">Blogs related to <?php echo $st_brand->name; ?></h1>
 							<a href="javascript:void()" class="btn-blueRounded">See All</a>
 						</div>
 						<div class="blogs-container">
 							<div class="row">
-								<?php echo do_shortcode('[awake_editors_picks display_layout="1"]'); ?>
+								<?php echo do_shortcode("[awake_editors_picks display_layout=\"1\" search=\"{$st_brand->name}\"]"); ?>
 							</div>
 						</div>
 					</div>
