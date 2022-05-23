@@ -201,4 +201,4 @@ function st_dashboard_tab_content() {
  * @return void
  */
 function buddyboss_add_st_dashboard_menu() {
-
+}
