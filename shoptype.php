@@ -81,7 +81,7 @@ function shoptype_login_modal(){
 	
 //Add Product Route
 add_action('init', function(){
-    add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?product=$matches[1]', 'top' );
+    add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[1]', 'top' );
 	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
 	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
@@ -91,7 +91,7 @@ add_action('init', function(){
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'product';
+    $query_vars[] = 'stproduct';
     return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
@@ -120,7 +120,7 @@ add_filter( 'query_vars', function( $query_vars ) {
 } );
 
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'product' ) == false || get_query_var( 'product' ) == '' ) {
+    if ( get_query_var( 'stproduct' ) == false || get_query_var( 'stproduct' ) == '' ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/page-product.php';
