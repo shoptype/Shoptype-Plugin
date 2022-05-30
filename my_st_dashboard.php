@@ -214,4 +214,4 @@ function buddyboss_add_st_dashboard_menu() {
 }
 
 add_action( 'buddyboss_theme_after_bb_profile_menu', 'buddyboss_add_st_dashboard_menu' );
-}
+
