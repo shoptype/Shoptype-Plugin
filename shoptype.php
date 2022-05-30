@@ -321,7 +321,11 @@ function have_posts_override(){
 		}
     }
 }
-add_action( 'found_posts', 'have_posts_override' );
+//add condition to not override admin pagination
+if (! is_admin() ) {
+    add_action( 'found_posts', 'have_posts_override' );
+
+} 
 
 /*Add page templates*/
 

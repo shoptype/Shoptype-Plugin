@@ -4,7 +4,7 @@
  * Add custom sub-tab on groups page.
  */
 function buddyboss_st_dashboard_tab() {
-	wp_enqueue_script( 'my-script-handle', 'url-to/my-script.js', array( 'bp-api-request' ) );
+	wp_enqueue_script( 'my-script-handle', '/url-to/my-script.js', array( 'bp-api-request' ) );
 	$path = dirname(plugin_dir_url( __FILE__ ));
 	wp_enqueue_style( 'st-dashboard-css', plugin_dir_url( __FILE__ ) . '/css/st-dashboard.css' );
 	// Avoid fatal errors when plugin is not available.
@@ -214,4 +214,4 @@ function buddyboss_add_st_dashboard_menu() {
 }
 
 add_action( 'buddyboss_theme_after_bb_profile_menu', 'buddyboss_add_st_dashboard_menu' );
-
+}
