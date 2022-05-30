@@ -68,6 +68,7 @@
 
 .st-coseller-kpi-products {
   overflow: auto;
+  max-height:100%!important;
 }
 
 .st-coseller-products-list {
