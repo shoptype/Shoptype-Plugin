@@ -542,6 +542,9 @@ function custom_search_template($template){
 
 define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+remove_action( 'woocommerce_after_mini_cart', 'action_woocommerce_after_mini_cart', 10, 0 );
+add_action( 'woocommerce_after_mini_cart', get_template_part(ST__PLUGIN_DIR.'/templates/mini-cart.php'), 10, 0 );
+
 
 require_once(ST__PLUGIN_DIR.'/shortcodes/products.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/cosellers.php');
