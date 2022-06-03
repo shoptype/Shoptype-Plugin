@@ -101,17 +101,15 @@ get_header(null);
 			<div class="st-chkout-products">
 				<div id="st-chkout-products-list" class="st-chkout-products-list">
 					<?php foreach($st_checkout->order_details_per_vendor as $vendorId=>$items): ?>
-						<?php if(!empty($items->shipping_options)) : ?>
 						<select name="shippingOption" orderId="<?php echo $vendorId ?>" class="st-chkout-billing-fld-val" id="st-shipping-<?php echo $vendorId ?>" value=""	required onchange="onShippingChanged(this)">
+						<?php if(!empty($items->shipping_options)) : ?>
 							<?php foreach($items->shipping_options as $key=>$shipping_options): ?>
 								 <option value="<?php echo $shipping_options->method_key ?>" <?php if($shipping_options->method_key == $items->shipping_selected->method_key){echo "selected";} ?> ><?php echo $shipping_options->method_title ?></option>
 							<?php endforeach; ?>
-						</select>
 						<?php else: ?>
-						<select name="shippingOption" orderId="" class="st-chkout-billing-fld-val" id="st-shipping-<?php echo $vendorId ?>" value=""	required onchange="onShippingChanged(this)">
 								 <option value="" >Enter address to get shipping options</option>
-						</select>
 						<?php endif; ?>
+						</select>
 						<div class="st-chkout-products-head">
 							<div class="st-chkout-products-title">PRODUCT</div>
 							<div class="st-chkout-products-tot">SUBTOTAL</div>
@@ -169,7 +167,8 @@ get_header(null);
 					countryField.add(option);
 				}
 				countryField.addEventListener('change', () => {
-					fetch(st_backend + "/states/" + countryField.value)
+					if(countryField.value && countryField.value != ""){
+						fetch(st_backend + "/states/" + countryField.value)
 						.then(response => response.json())
 						.then(statesJson => {
 							let stateField = document.getElementById("st-chkout-state");
@@ -187,6 +186,7 @@ get_header(null);
 								stateField.add(option);
 							}
 						});
+					}
 				});
         countryField.dispatchEvent(new Event('change'));
 
@@ -271,11 +271,14 @@ get_header(null);
 				.then(checkoutJson => {
 					stHideLoader();
 					if(checkoutJson.error){
+						st_showError(checkoutJson.error);
 					}else{
+						updateStCheckout(checkoutJson);
+						stHideLoader();
 					}
 				});
 		}
-
+		
 		function showPayment(){
 			initSTPayment(st_checkoutId, st_backend, headerOptions.headers["X-Shoptype-Api-Key"], onPaymentReturn)
 		}
