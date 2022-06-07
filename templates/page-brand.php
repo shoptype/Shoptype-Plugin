@@ -4,11 +4,12 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+global $stBackendUrl;
 $st_brand = [];
 try {
 	$brandId = get_query_var( 'brand' );
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/vendors?vendorId=$brandId");
+	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$brandId");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($ch);
 	curl_close($ch);

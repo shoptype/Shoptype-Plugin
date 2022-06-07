@@ -55,6 +55,7 @@ function st_dashboard_tab_content() {
 	global $stPlatformId;
 	global $stDefaultCurrency;
 	global $stCurrency;
+	global $stBackendUrl;
 	$stToken = $_COOKIE['stToken'];
 	$count = 10;
 	$offset = $_GET['offset'];
@@ -67,7 +68,7 @@ function st_dashboard_tab_content() {
 			"authorization: ".$stToken,
 		);
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/coseller-dashboard?viewType=cosellerProductView&currency=$stDefaultCurrency&count={$count}&offset={$offset}");
+		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/coseller-dashboard?viewType=cosellerProductView&currency=$stDefaultCurrency&count={$count}&offset={$offset}");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
@@ -78,7 +79,7 @@ function st_dashboard_tab_content() {
 			$cosellerDash = json_decode($result);
 		}
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/coseller-dashboard?viewType=cosellerView&currency=$stDefaultCurrency");
+		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/coseller-dashboard?viewType=cosellerView&currency=$stDefaultCurrency");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);

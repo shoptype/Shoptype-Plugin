@@ -1,6 +1,7 @@
 <?php
 function getUserProducts( $data ) {
 	global $stPlatformId;
+	global $stBackendUrl;
 	$the_user = get_user_by('login', $data['id']);
 	$count=isset($data['count'])?$data['count']:10;
 	$offset=isset($data['offset'])?$data['offset']:0;
@@ -16,7 +17,7 @@ function getUserProducts( $data ) {
 		}
 	}
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/products?count=$count&offset=$offset&productIds=$values");
+	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/products?count=$count&offset=$offset&productIds=$values");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($ch);
 	$products = json_decode($result);

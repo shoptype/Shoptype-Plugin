@@ -10,6 +10,7 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+global $stBackendUrl;
 get_header();
 
 try {
@@ -18,7 +19,7 @@ try {
 	$tag = get_query_var( 'tag' );
 	$firstLoad = 20;
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/products?tags=$tag&count=$firstLoad");
+	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/products?tags=$tag&count=$firstLoad");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($ch);
 	$pluginUrl = plugin_dir_url( __FILE__ );

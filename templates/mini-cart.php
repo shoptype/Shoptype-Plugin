@@ -7,7 +7,7 @@
  * This template is overridden by copying it to yourtheme/woocommerce/cart/mini-cart.php.
  *
  *
- * @see     https://backend.shoptype.com/api/#/cart
+ * @see     {backendUrl}/api/#/cart
  * @package Shoptype
  * @version 1.0
  */
@@ -20,6 +20,7 @@ global $stApiKey;
 global $stPlatformId;
 global $stCurrency;
 global $productUrl;
+global $stBackendUrl;
 
 $path = dirname(plugin_dir_url( __FILE__ ));
 $cartId = get_query_var( 'cart' );
@@ -35,7 +36,7 @@ try {
     "X-Shoptype-PlatformId: ".$stPlatformId
   );
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/cart/$cartId");
+  curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart/$cartId");
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $result = curl_exec($ch);

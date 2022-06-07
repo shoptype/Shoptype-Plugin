@@ -54,13 +54,14 @@ ________________________________________________________________________________
 <?php
 /* Shoptype login: this will login the shoptype user if a user with the same email exists else it creats a user and logs them in*/
 function shoptype_login(){
+	global $stBackendUrl;
 	$token = $_GET['token'];
 	if (is_user_logged_in()) {return;}
 	if( empty( $token ) ) {return;}
 	
 	try {
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, 'https://backend.shoptype.com/me');
+		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/me");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		   "Authorization: {$token}"
 		));

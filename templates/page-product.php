@@ -10,12 +10,13 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+global $stBackendUrl;
 try {
 	$vendorId = 0;
 	$vendorName = $vendorDescription = $vendorUrl = "";
 	$productId = get_query_var('stproduct');
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/products?productIds=$productId");
+	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/products?productIds=$productId");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($ch);
 	$pluginUrl = plugin_dir_url(__FILE__);
@@ -49,7 +50,7 @@ try {
 	// Get vendor details
 	if (!empty($vendorId)) {
 		$vendorch = curl_init();
-		curl_setopt($vendorch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/vendors?vendorId=$vendorId");
+		curl_setopt($vendorch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$vendorId");
 		curl_setopt($vendorch, CURLOPT_RETURNTRANSFER, true);
 		$vendorChResponse = curl_exec($vendorch);
 		curl_close($vendorch);

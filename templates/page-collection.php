@@ -9,6 +9,7 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 $collection_id = get_query_var( 'collection' );
 
@@ -16,7 +17,7 @@ try {
   $ch = curl_init();
   $urlparts = parse_url(home_url());
   $domain = $urlparts['host'];
-  curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/{$stPlatformId}/collections/{$collection_id}");
+  curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/{$stPlatformId}/collections/{$collection_id}");
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $result = curl_exec($ch);
   curl_close($ch);

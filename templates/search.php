@@ -70,9 +70,10 @@ $massage='';
 
         global $stPlatformId;
         global $wp_query;
+        global $stBackendUrl;
         $q = $wp_query->query_vars;
         $searchTearms = preg_replace('/\s+/', '%20', $searchTearm);
-        $url = "https://backend.shoptype.com/platforms/$stPlatformId/products?count=30&text=$searchTearms";
+        $url = "{$stBackendUrl}/platforms/$stPlatformId/products?count=30&text=$searchTearms";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

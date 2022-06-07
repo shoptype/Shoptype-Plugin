@@ -9,6 +9,7 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
 wp_enqueue_script('triggerUserEvent','https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js');
@@ -25,7 +26,7 @@ try {
     "X-Shoptype-PlatformId: ".$stPlatformId
   );
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/cart/$cartId");
+  curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart/$cartId");
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $result = curl_exec($ch);
