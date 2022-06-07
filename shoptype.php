@@ -87,7 +87,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
 	add_rewrite_rule( 'shop/(.+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
 	add_rewrite_rule( 'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
-	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?tag=$matches[1]', 'top' );
+	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -115,7 +115,7 @@ add_filter( 'query_vars', function( $query_vars ) {
     return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'tag';
+    $query_vars[] = 'sttag';
     return $query_vars;
 } );
 
@@ -156,7 +156,7 @@ add_action( 'template_include', function( $template ) {
     return plugin_dir_path( __FILE__ ) . '/templates/page-collection.php';
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'tag' ) == false || get_query_var( 'tag' ) == '' ) {
+    if ( get_query_var( 'sttag' ) == false || get_query_var( 'sttag' ) == '' ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/page-tags.php';
@@ -188,12 +188,13 @@ add_action('wp_footer', 'awakenthemarket');
 /* Shoptype login */
 function shoptype_login(){
 	$token = $_GET['token'];
+	global $stBackendUrl;
 	if (is_user_logged_in()) {return;}
 	if( empty( $token ) ) {return;}
 	
 	try {
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, 'https://backend.shoptype.com/me');
+		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/me");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		   "Authorization: {$token}"
 		));
@@ -286,12 +287,13 @@ function have_posts_override(){
     if ( is_search() ) {
 		global $stPlatformId;
         global $wp_query;
+        global $stBackendUrl;
 		$q = $wp_query->query_vars;
 		$searchTxt="";
 		foreach ((array)$q['search_terms'] as $term) {
 			$searchTxt .= "$term%20";
 		}
-		$url = "https://backend.shoptype.com/platforms/$stPlatformId/products?count=20&text=$searchTxt";
+		$url = "$stBackendUrl/platforms/$stPlatformId/products?count=20&text=$searchTxt";
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
