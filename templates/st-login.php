@@ -17,9 +17,10 @@ get_header();
 
 	<script type="text/javascript">
 		var url = new URL(window.location.href);
+		var returnUrl = new URL(url);
+		returnUrl=url.searchParams.get("redirectUrl");
 		var urlStr = url.searchParams.get("url")??"<?php echo get_home_url(); ?>";
-		var returnUrl = new URL(urlStr);
-		const renderForm = () => {
+		 	const renderForm = () => {
 			stLoginHandler.renderSTLoginForm(
 				"login-form",
 				{
@@ -39,13 +40,13 @@ get_header();
 						  break;
 						case "login success":
 						  stLoginHandler.closeSTLoginModal();
-						  window.location.replace(returnUrl.href + (returnUrl.search==''?'?':returnUrl.search+"&")+"token="+appRes.user.token);
+						  window.location.replace((returnUrl+"/?")+"token="+appRes.user.token);
 						  break;
 						case "login failed":
 						  break;
 						case "sign-up success":
 						  stLoginHandler.closeSTLoginModal();
-						  window.location.replace(returnUrl.href + (returnUrl.search==''?'?':returnUrl.search+"&")+"token="+appRes.user.token);
+						  window.location.replace((returnUrl+"/?")+"token="+appRes.user.token);
 						  break;
 						case "sign-up failed":
 							break;
