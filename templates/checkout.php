@@ -139,6 +139,10 @@ get_header(null);
 					<div class="st-chkout-shipping-tot"><?php echo $prodCurrency.$st_checkout->shipping->amount ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
+					<div class="st-chkout-tot-title">TAX</div>
+					<div class="st-chkout-shipping-tot"><?php echo $prodCurrency.$st_checkout->taxes->amount ?></div>
+				</div>
+				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">TOTAL</div>
 					<div class="st-chkout-tot-cost"><?php echo $prodCurrency.$st_checkout->total->amount ?></div>
 				</div>
