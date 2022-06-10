@@ -25,8 +25,9 @@ class Shoptype_Settings {
     
     public static function add_network_settings($token){
         try {
+            global $stBackendUrl;
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'https://backend.shoptype.com/networks');
+            curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/networks");
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 "Authorization: {$token}"
             ));
@@ -46,7 +47,8 @@ class Shoptype_Settings {
             $postData = array(
                 'userType' => 'network'
             );
-            $ch = curl_init('https://backend.shoptype.com/authenticate');
+            global $stBackendUrl;
+            $ch = curl_init("{$stBackendUrl}/authenticate");
             curl_setopt_array($ch, array(
                 CURLOPT_POST => TRUE,
                 CURLOPT_RETURNTRANSFER => TRUE,
@@ -68,7 +70,8 @@ class Shoptype_Settings {
         }
     }
     /* Create the page*/
-    public function settings_page_content() { ?>
+    public function settings_page_content() { 
+        global $stBackendUrl;?>
         <div class="wrap">
             <h2> Shoptype Settings </h2>
             <form method="post" action="options.php">
@@ -77,7 +80,7 @@ class Shoptype_Settings {
                         $token=$_COOKIE["stToken"];
                         try {
                             $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, 'https://backend.shoptype.com/me');
+                            curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/me");
                             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                                 "Authorization: {$token}"
                             ));
@@ -127,7 +130,7 @@ class Shoptype_Settings {
                         },  
                         body: JSON.stringify(data)
                     };
-                    fetch("https://backend.shoptype.com/api-keys", postHeader)
+                    fetch("<?php echo $stBackendUrl; ?>/api-keys", postHeader)
                         .then(response=>response.json())
                         .then(apiJson=>{
                             document.getElementById("shoptype_api_key").value = apiJson.apiKey;
@@ -304,6 +307,8 @@ add_filter( 'bp_groups_default_extension', 'buddyboss_groups_default_extension',
 new Shoptype_Settings();
 
 function shoptypeSettings() {
+    global $stBackendUrl;
+    $stBackendUrl = "https://backend.shoptype.com";
 	global $stPlatformId;
 	$stPlatformId = get_option('platformID');
 	global $stVendorId;
@@ -319,7 +324,7 @@ function shoptypeSettings() {
     global $stDefaultCurrency;
     $stDefaultCurrency = get_option('stDefaultCurrency');
     global $productUrl;
-    $productUrl = "/products/{{productId}}";
+    $productUrl = "/products/{{productId}}/?tid={{tid}}";
     global $brandUrl;
     $brandUrl = "/brands/{{brandId}}";
 	global $stCurrency;

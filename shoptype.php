@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:    
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:      1.3.1
+Version:      1.4.1
 Author:       shoptype 
 Author URI:   https://www.shoptype.com
 License:      GPL2
@@ -88,6 +88,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'shop/(.+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
 	add_rewrite_rule( 'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
 	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
+	add_rewrite_rule( 'chechout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -116,6 +117,10 @@ add_filter( 'query_vars', function( $query_vars ) {
 } );
 add_filter( 'query_vars', function( $query_vars ) {
     $query_vars[] = 'sttag';
+    return $query_vars;
+} );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'success_chkout';
     return $query_vars;
 } );
 
@@ -160,6 +165,12 @@ add_action( 'template_include', function( $template ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/page-tags.php';
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'success_chkout' ) == false || get_query_var( 'success_chkout' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
 } );
 
 //Shoptype login handler

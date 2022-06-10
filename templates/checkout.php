@@ -10,9 +10,10 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
-global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
+wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
+wp_enqueue_style( 'authnetCss', $path.'/css/authnet.css' );
 wp_enqueue_script('triggerUserEvent','https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js');
 wp_enqueue_script('st-payment-handlers',"https://shoptype-scripts.s3.amazonaws.com/payment_js/st-payment-handlers-bundle.js");
 wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
@@ -25,7 +26,7 @@ try {
 		"X-Shoptype-PlatformId: ".$stPlatformId
 	);
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/checkout/$checkoutId");
+	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/checkout/$checkoutId");
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($ch);
@@ -142,6 +143,7 @@ get_header(null);
 					<div class="st-chkout-tot-cost"><?php echo $prodCurrency.$st_checkout->total->amount ?></div>
 				</div>
 			</div>
+			<div id="payment-container"></div>
 			<div class="st-chkout-btn" onclick="showPayment()">
 				<div class="st-chkout-btn-txt">PLACE ORDER</div>
 			</div>
@@ -189,7 +191,7 @@ get_header(null);
 						});
 					}
 				});
-        countryField.dispatchEvent(new Event('change'));
+        		countryField.dispatchEvent(new Event('change'));
 
 			});
 		}
@@ -206,6 +208,8 @@ get_header(null);
 			}`;
 			headerOptions.method = "put";
 			headerOptions.body = shippingBody;
+			document.querySelector(".st-chkout-btn").style.display="";
+			document.getElementById("payment-container").innerHTML="";
 			fetch(st_backend + `/checkout/${st_checkoutId}/shipping-method`, headerOptions)
 				.then(response => response.json())
 				.then(checkoutJson => {
@@ -281,17 +285,24 @@ get_header(null);
 		}
 		
 		function showPayment(){
-			initSTPayment(st_checkoutId, st_backend, headerOptions.headers["X-Shoptype-Api-Key"], onPaymentReturn)
+			initSTPayment(st_checkoutId, st_backend, headerOptions.headers["X-Shoptype-Api-Key"], onPaymentReturn);
+			document.querySelector(".st-chkout-btn").style.display="none";
+			document.querySelector("#payment-container").style.display="";
 		}
 
 		function onPaymentReturn(payload){
 			switch(payload.status){
 			case "failed":
 				alert(payload.message);
+				document.querySelector(".st-chkout-btn").style.display="";
+				document.querySelector("#payment-container").style.display="none";
 				break;
 			case "closed":
+				document.querySelector(".st-chkout-btn").style.display="";
+				document.querySelector("#payment-container").style.display="none";
 				break;
 			case "success":
+					window.location.href = "/chechout-success/"+st_checkoutId;
 				break;
 			}
 		}
