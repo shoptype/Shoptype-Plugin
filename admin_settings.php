@@ -19,6 +19,7 @@ class Shoptype_Settings {
         $slug = "shoptype_settings";
         $callback = array( $this, 'settings_page_content' );
         add_menu_page( $page_title, $menu_title, $capability, $slug, $callback );
+        flush_rewrite_rules();
     
     }
     
@@ -105,7 +106,7 @@ class Shoptype_Settings {
                     $storeValue = empty($storeJson)?"": "[awake_products loadmore=\"true\" my_shop=\"{$storeJson}\" per_row=\"12\" container_classes=\"grid-two-by-two\"]";
 
                     echo "<table class=\"form-table\"><tbody><tr><th>My Shop Shortcode: </th><td><input name=\"myshopShortcode\" id=\"myshopShortcode\" type=\"text\" value='$storeValue'></td></tr></tbody></table>";
-
+                    flush_rewrite_rules();
                     submit_button();
                 ?>
             </form>
@@ -182,7 +183,6 @@ class Shoptype_Settings {
         add_settings_section( 'channel_champion', 'Channel Champion', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("myshopUrl", "My Shop URL: ", array( $this, 'field_callback' ), "shoptype_settings", "channel_champion", array("id"=>"myshopURL","name"=>"My Shop URL:") );   
         
-
     }
     /* Create input fields*/
     public function field_callback ( $arguments ) {
@@ -329,6 +329,7 @@ function shoptypeSettings() {
     $productsInGroup = get_option('productsInGroup');
     global $myshopUrl;
     $myshopUrl = get_option('myshopURL');
+    flush_rewrite_rules();
 }
 
 
