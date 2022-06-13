@@ -33,7 +33,7 @@ function shoptype_header(){
 	$siteUrl = get_site_url();
 	$siteName = get_bloginfo('name');
 	
-  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.8/shoptype.js"></script>';
+  echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@2.7.9/shoptype.js"></script>';
   echo "<awakesetup apikey='$stApiKey' refcode='$stRefcode' cartcountmatch='$cartCountMatch' platformid='$stPlatformId' loginUrl='$loginUrl'></awakesetup>";
   echo "<awakeMarket platformid='$stPlatformId' productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
   echo '<script src="https://cdn.jsdelivr.net/gh/shoptype/Awake-Market-JS@1.6/awakeMarket.min.js"></script>';
