@@ -19,6 +19,8 @@ class Shoptype_Settings {
         $slug = "shoptype_settings";
         $callback = array( $this, 'settings_page_content' );
         add_menu_page( $page_title, $menu_title, $capability, $slug, $callback );
+        add_submenu_page($page_title, $menu_title, $capability,$slug , $callback,$slug );
+	
         flush_rewrite_rules();
     
     }

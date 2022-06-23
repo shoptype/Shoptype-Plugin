@@ -15,7 +15,8 @@ Domain Path:  /languages
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
+//include required files
+include plugin_dir_path( __FILE__ ).'/shortcodes/coselluserlist.php';
 
 /* Initialisation of the shopype JS and adding the cart+profile buttons to the header */
 
@@ -558,6 +559,47 @@ define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 remove_action( 'woocommerce_after_mini_cart', 'action_woocommerce_after_mini_cart', 10, 0 );
 add_action( 'woocommerce_after_mini_cart', get_template_part(ST__PLUGIN_DIR.'/templates/mini-cart.php'), 10, 0 );
 
+//Add snipet to manage cosell user
+add_action('admin_menu', 'register_cosell_user', 20 );
+ 
+function register_cosell_user() {
+    add_submenu_page(
+        'shoptype_settings',
+        'Manage Cosell Users',
+        'Manage Cosell Users',
+        'manage_options',
+        'my-admin-slug',
+        'manage_cosell_users' );
+}
+
+
+function manage_cosell_users() {
+    echo '<div class="wrap">';
+        echo '<h2>Manage Cosell Users</h2><div style="margin-top:50px;margin-bottom:50px">';
+		if($stRefcode=='')
+		{
+			$stRefcode=0;
+		}
+		coselluserlist($stRefcode);
+    echo '</div></div>';
+} 
+
+//add coseller role
+function coseller_new_role() {  
+ 
+	//add the new user role
+	add_role(
+		'coseller',
+		'Coseller',
+		array(
+			'read'         => true,
+			'delete_posts' => false
+		)
+	);
+ 
+}
+add_action('admin_init', 'coseller_new_role');
+//define hooks for ajax
 
 require_once(ST__PLUGIN_DIR.'/shortcodes/products.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/cosellers.php');
