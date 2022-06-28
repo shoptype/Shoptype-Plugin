@@ -125,8 +125,7 @@ function addCoseller()
 {
 
 }
-?>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+?><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 <script>
 
 function sendMail(id,name,mail,refcode) {
@@ -153,7 +152,7 @@ function sendInviteAll()
             if(inputs[i].checked == true) 
             {
                 let text = inputs[i].getAttribute("data");
-                document.getElementById("button-"+i).click()
+                document.getElementById("button-"+text).click()
                 console.log(text);
 
             }  
