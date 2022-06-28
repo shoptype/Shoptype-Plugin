@@ -13,7 +13,7 @@ global $brandUrl;
 try {
     $vendorId = 0;
     $vendorName = $vendorDescription = $vendorUrl = "";
-    $productId = get_query_var('product');
+    $productId = get_query_var('stproduct');
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/products?productIds=$productId");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
