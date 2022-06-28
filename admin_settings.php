@@ -19,6 +19,8 @@ class Shoptype_Settings {
         $slug = "shoptype_settings";
         $callback = array( $this, 'settings_page_content' );
         add_menu_page( $page_title, $menu_title, $capability, $slug, $callback );
+        //add_submenu_page($page_title, $menu_title, $capability,$slug , $callback,$slug );
+	
         flush_rewrite_rules();
     
     }
@@ -168,8 +170,11 @@ class Shoptype_Settings {
 		register_setting("shoptype_settings", "cartCountMatch");
         register_setting("shoptype_settings", "loginUrl");
         register_setting("shoptype_settings", "stDefaultCurrency");
+        register_setting("shoptype_settings", "ServerName");
         register_setting("shoptype_settings", "myshopURL");
         register_setting("shoptype_settings", "productsInGroup");
+        $serverName=$_SERVER['SERVER_NAME'];
+        
 
 
         add_settings_section("shoptype_settings", "Network Settings: ", array($this, 'section_callback'), "shoptype_settings");
@@ -180,11 +185,15 @@ class Shoptype_Settings {
 		add_settings_field("refCode", "ST Referral Code: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"refCode","name"=>"ST Referral Code") );
         add_settings_field("cartCountMatch", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );
         add_settings_field("loginUrl", "ST Login Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"loginUrl","name"=>"ST Login Page URL") );
-        add_settings_field("stDefaultCurrency", "ST Default Currency: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stDefaultCurrency","name"=>"ST Default Currency") );              
+        add_settings_field("stDefaultCurrency", "ST Default Currency: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stDefaultCurrency","name"=>"ST Default Currency") );
+        add_settings_field("ServerName", "ServerName: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"ServerName","name"=>"ServerName","value"=>"values123") );                        
         add_settings_section( 'buddypress_groups_products', 'Buddypress group settings', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("productsInGroup", "Display products in Buddypress groups", array( $this, 'sandbox_checkbox_element_callback' ), "shoptype_settings", "buddypress_groups_products", array("id"=>"productsInGroup","name"=>"productsInGroup"));               
         add_settings_section( 'channel_champion', 'Channel Champion', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("myshopUrl", "My Shop URL: ", array( $this, 'field_callback' ), "shoptype_settings", "channel_champion", array("id"=>"myshopURL","name"=>"My Shop URL:") );   
+        
+        //Setting defult value for server name
+        update_option( 'ServerName',$serverName );
         
     }
     /* Create input fields*/
@@ -203,6 +212,8 @@ function sandbox_checkbox_element_callback() {
     $html .= '<label for="checkbox_example"> </label>';
 
     echo $html;
+    echo '<script>jQuery("#ServerName").prop("disabled", true);</script>';
+        
     
 }
 }
