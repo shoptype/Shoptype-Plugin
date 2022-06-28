@@ -17,9 +17,8 @@ get_header();
 
 	<script type="text/javascript">
 		var url = new URL(window.location.href);
+		url = url.searchParams.get("redirectUrl")??"<?php echo get_home_url(); ?>";
 		var returnUrl = new URL(url);
-		returnUrl=url.searchParams.get("redirectUrl");
-		var urlStr = url.searchParams.get("url")??"<?php echo get_home_url(); ?>";
 		 	const renderForm = () => {
 			stLoginHandler.renderSTLoginForm(
 				"login-form",
@@ -40,13 +39,13 @@ get_header();
 						  break;
 						case "login success":
 						  stLoginHandler.closeSTLoginModal();
-						  window.location.replace((returnUrl+"/?")+"token="+appRes.user.token);
+						  window.location.replace( insertParam("token", appRes.user.token,returnUrl));
 						  break;
 						case "login failed":
 						  break;
 						case "sign-up success":
 						  stLoginHandler.closeSTLoginModal();
-						  window.location.replace((returnUrl+"/?")+"token="+appRes.user.token);
+						  window.location.replace( insertParam("token", appRes.user.token,returnUrl));
 						  break;
 						case "sign-up failed":
 							break;
@@ -54,6 +53,34 @@ get_header();
 				}
 			);
 		};
+		
+		function insertParam(key, value, url) {
+			key = encodeURIComponent(key);
+			value = encodeURIComponent(value);
+
+			var kvp = url.search.substr(1).split('&');
+			let i=0;
+
+			for(; i<kvp.length; i++){
+				if (kvp[i].startsWith(key + '=')) {
+					let pair = kvp[i].split('=');
+					pair[1] = value;
+					kvp[i] = pair.join('=');
+					break;
+				}
+			}
+
+			if(i >= kvp.length){
+				kvp[kvp.length] = [key,value].join('=');
+			}
+
+			// can return this or...
+			let params = kvp.join('&');
+
+			// reload page with new params
+			url.search = params;
+			return url;
+		}
 
 		function renderLogin(){
 			if(typeof stLoginHandler !== "undefined"){

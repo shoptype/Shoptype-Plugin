@@ -109,16 +109,8 @@ get_header(null);
     var productId = qtyInput.getAttribute("pid");
     var variantId = qtyInput.getAttribute("vid");
     var quantity = parseInt(qtyInput.value);
-    let payload = {
-            "product_id": productId,
-            "product_variant_id": variantId,
-            "quantity": quantity
-          }
-    headerOptions.method = 'put';
-    headerOptions.body = JSON.stringify(payload);
-    stShowLoader();
-    fetch(st_backend + "/cart/" + st_cartId,headerOptions)
-      .then(response => response.json())
+    shoptype_UI.stShowLoader();
+    st_platform.updateCart(productId, variantId, quantity)
       .then(cartJson => {
         if(quantity==0){
           qtyInput.parentElement.parentElement.remove();
@@ -128,58 +120,45 @@ get_header(null);
           prodVal = parseFloat(prodVal);
           parent.querySelector(".st-cart-product-tot-price").innerHTML = myCurrency + (quantity*prodVal);
         }
-    var totQuant = 0;
-    var totSum = myCurrency+"0";
-    if(cartJson.sub_total){
-      totQuant = cartJson.total_quantity;
-      totSum = myCurrency+cartJson.sub_total.amount;
-    }
-      let shoptypeCartCountChanged =new CustomEvent('shoptypeCartCountChanged', {'detail': {
-        "count": totQuant
-      }});
-      document.dispatchEvent(shoptypeCartCountChanged);
-      document.querySelector(".st-cart-subtotal").innerHTML = totSum;
-      document.querySelector(".st-cart-total").innerHTML = totSum;
-        stHideLoader();
-      })
-      .catch(err => console.info(err));
+        var totQuant = 0;
+        var totSum = myCurrency+"0";
+        if(cartJson.sub_total){
+          totQuant = cartJson.total_quantity;
+          totSum = myCurrency+cartJson.sub_total.amount;
+        }
+        let shoptypeCartCountChanged =new CustomEvent('shoptypeCartCountChanged', {'detail': {
+          "count": totQuant
+        }});
+        document.dispatchEvent(shoptypeCartCountChanged);
+        document.querySelector(".st-cart-subtotal").innerHTML = totSum;
+        document.querySelector(".st-cart-total").innerHTML = totSum;
+          shoptype_UI.stHideLoader();
+      });
   }
 
   function checkout(){
-    stShowLoader();
-    getDeviceId().
-      then(deviceId=>{
-      headerOptions.method = 'post';
-      let data = {
-        "deviceId": deviceId,
-        "cartId": st_cartId
-      }
-      headerOptions.body = JSON.stringify(data);
-      headerOptions.headers['X-Shoptype-PlatformId']=st_platformId;
-      fetch(st_backend + "/checkout", headerOptions)
-        .then(response => response.json())
-        .then(checkoutJson => {
-          if(checkoutJson.message){
-            stHideLoader();
-            showError(checkoutJson.message);
-          }else if(checkout.external_url){
-            let childWindow = null;
-            let st_redirect_uri = checkout.redirect_uri;
-            if(st_hostDomain && st_hostDomain!=""){
-              let st_checkoutUrl = new URL(st_redirect_uri);
-              st_redirect_uri = st_checkoutUrl.href.replace(st_checkoutUrl.host,st_hostDomain)
-            }
-
-            if(stCheckoutType == "newWindow"){
-              childWindow = window.open(st_redirect_uri);
-            }else{
-              window.location.href = st_redirect_uri;           
-            }
-          }else{
-            window.location.href = "/checkout/" + checkoutJson.checkout_id; 
+    shoptype_UI.stShowLoader();
+    st_platform.createCheckout((checkoutJson)=>{
+      if(checkoutJson.message){
+          shoptype_UI.stHideLoader();
+          showError(checkoutJson.message);
+        }else if(checkout.external_url){
+          let childWindow = null;
+          let st_redirect_uri = checkout.redirect_uri;
+          if(st_hostDomain && st_hostDomain!=""){
+            let st_checkoutUrl = new URL(st_redirect_uri);
+            st_redirect_uri = st_checkoutUrl.href.replace(st_checkoutUrl.host,st_hostDomain)
           }
-        });
-      });
+
+          if(stCheckoutType == "newWindow"){
+            childWindow = window.open(st_redirect_uri);
+          }else{
+            window.location.href = st_redirect_uri;           
+          }
+        }else{
+          window.location.href = "/checkout/" + checkoutJson.checkout_id; 
+        }
+    })
   }
   function removeProduct(removeBtn){
     var quantity = removeBtn.parentElement.querySelector(".st-cart-product-qty");

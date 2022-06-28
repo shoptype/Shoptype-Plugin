@@ -19,28 +19,67 @@ wp_enqueue_script('st-payment-handlers',"https://shoptype-scripts.s3.amazonaws.c
 wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
 wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
-
-try {
-	$headers = array(
-		"X-Shoptype-Api-Key: ".$stApiKey,
-		"X-Shoptype-PlatformId: ".$stPlatformId
-	);
+$headers = array(
+	"Content-Type: application/json",
+	"X-Shoptype-Api-Key: ".$stApiKey,
+	"X-Shoptype-PlatformId: ".$stPlatformId
+);
+if($checkoutId == "new"){
+	$productId = $_GET["productid"];
+	$variantId = $_GET["variantid"];
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/checkout/$checkoutId");
+	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/cart");
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS,"{}");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($ch);
-
 	curl_close($ch);
-
 	if( !empty( $result ) ) {
-		$st_checkout = json_decode($result);
-		$prodCurrency = $stCurrency[$st_checkout->total->currency];
+		$st_cart = json_decode($result);
+		$ch = curl_init();
+		$data = array(
+			'product_id' => $productId,
+			'product_variant_id' => $variantId,
+			'quantity' => 1
+		);
+		curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/cart/{$st_cart->id}/add");
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		if( !empty( $result ) ) {
+			$new_cart = json_decode($result);
+			$st_checkout = new stdClass();
+			$st_checkout->order_details_per_vendor = new stdClass();
+			$vendorId = $new_cart->cart_lines[0]->vendor_id;
+			$st_checkout->order_details_per_vendor->$vendorId = $new_cart;
+			$st_checkout->sub_total = $new_cart->sub_total;
+			$st_checkout->total = $new_cart->sub_total;
+			$prodCurrency = $stCurrency[$st_checkout->total->currency];
+		}
+	}
+}else{
+	try {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/checkout/$checkoutId");
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+
+		curl_close($ch);
+
+		if( !empty( $result ) ) {
+			$st_checkout = json_decode($result);
+			$prodCurrency = $stCurrency[$st_checkout->total->currency];
+		}
+	}
+	catch(Exception $e) {
+		echo "Cart not found";
 	}
 }
-catch(Exception $e) {
-	echo "Cart not found";
-}
+
 
 get_header(null);
 ?>
@@ -155,11 +194,12 @@ get_header(null);
 	</div>
 
 	<script type="text/javascript">
-		const st_checkoutId = "<?php echo $st_checkout->id ?>";
+		const testCheckout = <?php echo json_encode( $st_checkout ); ?>;
+		let st_checkoutId = "<?php echo $checkoutId ?>";
+		const new_cart_id = "<?php echo $st_cart->id ?>";
 		const st_currSymb = "<?php echo $prodCurrency ?>";
 		function checkoutSetCountry(){
-			fetch(st_backend + "/countries")
-			.then(response => response.json())
+			STUtils.countries()
 			.then(countriesJson => {
 				let countryField = document.getElementById("st-chkout-country");
 				let selectedCntry =	countryField.getAttribute("value");
@@ -175,8 +215,7 @@ get_header(null);
 				}
 				countryField.addEventListener('change', () => {
 					if(countryField.value && countryField.value != ""){
-						fetch(st_backend + "/states/" + countryField.value)
-						.then(response => response.json())
+						STUtils.states(countryField.value)
 						.then(statesJson => {
 							let stateField = document.getElementById("st-chkout-state");
 							let selectedState =	stateField.getAttribute("value");
@@ -196,30 +235,25 @@ get_header(null);
 					}
 				});
         		countryField.dispatchEvent(new Event('change'));
-
 			});
 		}
 
 		function onShippingChanged(shippingSelect){
-			stShowLoader();
+			shoptype_UI.stShowLoader();
 			let orderKey = shippingSelect.getAttribute("orderId");
-			let shippingBody = `{
+			let shippingBody = {
 				"method_key_per_vendor": {
-				"${orderKey}": {
-						"method_key": "${shippingSelect.options[shippingSelect.selectedIndex].value}"
+					[orderKey]: {
+						method_key: shippingSelect.options[shippingSelect.selectedIndex].value
 					}
 				}
-			}`;
-			headerOptions.method = "put";
-			headerOptions.body = shippingBody;
+			};
 			document.querySelector(".st-chkout-btn").style.display="";
 			document.getElementById("payment-container").innerHTML="";
-			fetch(st_backend + `/checkout/${st_checkoutId}/shipping-method`, headerOptions)
-				.then(response => response.json())
-				.then(checkoutJson => {
-					updateStCheckout(checkoutJson);
-					stHideLoader();
-				});
+			st_platform.updateShipping(st_checkoutId,shippingBody).then(checkoutJson=>{
+				updateStCheckout(checkoutJson);
+				shoptype_UI.stHideLoader();
+			});
 		}
 
 		function updateStCheckout(checkout){
@@ -255,7 +289,6 @@ get_header(null);
 			if(!addressForm.checkValidity()){
 				return;
 			}
-			headerOptions.method = "put";
 			let countrySelect = document.getElementById("st-chkout-country");
 			let stateSelect = document.getElementById("st-chkout-state");
 			let checkoutBody = {
@@ -274,22 +307,21 @@ get_header(null);
 				"is_shipping_billing": true
 			};
 			checkoutBody.billing_address = checkoutBody.shipping_address
-			headerOptions.body = JSON.stringify(checkoutBody);
-			fetch(st_backend + `/checkout/${st_checkoutId}/address`, headerOptions)
-				.then(response => response.json())
+
+			st_platform.updateAddress(st_checkoutId,checkoutBody)
 				.then(checkoutJson => {
-					stHideLoader();
+					shoptype_UI.stHideLoader();
 					if(checkoutJson.error){
 						st_showError(checkoutJson.error);
 					}else{
 						updateStCheckout(checkoutJson);
-						stHideLoader();
+						shoptype_UI.stHideLoader();
 					}
 				});
 		}
 		
 		function showPayment(){
-			initSTPayment(st_checkoutId, st_backend, headerOptions.headers["X-Shoptype-Api-Key"], onPaymentReturn);
+			initSTPayment(st_checkoutId, STUtils.backendUrl, st_platform.apiKey, onPaymentReturn);
 			document.querySelector(".st-chkout-btn").style.display="none";
 			document.querySelector("#payment-container").style.display="";
 		}
@@ -310,8 +342,25 @@ get_header(null);
 				break;
 			}
 		}
+		
+		function createCheckout(cartId){
+			if(st_checkoutId == "new"){
+				st_platform.createCheckout(data=>{
+					st_checkoutId = data.checkout_id;
+				},cartId);	
+			}
+		}
 
-		checkoutSetCountry();
+		if(st_platform){
+			checkoutSetCountry();
+			createCheckout(new_cart_id);
+		}else{
+			document.addEventListener("stPlatformCreated", ()=>{
+				checkoutSetCountry();
+				setTimeout(()=>{createCheckout(new_cart_id);}, 10);
+			});
+		}
+		
 	</script>
 
 <?php

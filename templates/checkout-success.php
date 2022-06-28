@@ -64,7 +64,11 @@ get_header(null);
 		</div>
 	</div>
 
-
+	<script type="text/javascript">
+		if(wc_cart_fragments_params){
+			sessionStorage[wc_cart_fragments_params["fragment_name"]] = null;
+		}
+	</script>
 
 <?php
 get_footer();
