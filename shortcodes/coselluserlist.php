@@ -4,8 +4,8 @@ if( isset($_POST['id']) && isset($_POST['name'])  ){
     
     global $wpdb;
      $to      = $_POST['mail'];
-     $subject = $_POST['name'].'invited for coseller'; 
-     $message = $_POST['name'].'you invited for coseller<br>Ref id is'.$_POST['refcode']; 
+     $subject = $_POST['name'].' You have been invited to become a coseller'; 
+     $message = $_POST['name'].' you have been invited by a network to become a coseller. Learn more about coselling at https://www.shoptype.com/creators/ <br>Your invite id is '.$_POST['refcode']; 
      $headers = "From: ".$_POST['nam‌​e​']." <".$_POST['m‌​ail‌​'].">\r\n"; $headers = "Reply-To: ".$_POST['ma‌​il‌​']."\r\n"; 
      $headers = "Content-type: text/html; charset=iso-8859-1\r\n";
      'X-Mailer: PHP/' . phpversion();
