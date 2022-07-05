@@ -312,7 +312,7 @@ get_header(null);
 				.then(checkoutJson => {
 					shoptype_UI.stHideLoader();
 					if(checkoutJson.error){
-						st_showError(checkoutJson.error);
+						ShoptypeUI.showError(checkoutJson.message);
 					}else{
 						updateStCheckout(checkoutJson);
 						shoptype_UI.stHideLoader();
@@ -329,7 +329,7 @@ get_header(null);
 		function onPaymentReturn(payload){
 			switch(payload.status){
 			case "failed":
-				alert(payload.message);
+				ShoptypeUI.showMessage(payload.message);
 				document.querySelector(".st-chkout-btn").style.display="";
 				document.querySelector("#payment-container").style.display="none";
 				break;

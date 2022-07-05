@@ -141,7 +141,7 @@ get_header(null);
     st_platform.createCheckout((checkoutJson)=>{
       if(checkoutJson.message){
           shoptype_UI.stHideLoader();
-          showError(checkoutJson.message);
+          ShoptypeUI.showError(checkoutJson.message);
         }else if(checkout.external_url){
           let childWindow = null;
           let st_redirect_uri = checkout.redirect_uri;

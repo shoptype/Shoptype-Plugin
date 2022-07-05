@@ -13,7 +13,8 @@ class ShoptypeUI{
 		this.st_Wraper.innerHTML = st_coseller_profile.replace("{site}", this.currentUrl.hostname) +
 								cosellMask+
 								st_cosell_screen.replace("{{site}}", this.currentUrl.host)+
-								st_loader
+								st_loader +
+								'<div id="st-errors" class="st-error-msg-box"> </div>'
 		
 		let body = document.getElementsByTagName('body')[0];
 		body.insertBefore(this.st_Wraper, body.firstChild);
@@ -78,9 +79,19 @@ class ShoptypeUI{
 		if(quantity==0){
 			return;
 		}
-		st_platform.addToCart(productId, variantId, quantity);
+		st_platform.addToCart(productId, variantId, quantity)
+			.then(cartJson=>{
+				if(cartJson.cart_lines){
+					ShoptypeUI.showSuccess( ShoptypeUI.pluralize(quantity, "item") + " added to cart")
+				}else{
+					ShoptypeUI.showError(cartJson.message);
+				}
+			});
 		return false;
 	}
+
+	static pluralize = (count, noun, suffix = 's') =>
+  		`${count} ${noun}${count !== 1 ? suffix : ''}`;
 
 	showCosell(productId){
 		if(!this.user){
@@ -148,6 +159,38 @@ class ShoptypeUI{
 
 	static hide(element){
 		element.style.display="none";
+	}
+
+	static showMessage(message, type, closeTicks = 5000){
+		const newError = document.createElement("div");
+		const newErrorMsg = document.createElement("h3");
+		const newCloseBtn = document.createElement("a");
+		newErrorMsg.innerHTML=message;
+		newCloseBtn.innerHTML="&times;"; 
+		newCloseBtn.setAttribute("onclick", "ShoptypeUI.hideMessage(this)")
+		newError.appendChild(newErrorMsg);
+		newError.appendChild(newCloseBtn);
+		newError.classList.add("st-alert");
+		newError.classList.add(type);
+		newCloseBtn.classList.add("st-close");
+		document.getElementById("st-errors").appendChild(newError);
+		setTimeout(()=>{ShoptypeUI.hideMessage(newCloseBtn)}, closeTicks)
+	}
+
+	static showError(message, closeTicks = 5000){
+		ShoptypeUI.showMessage(message, "st-error", closeTicks);
+	}
+
+	static showWarning(message, closeTicks = 5000){
+		ShoptypeUI.showMessage(message, "st-warning", closeTicks);
+	}
+
+	static showSuccess(message, closeTicks = 5000){
+		ShoptypeUI.showMessage(message, "st-success", closeTicks);
+	}
+
+	static hideMessage(closeBtn){
+		closeBtn.parentElement.remove();
 	}
 }
 
