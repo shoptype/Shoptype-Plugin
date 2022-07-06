@@ -135,9 +135,9 @@ class ShoptypeUI{
 		}
 	}
 
-	stShowLoader(hideDelay=5000){
+	stShowLoader(hideDelay=10000){
 		this.loader.style.display = "";
-		setTimeout(this.stHideLoader(), hideDelay);
+		setTimeout(()=>{this.stHideLoader()}, hideDelay);
 	}
 
 	stHideLoader(){
