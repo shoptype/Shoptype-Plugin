@@ -281,14 +281,18 @@ class STPlatform {
 
 
 class STUser {
+  #token = null;
+  #platformId = null;
+  
   constructor(token) {
-    this.token = token;
+    this.#token = token;
+    this.#platformId = platformId;
     this.endpoints = {
       user: {
         me: () => {
           var endpoint = {
             resource: '/me',
-            header: {'authorization':this.token},
+            header: {'authorization':this.#token},
             method: 'get' 
           };
           return endpoint;
@@ -296,15 +300,23 @@ class STUser {
         coseller: () =>{
           var endpoint = {
             resource: '/cosellers',
-            header: {'authorization':this.token},
+            header: {'authorization':this.#token},
             method: 'get' 
           };
           return endpoint;
         },
         productTracker:(productId)=>{
           var endpoint = {
-            resource: `/track/publish-slug?productId=${productId}`,
-            header: {'authorization':this.token},
+            resource: `/track/publish-slug?productId=${productId}&platformId=${this.#platformId}`,
+            header: {'authorization':this.#token},
+            method: 'get' 
+          };
+          return endpoint;
+        },
+        networkTracker:(refUrl)=>{
+          var endpoint = {
+            resource: `/track/network?referrer=${refUrl}`,
+            header: {'authorization':this.#token},
             method: 'get' 
           };
           return endpoint;
@@ -312,7 +324,7 @@ class STUser {
         referral: () => {
           var endpoint = {
             resource: `/invites`,
-            header: {'authorization':this.token},
+            header: {'authorization':this.#token},
             body:{},
             method: 'post' 
           };
@@ -321,9 +333,15 @@ class STUser {
       }
     }
   }
-
+  setPlatform(platformId){
+    this.#platformId = platformId;
+  }
   getTracket(productId){
     return STUtils.request(this.endpoints.user.productTracker(productId));
+  }
+
+  getNetworkTracker(referUrl){
+    return STUtils.request(this.endpoints.user.networkTracker(referUrl));
   }
 
   details(){
@@ -342,17 +360,22 @@ class STUser {
     if(typeof fingerprintExcludeOptions=== 'undefined'){
       STUtils.st_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", ()=>{this.sendUserEvent(tid)});
     }else{
-      if(!tid){return;}
       getDeviceId()
       .then(deviceId =>{
+        var postBody={
+          "device_id": deviceId,
+          "url": window.location.href,
+          "tracker_id": tid,
+          "referrer": window.location.host
+        };
+        if(!tid){
+          postBody["tracker_id"] = tid;
+        }else{
+          postBody['platform_id']="";
+        }
         var endpoint = {
           resource: '/track/user-event',
-          body: {
-            "device_id": deviceId,
-            "url": window.location.href,
-            "tracker_id": tid,
-            "referrer": window.location.host
-          },
+          body: postBody,
           method: 'post' 
         };
         return STUtils.request(endpoint);

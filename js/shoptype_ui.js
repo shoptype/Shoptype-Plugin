@@ -1,6 +1,7 @@
 class ShoptypeUI{
 	#productUrl = null;
 	#stLoginUrl = null;
+	#platformId = null;
 	#rid = null;
 	constructor(){
 		this.currentUrl = new URL(window.location);
@@ -28,6 +29,10 @@ class ShoptypeUI{
 
 	setLoginUrl(loginUrl){
 		this.#stLoginUrl = loginUrl;
+	}
+
+	setPlatform(platformId){
+		this.#platformId = platformId;
 	}
 
 	setRefferId(rid){

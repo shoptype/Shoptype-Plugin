@@ -250,7 +250,7 @@ function my_shop_tab_content() {
 
 	function addProductToShop(productId){
 		headerOptions.method = "get";
-		fetch( st_backend+"/track/publish-slug?productId=" + productId, headerOptions)
+		fetch( `${st_backend}/track/publish-slug?productId=${productId}&platformId=<?php echo $stPlatformId; ?>`, headerOptions)
 			.then(response => response.json())
 			.then(trackerJson=>{
 				let products = {};
@@ -262,7 +262,7 @@ function my_shop_tab_content() {
 	function productSelect(selectBox){
 		let productId = selectBox.value;
 		headerOptions.method = "get";
-		fetch( st_backend+"/track/publish-slug?productId=" + productId, headerOptions)
+		fetch( `${st_backend}/track/publish-slug?productId=${productId}&platformId=<?php echo $stPlatformId; ?>`, headerOptions)
 			.then(response => response.json())
 			.then(trackerJson=>{
 				st_selectedProducts[productId]=trackerJson.trackerId;
