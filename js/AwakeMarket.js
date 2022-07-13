@@ -159,7 +159,7 @@ function loadProduct(productId, successCB, failureCB){
 	if(typeof fingerprintExcludeOptions!== 'undefined'){
 		fetchProduct(productId, successCB, failureCB);
 	}else{
-		am_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", function(){ensureFingerprint2(productId, successCB, failureCB);});
+		am_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", function(){ensureFingerprint2(productId, successCB, failureCB);});
 	}
 }
 

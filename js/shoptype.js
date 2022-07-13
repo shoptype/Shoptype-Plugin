@@ -186,7 +186,7 @@ class STPlatform {
       return this.productsCache[productId];
     }
     if(typeof fingerprintExcludeOptions=== 'undefined'){
-      st_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", ()=>{this.product(productId, callback, tid);});
+      st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", ()=>{this.product(productId, callback, tid);});
     }else{
       getDeviceId().then(deviceId =>{       
         return STUtils.request(this.endpoints.products.product(productId, deviceId, tid), (product)=>{ 
@@ -244,7 +244,7 @@ class STPlatform {
 
   createCheckout(callback, cartId=this.cartId){
     if(typeof fingerprintExcludeOptions=== 'undefined'){
-      STUtils.st_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", ()=>this.createCheckout(callback, cartId));
+      STUtils.st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", ()=>this.createCheckout(callback, cartId));
     }else{
       getDeviceId()
       .then(deviceId =>{
@@ -358,7 +358,7 @@ class STUser {
 
   static sendUserEvent(tid){
     if(typeof fingerprintExcludeOptions=== 'undefined'){
-      STUtils.st_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", ()=>{this.sendUserEvent(tid)});
+      STUtils.st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", ()=>{this.sendUserEvent(tid)});
     }else{
       getDeviceId()
       .then(deviceId =>{

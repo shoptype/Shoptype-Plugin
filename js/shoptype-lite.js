@@ -125,7 +125,7 @@ function sendUserEvent(callback){
 		}
 	}else{
 		if(typeof fingerprintExcludeOptions=== 'undefined'){
-			st_loadScript("https://shoptype-scripts.s3.amazonaws.com/triggerUserEvent.js", function(){sendUserEvent(callback);});
+			st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", function(){sendUserEvent(callback);});
 		}else{
 			getDeviceId().then(
 				deviceId =>{
