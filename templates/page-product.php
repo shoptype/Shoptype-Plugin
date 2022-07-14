@@ -157,7 +157,7 @@ get_header();
 														<a class="btn btn-standard am-product-add-cart-btn" href="javascript:void()" role="button" onclick="addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</a>
 													</div>
 												</div>
-												<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
+												<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="shoptype_UI.showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
 												<!-- <div class="product-spec">
 											<h4>specs</h4>
 											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae commodi dolorem voluptate quisquam, quasi illo iste mollitia ex maiores facilis reprehenderit ipsa quod veritatis. Animi, eaque ipsa! Nihil, mollitia nisi?</p>

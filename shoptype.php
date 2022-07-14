@@ -225,6 +225,7 @@ function awakenthemarket(){
 		document.addEventListener("ShoptypeUILoaded", ()=>{
 			shoptype_UI.setProductUrl("<?php echo $productUrl ?>");
 			shoptype_UI.setLoginUrl("<?php echo $loginUrl ?>");
+			shoptype_UI.setPlatform("<?php echo $stPlatformId ?>");
 			document.addEventListener("cartQuantityChanged", (e)=>{document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count});
 			if(typeof awakenTheMarket === 'function'){
 				awakenTheMarket();
@@ -645,7 +646,6 @@ add_action('admin_init', 'coseller_new_role');
 //define hooks for ajax
 
 require_once(ST__PLUGIN_DIR.'/shortcodes/products.php');
-require_once(ST__PLUGIN_DIR.'/shortcodes/cosellers.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/brands.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
 require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');

@@ -319,7 +319,7 @@ new Shoptype_Settings();
 
 function shoptypeSettings() {
     global $stBackendUrl;
-    $stBackendUrl = "https://backend.shoptype.com";
+    $stBackendUrl = "https://dev-backend.shoptype.com";
 	global $stPlatformId;
 	$stPlatformId = get_option('platformID');
 	global $stVendorId;

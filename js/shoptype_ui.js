@@ -2,6 +2,8 @@ class ShoptypeUI{
 	#productUrl = null;
 	#stLoginUrl = null;
 	#platformId = null;
+	#userTId = null;
+	#cosellerTId = null;
 	#rid = null;
 	constructor(){
 		this.currentUrl = new URL(window.location);
@@ -33,6 +35,10 @@ class ShoptypeUI{
 
 	setPlatform(platformId){
 		this.#platformId = platformId;
+		if(this.user){
+			this.user.setPlatform(this.#platformId);
+			this.setupShareUrl();
+		}
 	}
 
 	setRefferId(rid){
@@ -50,7 +56,42 @@ class ShoptypeUI{
 
 		if(stToken && stToken!=""){
 			this.user = new STUser(stToken);
+			if(this.#platformId!=null){
+				this.user.setPlatform(this.#platformId);
+			}
 		}
+		this.setupShareUrl();
+	}
+
+	setupShareUrl(){
+		const { history, location } = window;
+		const { search } = location;
+		var thisUrl = new URL(location);
+		this.#cosellerTId = sessionStorage["st-ctid"];
+		this.#userTId = sessionStorage["st-utid"];
+		STUser.sendUserEvent(this.#cosellerTId, this.#platformId);
+		var param_tid = thisUrl.searchParams.get("tid");
+		if(param_tid != this.#userTId && param_tid!="" && param_tid!=null){
+			sessionStorage["st-ctid"]=param_tid;
+		}
+
+		if(!this.#userTId && this.user){
+			this.user.getNetworkTracker(location.href)
+			.then(tracker=>{
+				if(tracker.trackerId){
+					sessionStorage["st-utid"] = tracker.trackerId;
+					this.#userTId = sessionStorage["st-utid"];				
+				}
+			});
+		}
+
+		var newUrl = ShoptypeUI.replaceUrlParam(location.href, "tid", this.#userTId);
+		history.replaceState({}, '', newUrl);
+	}
+
+	sendViewEvent(platformId){
+		this.#platformId = platformId;
+		STUser.sendUserEvent(this.#cosellerTId, this.#platformId);
 	}
 
 	removeAccessTokenFromUrl() {
@@ -196,6 +237,19 @@ class ShoptypeUI{
 
 	static hideMessage(closeBtn){
 		closeBtn.parentElement.remove();
+	}
+
+	static replaceUrlParam(url, paramName, paramValue)
+	{
+	    if (paramValue == null) {
+	        paramValue = '';
+	    }
+	    var pattern = new RegExp('\\b('+paramName+'=).*?(&|#|$)');
+	    if (url.search(pattern)>=0) {
+	        return url.replace(pattern,'$1' + paramValue + '$2');
+	    }
+	    url = url.replace(/[?#]$/,'');
+	    return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue;
 	}
 }
 

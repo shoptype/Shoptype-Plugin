@@ -283,10 +283,10 @@ class STPlatform {
 class STUser {
   #token = null;
   #platformId = null;
-  
+  #sessionCTid = null;
+
   constructor(token) {
     this.#token = token;
-    this.#platformId = platformId;
     this.endpoints = {
       user: {
         me: () => {
@@ -333,9 +333,11 @@ class STUser {
       }
     }
   }
+
   setPlatform(platformId){
     this.#platformId = platformId;
   }
+
   getTracket(productId){
     return STUtils.request(this.endpoints.user.productTracker(productId));
   }
@@ -356,9 +358,9 @@ class STUser {
     return STUtils.request(this.endpoints.user.referral());
   }
 
-  static sendUserEvent(tid){
+  static sendUserEvent(tid, platformId = null){
     if(typeof fingerprintExcludeOptions=== 'undefined'){
-      STUtils.st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", ()=>{this.sendUserEvent(tid)});
+      STUtils.st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", ()=>{this.sendUserEvent(tid,platformId)});
     }else{
       getDeviceId()
       .then(deviceId =>{
@@ -366,13 +368,10 @@ class STUser {
           "device_id": deviceId,
           "url": window.location.href,
           "tracker_id": tid,
+          "platform_id":platformId,
           "referrer": window.location.host
         };
-        if(!tid){
-          postBody["tracker_id"] = tid;
-        }else{
-          postBody['platform_id']="";
-        }
+
         var endpoint = {
           resource: '/track/user-event',
           body: postBody,
@@ -385,7 +384,7 @@ class STUser {
 }
 
 class STUtils{
-  static backendUrl ='https://backend.shoptype.com';
+  static backendUrl ='https://dev-backend.shoptype.com';
   
   static request(endpoint = {},callback=null) {
     if(endpoint.header){
@@ -393,7 +392,7 @@ class STUtils{
     }else{
       endpoint.header={'Content-Type':'application/json'};
     }
-    return fetch(`https://backend.shoptype.com${endpoint.resource}`, {
+    return fetch(`https://dev-backend.shoptype.com${endpoint.resource}`, {
       method: endpoint?.method,
       headers: endpoint?.header,
       body: endpoint?.body ? JSON.stringify(endpoint.body) : null,
