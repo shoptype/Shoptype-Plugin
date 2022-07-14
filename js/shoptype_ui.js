@@ -127,6 +127,7 @@ class ShoptypeUI{
 		}
 		st_platform.addToCart(productId, variantId, quantity)
 			.then(cartJson=>{
+				this.stHideLoader();
 				if(cartJson.cart_lines){
 					ShoptypeUI.showSuccess( ShoptypeUI.pluralize(quantity, "item") + " added to cart")
 				}else{

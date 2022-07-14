@@ -29,9 +29,11 @@ try {
 		$vendorId = $st_product->catalogId;
 
 		try {
-			$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
-			$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
-			$groupSlug = strtolower($groupSlug);
+			if(isset($st_brand)){
+				$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
+				$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
+				$groupSlug = strtolower($groupSlug);
+			}
 		} catch (Exception $ex) {
 		}
 
@@ -154,7 +156,7 @@ get_header();
 														</div>
 													</div>
 													<div class="addButton-container">
-														<a class="btn btn-standard am-product-add-cart-btn" href="javascript:void()" role="button" onclick="addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</a>
+														<a class="btn btn-standard am-product-add-cart-btn" href="javascript:void()" role="button" onclick="shoptype_UI.addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</a>
 													</div>
 												</div>
 
@@ -173,6 +175,7 @@ get_header();
                                                     {?>
                                                 <button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="shoptype_UI.showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
 
+												<?php } ?>
 												<!-- <div class="product-spec">
 											<h4>specs</h4>
 											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae commodi dolorem voluptate quisquam, quasi illo iste mollitia ex maiores facilis reprehenderit ipsa quod veritatis. Animi, eaque ipsa! Nihil, mollitia nisi?</p>
@@ -269,14 +272,15 @@ get_header();
 				jQuery(".btn-plus").on("click", function() {
 				var now = jQuery(".add-box > div > input").val();
 				if (jQuery.isNumeric(now)) {
-					if(parseInt(now)<varientquntity){
+					if(parseInt(now)<variantquntity){
 						console.log(now); jQuery(".add-box > div > input").val(parseInt(now) + 1);
 					}
 				} else {
 					jQuery(".add-box > div > input").val("1");
 				}
 			});
-
+			varientChang();
+			novarientproduct();
 			$(".tab_content").hide();
 			$(".tab_content:first").show();
 
@@ -315,110 +319,101 @@ get_header();
 <script>
 	const product = <?php echo $result; ?>;
 
-	var productjson = product.products;
-	productjson = productjson[0];
-	productjson = productjson['variants'];
+	var variantsJson = product.products[0].variants;
 	var json = {};
-	var varientquntity;
-function novarientproduct()
-{
-	var varients = document.getElementsByClassName("product-option-select");
-		for (var i = 0; i < varients.length; i++) {
-					json[varients[i].getAttribute('id')] = varients[i].value;
-		}
-		for (var key in productjson) {
-			
-				var varientquntity=productjson[key]['quantity'];
-				document.getElementById("quantity").max =varientquntity;
+	var variantquntity;
+	function novarientproduct()
+	{
+		var varients = document.getElementsByClassName("product-option-select");
+			for (var i = 0; i < varients.length; i++) {
+				json[varients[i].getAttribute('id')] = varients[i].value;
+			}
+			for (var key in variantsJson) {
 				
-				if(varientquntity<=0)
-				{
-					const addtocart = document.getElementsByClassName("addToCart-container");
-					const addtocartbtn = document.getElementsByClassName("am-product-add-cart-btn");
-					addtocart[0].style.opacity='60%';
-					document.getElementById("quantity").max =1;
-					document.getElementById("quantity").disabled = true;
-					addtocartbtn[0].style.pointerEvents = "none";
-				
-					jQuery("<p style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'>Sold Out</p>").insertAfter(".addToCart-container");
-						
-					jQuery('.am-product-add-cart-btn').on('click', function(e) {
-					e.preventDefault();
-					jQuery(this).off("click").attr('href', "javascript: void(0);");
-				//add .off() if you don't want to trigger any event associated with this link
-				});
-				}
-			
-
-
-}
+					var variantquntity=variantsJson[key]['quantity'];
+					document.getElementById("quantity").max =variantquntity;
+					
+					if(variantquntity<=0)
+					{
+						const addtocart = document.getElementsByClassName("addToCart-container");
+						const addtocartbtn = document.getElementsByClassName("am-product-add-cart-btn");
+						addtocart[0].style.opacity='60%';
+						document.getElementById("quantity").max =1;
+						document.getElementById("quantity").disabled = true;
+						addtocartbtn[0].style.pointerEvents = "none";
+					
+						jQuery("<p style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'>Sold Out</p>").insertAfter(".addToCart-container");
+							
+						jQuery('.am-product-add-cart-btn').on('click', function(e) {
+						e.preventDefault();
+						jQuery(this).off("click").attr('href', "javascript: void(0);");
+					//add .off() if you don't want to trigger any event associated with this link
+					});
+					}
+	}
 
 }
 	function varientChang() {
+		var variantSelected = false;
 		var varients = document.getElementsByClassName("product-option-select");
+		var addtocartbtn = document.querySelector(".am-product-add-cart-btn");
+		var addtocart = document.querySelector(".addToCart-container");
 		for (var i = 0; i < varients.length; i++) {
-					json[varients[i].getAttribute('id')] = varients[i].value;
+			json[varients[i].getAttribute('id')] = varients[i].value;
 		}
 		$(".onadd-box > div > input").val(1);
-		for (var key in productjson) {
-			var obj1 = productjson[key]['variantNameValue'];
-			if (JSON.stringify(obj1) === JSON.stringify(json)) {
-				var varientid = productjson[key]['id'];
-				var productprice = productjson[key]['discountedPrice'];
-				varientquntity=productjson[key]['quantity'];
-				document.getElementById("quantity").max =varientquntity;
-//				jQuery(".btn-plus").on("click", function() {
-//				var now = jQuery(".add-box > div > input").val();
-//				if (jQuery.isNumeric(now)) {
-//					if(parseInt(now)<varientquntity){
-//						jQuery(".add-box > div > input").val(parseInt(now) + 1);
-//					}
-//				} else {
-//					jQuery(".add-box > div > input").val("1");
-//				}
-//			});
-				if(varientquntity<=0)
+		for (var key in variantsJson) {
+			var obj1 = variantsJson[key]['variantNameValue'];
+			if (_.isEqual(obj1,json)) {
+				variantSelected = true;
+				var productprice = variantsJson[key]['discountedPrice'];
+				variantquntity=variantsJson[key]['quantity'];
+				document.getElementById("quantity").max =variantquntity;
+
+				if(variantquntity<=0)
 				{
-					const addtocart = document.getElementsByClassName("addToCart-container");
-					const addtocartbtn = document.getElementsByClassName("am-product-add-cart-btn");
-					addtocart[0].style.opacity='60%';
-					document.getElementById("quantity").max =1;
-					document.getElementById("quantity").disabled = true;
-					addtocartbtn[0].style.pointerEvents = "none";
-				
-					jQuery("<p style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'> Sold Out</p>").insertAfter(".addToCart-container");
-						
-					jQuery('.am-product-add-cart-btn').on('click', function(e) {
-					e.preventDefault();
-					jQuery(this).off("click").attr('href', "javascript: void(0);");
-				//add .off() if you don't want to trigger any event associated with this link
-				});
+					variantSoldOut(addtocart,addtocartbtn);
+				}else{
+					variantAvailable(addtocart,addtocartbtn);
 				}
 				
-				
-				if (productjson[key].hasOwnProperty('primaryImageSrc')) {
-					var imagesrc = productjson[key]['primaryImageSrc'];
+				if (variantsJson[key].hasOwnProperty('primaryImageSrc')) {
+					var imagesrc = variantsJson[key]['primaryImageSrc'];
 					imagesrc = imagesrc['imageSrc']
 
-					var productimage = document.getElementsByClassName("am-product-image");
+					var productimage = document.querySelector(".am-product-image");
 					for (var i = 0; i < productimage.length; i++) {
-						productimage[i].src(imagesrc);
+						productimage.src(imagesrc);
 					}
 				}
-				var addtocart = document.getElementsByClassName("am-product-add-cart-btn");
-				for (var i = 0; i < addtocart.length; i++) {
-					addtocart[i].setAttribute("variantid", varientid);
-				}
-				document.getElementById("productprice").innerHTML = productprice;
 
+				addtocartbtn.setAttribute("variantid", variantsJson[key]['id']);
+				document.getElementById("productprice").innerHTML = productprice;
 			}
 		}
-
-
+		if(!variantSelected){
+			variantSoldOut(addtocart,addtocartbtn);
+			addtocartbtn.setAttribute("variantid", "soldout");
+		}
 	}
-	varientChang();
-	novarientproduct();
-	window.onload =novarientproduct;
+
+	function variantSoldOut(container, button){
+		container.style.opacity='60%';
+		document.getElementById("quantity").max =1;
+		document.getElementById("quantity").disabled = true;
+		button.style.pointerEvents = "none";
+		if (!document.getElementById("soldOut")) {
+			jQuery("<p id='soldOut' style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'> Sold Out</p>").insertAfter(".addToCart-container");
+		}
+	}
+
+	function variantAvailable(container, button){
+		container.style.opacity='';
+		document.getElementById("quantity").disabled = false;
+		button.style.pointerEvents = "";
+		document.getElementById('soldOut').remove();
+	}
+	
 </script>
 
 

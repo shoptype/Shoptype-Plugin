@@ -26,6 +26,7 @@ try {
     "X-Shoptype-PlatformId: ".$stPlatformId
   );
   $ch = curl_init();
+  
   curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart/$cartId");
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -57,8 +58,10 @@ get_header(null);
                 <h2 class="st-cart-product-title"><?php echo $value->name ?></h2>
                 <div>
                   <div id="st-cart-product-var" class="st-cart-product-var">
+          <?php if (isset($value->variant_name_value)) {?>
                     <div class="st-cart-product-var-title">Variant:</div>
                     <div class="st-cart-product-var-val"><?php echo $value->variant_name_value->title ?></div>
+          <?php } ?>
                   </div>
                 </div>
               </div>

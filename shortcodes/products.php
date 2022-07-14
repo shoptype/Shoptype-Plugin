@@ -21,7 +21,7 @@ function renderAwakeProducts($atts = []){
     if(isset($atts['my_shop']) && !empty($atts['my_shop'])) $my_shop = "myshop=".$atts['my_shop']; ?>
 
     <div count="<?php echo $perRow; ?>" <?php echo $my_shop; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
-        <div class="product-container single-product <?php echo $atts['product_classes']; ?>" style="display: none;">
+        <div class="product-container single-product" style="display: none;">
             <div class="product-image">
                 <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
                     <img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">
