@@ -20,7 +20,7 @@ class Shoptype_Settings {
         $callback = array( $this, 'settings_page_content' );
         add_menu_page( $page_title, $menu_title, $capability, $slug, $callback );
         //add_submenu_page($page_title, $menu_title, $capability,$slug , $callback,$slug );
-	
+    
         flush_rewrite_rules();
     
     }
@@ -166,14 +166,15 @@ class Shoptype_Settings {
         register_setting("shoptype_settings", "platformID");
         register_setting("shoptype_settings", "vendorId");
         register_setting("shoptype_settings", "networkId");
-		register_setting("shoptype_settings", "refCode");
-		register_setting("shoptype_settings", "cartCountMatch");
+        register_setting("shoptype_settings", "refCode");
+        register_setting("shoptype_settings", "cartCountMatch");
         register_setting("shoptype_settings", "loginUrl");
         register_setting("shoptype_settings", "stDefaultCurrency");
         register_setting("shoptype_settings", "ServerName");
         register_setting("shoptype_settings", "myshopURL");
         register_setting("shoptype_settings", "productsInGroup");
-        $serverName=$_SERVER['SERVER_NAME'];
+        register_setting("shoptype_settings", "manage_coseller");
+        
         
 
 
@@ -182,18 +183,19 @@ class Shoptype_Settings {
         add_settings_field("platformID", "ST Platform ID: ", array($this, 'field_callback'), "shoptype_settings", 'shoptype_settings', array("id"=>"platformID","name"=>"ST Platform ID"));
         add_settings_field("vendorId", "ST Vendor ID: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"vendorId","name"=>"ST Vendor ID") );
         add_settings_field("networkId", "ST Network ID: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"networkId","name"=>"ST Network ID") );
-		add_settings_field("refCode", "ST Referral Code: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"refCode","name"=>"ST Referral Code") );
+        add_settings_field("refCode", "ST Referral Code: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"refCode","name"=>"ST Referral Code") );
         add_settings_field("cartCountMatch", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );
         add_settings_field("loginUrl", "ST Login Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"loginUrl","name"=>"ST Login Page URL") );
         add_settings_field("stDefaultCurrency", "ST Default Currency: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stDefaultCurrency","name"=>"ST Default Currency") );
-        add_settings_field("ServerName", "ServerName: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"ServerName","name"=>"ServerName","value"=>"values123") );                        
+                           
         add_settings_section( 'buddypress_groups_products', 'Buddypress group settings', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("productsInGroup", "Display products in Buddypress groups", array( $this, 'sandbox_checkbox_element_callback' ), "shoptype_settings", "buddypress_groups_products", array("id"=>"productsInGroup","name"=>"productsInGroup"));               
         add_settings_section( 'channel_champion', 'Channel Champion', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("myshopUrl", "My Shop URL: ", array( $this, 'field_callback' ), "shoptype_settings", "channel_champion", array("id"=>"myshopURL","name"=>"My Shop URL:") );   
         
-        //Setting defult value for server name
-        update_option( 'ServerName',$serverName );
+        add_settings_section( 'manage_coseller_setting', 'Coseller manage setting', array( $this, 'section_callback' ), 'shoptype_settings' );
+        add_settings_field("manage_coseller", "Allow all user to cosell product", array( $this, 'manage_cosell_checkbox' ), "shoptype_settings", "manage_coseller_setting", array("id"=>"manage_coseller","name"=>"manage_coseller"));
+      
         
     }
     /* Create input fields*/
@@ -212,9 +214,14 @@ function sandbox_checkbox_element_callback() {
     $html .= '<label for="checkbox_example"> </label>';
 
     echo $html;
-    echo '<script>jQuery("#ServerName").prop("disabled", true);</script>';
         
     
+}
+function manage_cosell_checkbox()
+{
+    ?>
+    <input type="checkbox" name="manage_coseller" value="1" <?php checked(1, get_option('manage_coseller'), true); ?> />
+<?php
 }
 }
 
@@ -232,42 +239,42 @@ if ( ! empty( $options['checkbox_example'] ) ) {
  */
 function buddypress_custom_group_tab() {
 
-	// Avoid fatal errors when plugin is not available.
-	if ( ! function_exists( 'bp_core_new_subnav_item' ) ||
-		 ! function_exists( 'bp_is_single_item' ) ||
-		 ! function_exists( 'bp_is_groups_component' ) ||
-		 ! function_exists( 'bp_get_group_permalink' ) ) {
+    // Avoid fatal errors when plugin is not available.
+    if ( ! function_exists( 'bp_core_new_subnav_item' ) ||
+         ! function_exists( 'bp_is_single_item' ) ||
+         ! function_exists( 'bp_is_groups_component' ) ||
+         ! function_exists( 'bp_get_group_permalink' ) ) {
 
-		return;
+        return;
 
-	}
+    }
 
-	// Check if we are on group page.
-	if ( bp_is_groups_component() && bp_is_single_item() ) {
+    // Check if we are on group page.
+    if ( bp_is_groups_component() && bp_is_single_item() ) {
 
-		global $bp;
+        global $bp;
 
-		// Get current group page link.
-		$group_link = bp_get_group_permalink( $bp->groups->current_group );
+        // Get current group page link.
+        $group_link = bp_get_group_permalink( $bp->groups->current_group );
 
-		// Tab args.
-		$tab_args = array(
-			'name'                => esc_html__( 'Products', 'default' ),
-			'slug'                => 'products',
-			'screen_function'     => 'products_screen',
-			'position'            => 0,
-			'parent_url'          => $group_link,
-			'parent_slug'         => $bp->groups->current_group->slug,
-			'default_subnav_slug' => 'products',
-			'item_css_id'         => 'products-main',
-			'show_tab'			  => 'anyone',
-			'visibility'		  => 'public',
-			'user_has_access'	  => 'anyone',
-		);
+        // Tab args.
+        $tab_args = array(
+            'name'                => esc_html__( 'Products', 'default' ),
+            'slug'                => 'products',
+            'screen_function'     => 'products_screen',
+            'position'            => 0,
+            'parent_url'          => $group_link,
+            'parent_slug'         => $bp->groups->current_group->slug,
+            'default_subnav_slug' => 'products',
+            'item_css_id'         => 'products-main',
+            'show_tab'            => 'anyone',
+            'visibility'          => 'public',
+            'user_has_access'     => 'anyone',
+        );
 
-		// Add sub-tab.
-		bp_core_new_subnav_item( $tab_args, 'groups' );
-	}
+        // Add sub-tab.
+        bp_core_new_subnav_item( $tab_args, 'groups' );
+    }
 }
 
 add_action( 'bp_setup_nav', 'buddypress_custom_group_tab' );
@@ -276,26 +283,26 @@ add_action( 'bp_setup_nav', 'buddypress_custom_group_tab' );
  * Set template for new tab.
  */
 function products_screen() {
-	// Add title and content here - last is to call the members plugin.php template.
-	add_action( 'bp_template_title', 'custom_group_tab_title' );
-	add_action( 'bp_template_content', 'custom_group_tab_content' );
-	bp_core_load_template( 'buddypress/members/single/plugins' );
+    // Add title and content here - last is to call the members plugin.php template.
+    add_action( 'bp_template_title', 'custom_group_tab_title' );
+    add_action( 'bp_template_content', 'custom_group_tab_content' );
+    bp_core_load_template( 'buddypress/members/single/plugins' );
 }
 
 /**
  * Set title for custom tab.
  */
 function custom_group_tab_title() {
-	echo esc_html__( 'Products', 'default_content' );
+    echo esc_html__( 'Products', 'default_content' );
 }
 
 /**
  * Display content of custom tab.
  */
 function custom_group_tab_content() {
-	$currentGroup = bp_get_current_group_name();
-	$currentGroup = str_replace(" ", "%20", $currentGroup);
-	echo do_shortcode( '[awake_products for_listing="1" slider="0" tags="'.$currentGroup.'" imagesize="200x200" product_classes="groups-product single-product"]' );
+    $currentGroup = bp_get_current_group_name();
+    $currentGroup = str_replace(" ", "%20", $currentGroup);
+    echo do_shortcode( '[awake_products for_listing="1" slider="0" tags="'.$currentGroup.'" imagesize="200x200" product_classes="groups-product single-product"]' );
 
 }
 
@@ -306,7 +313,7 @@ function custom_group_tab_content() {
  * @return string
  */
 function buddyboss_groups_default_extension( $default_tab ) {
-	return 'products'; // Last part of the URL.
+    return 'products'; // Last part of the URL.
 }
 
 add_filter( 'bp_groups_default_extension', 'buddyboss_groups_default_extension', 10 );
@@ -320,14 +327,14 @@ new Shoptype_Settings();
 function shoptypeSettings() {
     global $stBackendUrl;
     $stBackendUrl = "https://backend.shoptype.com";
-	global $stPlatformId;
-	$stPlatformId = get_option('platformID');
-	global $stVendorId;
-	$stVendorId = get_option('vendorId');
-	global $stApiKey;
-	$stApiKey = get_option('shoptype_api_key');
-	global $stRefcode;
-	$stRefcode = get_option('refCode');
+    global $stPlatformId;
+    $stPlatformId = get_option('platformID');
+    global $stVendorId;
+    $stVendorId = get_option('vendorId');
+    global $stApiKey;
+    $stApiKey = get_option('shoptype_api_key');
+    global $stRefcode;
+    $stRefcode = get_option('refCode');
     global $cartCountMatch;
     $cartCountMatch = get_option('cartCountMatch');
     global $loginUrl;
@@ -338,8 +345,8 @@ function shoptypeSettings() {
     $productUrl = "/products/{{productId}}/?tid={{tid}}";
     global $brandUrl;
     $brandUrl = "/brands/{{brandId}}";
-	global $stCurrency;
-	$stCurrency["USD"] = "$";
+    global $stCurrency;
+    $stCurrency["USD"] = "$";
     $stCurrency["INR"] = "₹";
     global $productsInGroup;
     $productsInGroup = get_option('productsInGroup');
