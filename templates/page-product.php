@@ -157,7 +157,20 @@ get_header();
 														<a class="btn btn-standard am-product-add-cart-btn" href="javascript:void()" role="button" onclick="addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</a>
 													</div>
 												</div>
-												<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
+												<?php 
+                                                    if(is_user_logged_in())
+                                                    {
+                                                    $user = wp_get_current_user();
+                                                    $user = get_userdata( $user->ID  );
+                                                    $iscoseller=in_array( 'coseller', (array) $user->roles); 
+                                                    }
+                                                    else
+                                                    {
+                                                        $iscoseller=false;
+                                                    }
+                                                if(get_option('manage_coseller')== 1 || $iscoseller || current_user_can( 'manage_options' )) 
+                                                    {?>
+                                                <button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
 												<!-- <div class="product-spec">
 											<h4>specs</h4>
 											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae commodi dolorem voluptate quisquam, quasi illo iste mollitia ex maiores facilis reprehenderit ipsa quod veritatis. Animi, eaque ipsa! Nihil, mollitia nisi?</p>
@@ -240,8 +253,8 @@ get_header();
 
 		$(document).ready(function() {
 			//-- Click on QUANTITY
-			$(".btn-minus").on("click", function() {
-				var now = $(".add-box > div > input").val();
+			$(".btn-minus").("click", function() {
+				var now = $(".onadd-box > div > input").val();
 				if ($.isNumeric(now)) {
 					if (parseInt(now) - 1 > 0) {
 						now--;
@@ -344,6 +357,7 @@ function novarientproduct()
 		for (var i = 0; i < varients.length; i++) {
 					json[varients[i].getAttribute('id')] = varients[i].value;
 		}
+		$(".onadd-box > div > input").val(1);
 		for (var key in productjson) {
 			var obj1 = productjson[key]['variantNameValue'];
 			if (JSON.stringify(obj1) === JSON.stringify(json)) {
