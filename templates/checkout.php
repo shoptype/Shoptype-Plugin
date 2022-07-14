@@ -10,6 +10,7 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
 wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
@@ -28,7 +29,7 @@ if($checkoutId == "new"){
 	$productId = $_GET["productid"];
 	$variantId = $_GET["variantid"];
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/cart");
+	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart");
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS,"{}");
@@ -43,7 +44,7 @@ if($checkoutId == "new"){
 			'product_variant_id' => $variantId,
 			'quantity' => 1
 		);
-		curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/cart/{$st_cart->id}/add");
+		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart/{$st_cart->id}/add");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
@@ -63,7 +64,7 @@ if($checkoutId == "new"){
 }else{
 	try {
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/checkout/$checkoutId");
+		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/checkout/$checkoutId");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
@@ -96,7 +97,7 @@ get_header(null);
 			<div class="st-chkout-billing-title">BILLING DETAILS</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Name *</div>
-				<input type="text" name="name" class="st-chkout-billing-fld-val" value="<?php echo $st_checkout->shipping_address->name ?>" onchange="updateAddress()" required>
+				<input type="text" name="name" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->name;} ?>" onchange="updateAddress()" required>
 			</div>
 			<div class="st-chkout-billing-fld" style="display: none;">
 				<div class="st-chkout-billing-fld-name">Last Name</div>
@@ -104,36 +105,36 @@ get_header(null);
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Street Address *</div>
-				<input type="text" name="address" class="st-chkout-billing-fld-val" value="<?php echo $st_checkout->shipping_address->street1 ?>"	required onchange="updateAddress()">
+				<input type="text" name="address" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->street1;} ?>"	required onchange="updateAddress()">
 				<input type="text" name="address2" class="st-chkout-billing-fld-val" onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Town / City *</div>
-				<input type="text" name="city" class="st-chkout-billing-fld-val" value="<?php echo $st_checkout->shipping_address->city ?>"	required onchange="updateAddress()">
+				<input type="text" name="city" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->city;} ?>"	required onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">State *</div>
-				<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" value="<?php echo $st_checkout->shipping_address->state ?>"	required onchange="updateAddress()">
+				<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->state;} ?>"	required onchange="updateAddress()">
 					 <option value="">Select state</option>
 				</select>
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Country *</div>
-				<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" value="<?php echo $st_checkout->shipping_address->country ?>"	required onchange="updateAddress()">
+				<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
 					 <option value="">Select Country</option>
 				</select>
 			</div>			
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">PIN *</div>
-				<input type="text" name="pincode" class="st-chkout-billing-fld-val" value="<?php echo $st_checkout->shipping_address->postalCode ?>"	required onchange="updateAddress()">
+				<input type="text" name="pincode" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->postalCode;} ?>"	required onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Phone</div>
-				<input type="text" name="phone" class="st-chkout-billing-fld-val" value="<?php echo $st_checkout->shipping_address->phone ?>"	onchange="updateAddress()">
+				<input type="text" name="phone" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->phone;} ?>"	onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Email Address *</div>
-				<input type="text" name="email" class="st-chkout-billing-fld-val" value="<?php echo $st_checkout->shipping_address->email ?>"	required onchange="updateAddress()">
+				<input type="text" name="email" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->email;} ?>"	required onchange="updateAddress()">
 			</div>
 		</form>
 		</div>
@@ -158,7 +159,7 @@ get_header(null);
 						<?php foreach($items->cart_lines as $key=>$product): ?>
 						<div id="st-chkout-product" class="st-chkout-product">
 							<div class="div-block-18">
-								<div class="st-chkout-product-title"><?php echo "{$product->name} - {$product->variant_name_value->title}" ?> <span class="st-chkout-product-qty">x <?php echo $product->quantity ?></span></div>
+								<div class="st-chkout-product-title"><?php echo "{$product->name}"; if(isset($product->variant_name_value)){ echo "- {$product->variant_name_value->title}";} ?> <span class="st-chkout-product-qty">x <?php echo $product->quantity ?></span></div>
 							</div>
 							<div class="st-chkout-product-tot"><?php echo $prodCurrency.($product->quantity*$product->price->amount) ?></div>
 						</div>
