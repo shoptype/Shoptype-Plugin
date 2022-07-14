@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 //include required files
-include plugin_dir_path( __FILE__ ).'/shortcodes/coselluserlist.php';
 
 /* Initialisation of the shopype JS and adding the cart+profile buttons to the header */
 
@@ -242,10 +241,16 @@ add_action('wp_head', 'awakenthemarket');
 
 /* Shoptype login */
 function shoptype_login(){
-	$token = $_GET['token'];
+if(isset($_GET['token'])){
+		$token = $_GET['token'];
+	}
+	else
+	{
+		return;
+	}
 	global $stBackendUrl;
 	if (is_user_logged_in()) {return;}
-	if( empty( $token ) ) {return;}
+
 	
 	try {
 		$ch = curl_init();
@@ -578,12 +583,12 @@ function ecs_add_post_state( $post_states, $post ) {
 	return $post_states;
 }
 //Admin notice for buddypress requirement
-/*	if ( ! class_exists( 'BuddyPress' ) ) {
-		add_action( 'admin_notices', function() {
-			echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'Shoptype requires BuddyPress to be installed and active. You can download %s here.', 'Shoptype' ), '<a href="https://wordpress.org/plugins/buddypress/" target="_blank">BuddyPress</a>' ) . '</strong></p></div>';
-		} );
-		return;
-}*/
+// 	if ( ! class_exists( 'BuddyPress' ) ) {
+// 		add_action( 'admin_notices', function() {
+// 			echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'Shoptype requires BuddyPress to be installed and active. You can download %s here.', 'Shoptype' ), '<a href="https://wordpress.org/plugins/buddypress/" target="_blank">BuddyPress</a>' ) . '</strong></p></div>';
+// 		} );
+// 		return;
+// }
 //Add custom Search templet templates/search.php
 add_filter('template_include','custom_search_template', 10, 3);
 
@@ -592,14 +597,14 @@ function custom_search_template($template){
     if (!$wp_query->is_search)
         return $template;
     
-	$search_template = untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/templates/search.php';
+	$search_template = untrailingslashit( plugin_dir_path( __FILE__ ) . '/templates/search.php');
     return $search_template;
 
 } 
 
 define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-remove_action( 'woocommerce_after_mini_cart', 'action_woocommerce_after_mini_cart', 10, 0 );
+ remove_action( 'woocommerce_after_mini_cart', 'action_woocommerce_after_mini_cart', 10, 0 );
 add_action( 'woocommerce_after_mini_cart', get_template_part(ST__PLUGIN_DIR.'/templates/mini-cart.php'), 10, 0 );
 
 //Add snipet to manage cosell user
@@ -617,13 +622,15 @@ function register_cosell_user() {
 
 
 function manage_cosell_users() {
+    global $stRefcode;
+	include (ST__PLUGIN_DIR.'shortcodes/coselluserlist.php');
     echo '<div class="wrap">';
         echo '<h2>Manage Cosell Users</h2><div style="margin-top:50px;margin-bottom:50px">';
 		if($stRefcode=='')
 		{
-			$stRefcode=0;
+			 $stRefcode=0;
 		}
-		coselluserlist($stRefcode);
+		coselluserlists($stRefcode);
     echo '</div></div>';
 } 
 
@@ -644,12 +651,12 @@ function coseller_new_role() {
 add_action('admin_init', 'coseller_new_role');
 //define hooks for ajax
 
-require_once(ST__PLUGIN_DIR.'/shortcodes/products.php');
-require_once(ST__PLUGIN_DIR.'/shortcodes/cosellers.php');
-require_once(ST__PLUGIN_DIR.'/shortcodes/brands.php');
-require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
-require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');
-require_once(ST__PLUGIN_DIR.'/admin_settings.php');
-require_once(ST__PLUGIN_DIR.'/my_shop.php');
-require_once(ST__PLUGIN_DIR.'/my_st_dashboard.php');
-require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');
+ require_once(ST__PLUGIN_DIR.'/shortcodes/products.php');
+ require_once(ST__PLUGIN_DIR.'/shortcodes/cosellers.php');
+ require_once(ST__PLUGIN_DIR.'/shortcodes/brands.php');
+ require_once(ST__PLUGIN_DIR.'/shortcodes/communities.php');
+ require_once(ST__PLUGIN_DIR.'/shortcodes/editors_picks.php');
+ require_once(ST__PLUGIN_DIR.'/admin_settings.php');
+ require_once(ST__PLUGIN_DIR.'/my_shop.php');
+ require_once(ST__PLUGIN_DIR.'/my_st_dashboard.php');
+ require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');
