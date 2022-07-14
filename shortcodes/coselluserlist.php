@@ -1,5 +1,7 @@
 <?php
-
+function coselluserlists($stRefcode)
+{
+   
 if( isset($_POST['id']) && isset($_POST['name'])  ){
     
     global $wpdb;
@@ -14,23 +16,24 @@ if( isset($_POST['id']) && isset($_POST['name'])  ){
      $user_id=$_POST['id'];
      $user_role='a:2:{s:10:"subscriber";b:1;s:8:"coseller";b:1;}';
      
-     $post_id =$wpdb->query($wpdb->prepare("UPDATE wp_users SET display_name = %s WHERE ID = %s;",$user_role,$user_id));
-     
 
     //$query='UPDATE '.$table_name.' SET meta_value="s:10:"subscriber";b:1;s:8:"coseller" WHERE userid= '.$user_id.' AND meta_key="wp_capabilities"';
      $post_id =$wpdb->query($wpdb->prepare("UPDATE wp_usermeta SET meta_value= %s WHERE user_id= %s AND meta_key='wp_capabilities'",$user_role,$user_id));
      //$post_id = $wpdb->get_results("SELECT meta_value FROM wp_usermeta WHERE (meta_key = 'wp_capabilities' AND userid = '2')");
      //$post_id = $wpdb->get_results("");
      //print_r($query);
-     print_r($post_id); 
+
      unset($_POST);
      exit;
-   }
-function coselluserlist($stRefcode)
-{?>
+   } ?>
     <ul id="ulfriends">
     
  <?php 
+ 
+ 
+ //ragister setting for mail
+
+
 
     $no=120;// total no of author to display
 
@@ -45,7 +48,8 @@ function coselluserlist($stRefcode)
  $user_query = new WP_User_Query( array('number' => $no, 'offset' => $offset ) );
        if ( ! empty( $user_query->results ) ) {
         ?>
-        <div id="inviteall" class="page-title-action" onclick="sendInviteAll()" style="width: fit-content;">Invite All</div>
+          <h2>User List</h2>
+        <div id="inviteall" class="page-title-action button button-primary" onclick="sendInviteAll()" style="width: fit-content;cursor:pointer;">Invite All</div>
         <table class="wp-list-table widefat fixed striped table-view-list users">
     <thead>
     <tr>
@@ -97,6 +101,8 @@ function coselluserlist($stRefcode)
  ?>           
 </tbody>
 </table>
+
+
 <style>
     .page-numbers
     {
@@ -120,20 +126,23 @@ function coselluserlist($stRefcode)
                 )); ?></div>
 
 <?php
-}
-function addCoseller()
-{
 
-}
-?><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+//echo '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>'
+?>
+
+
+<?php
+$key='my-admin-slug';
+$pageurl=$_SERVER['REQUEST_URI'];    
+if(strpos($pageurl, $key) == true)
+{ ?>
+
 <script>
-
+   
 function sendMail(id,name,mail,refcode) {
-    var link="<?php echo plugin_dir_path( __FILE__ ).'/shortcodes/coselluserlist.php' ?>"
     jQuery('#invite-'+id).html('wait...');
   jQuery.ajax({
-    url:link,
-   type: 'post',
+    type: 'post',
    data: {id:id,name:name,mail:mail,refcode:refcode},
    success: function(){
     jQuery('#invite-'+id).html('success');
@@ -146,6 +155,7 @@ function sendMail(id,name,mail,refcode) {
 
 function sendInviteAll()
 {
+   
     
     var inputs = document.querySelectorAll('.inviteallcheck');   
         for (var i = 0; i < inputs.length; i++) {   
@@ -159,3 +169,7 @@ function sendInviteAll()
         }   
 }
 </script>
+
+<?php }
+}?>
+
