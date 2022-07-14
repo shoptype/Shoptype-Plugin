@@ -384,7 +384,7 @@ class STUser {
 }
 
 class STUtils{
-  static backendUrl ='https://dev-backend.shoptype.com';
+  static backendUrl ='https://backend.shoptype.com';
   
   static request(endpoint = {},callback=null) {
     if(endpoint.header){
@@ -392,7 +392,7 @@ class STUtils{
     }else{
       endpoint.header={'Content-Type':'application/json'};
     }
-    return fetch(`https://dev-backend.shoptype.com${endpoint.resource}`, {
+    return fetch(`https://backend.shoptype.com${endpoint.resource}`, {
       method: endpoint?.method,
       headers: endpoint?.header,
       body: endpoint?.body ? JSON.stringify(endpoint.body) : null,
