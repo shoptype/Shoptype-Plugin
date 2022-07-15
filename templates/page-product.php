@@ -323,10 +323,11 @@ get_header();
 	var variantquntity;
 
 	function varientChang() {
-		var variantSelected = false;
+		
 		var varients = document.getElementsByClassName("product-option-select");
 		var addtocartbtn = document.querySelector(".am-product-add-cart-btn");
 		var addtocart = document.querySelector(".addToCart-container");
+		var variantSelected = (varients.length==0);
 		for (var i = 0; i < varients.length; i++) {
 			json[varients[i].getAttribute('id')] = varients[i].value;
 		}
