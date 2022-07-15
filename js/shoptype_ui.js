@@ -5,6 +5,7 @@ class ShoptypeUI{
 	#userTId = null;
 	#cosellerTId = null;
 	#rid = null;
+	#eventSent = false;
 	constructor(){
 		this.currentUrl = new URL(window.location);
 		this.st_Wraper = document.createElement("div");
@@ -37,8 +38,8 @@ class ShoptypeUI{
 		this.#platformId = platformId;
 		if(this.user){
 			this.user.setPlatform(this.#platformId);
-			this.setupShareUrl();
 		}
+		this.setupShareUrl();
 	}
 
 	setRefferId(rid){
@@ -69,12 +70,17 @@ class ShoptypeUI{
 		var thisUrl = new URL(location);
 		this.#cosellerTId = sessionStorage["st-ctid"];
 		this.#userTId = sessionStorage["st-utid"];
-		STUser.sendUserEvent(this.#cosellerTId, this.#platformId);
+		
 		var param_tid = thisUrl.searchParams.get("tid");
 		if(param_tid != this.#userTId && param_tid!="" && param_tid!=null){
 			sessionStorage["st-ctid"]=param_tid;
+			this.#cosellerTId = param_tid;
 		}
-
+		if(this.#cosellerTId || this.#platformId && (!this.#eventSent)){
+			STUser.sendUserEvent(this.#cosellerTId, this.#platformId);
+			this.#eventSent = true;
+		}
+		
 		if(!this.#userTId && this.user){
 			this.user.getNetworkTracker(location.href)
 			.then(tracker=>{

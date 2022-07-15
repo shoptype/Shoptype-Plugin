@@ -65,6 +65,7 @@ try {
 	}
 } catch (Exception $e) {
 }
+wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
 get_header();
 ?>
 <style>
@@ -125,20 +126,19 @@ get_header();
 													<?php if (count($st_product->options) > 0) {
 														foreach ($st_product->options as $optionName) {
 															if ($optionName->name != 'title') { ?>
-																<div class="product-option-text">
-																	<?php
-																	echo '<h4>' . $optionName->name . '</h4>';
-
-																	?>
-																</div>
-																<div class="custom-select">
-																	<div class="form-group">
-																		<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="varientChang()">
-																			<?php foreach ($optionName->values as $optionValue) {
-																				echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
-																			}
-																			?>
-																		</select>
+																<div>
+																	<div class="product-option-text">
+																		<h4> <?php echo "$optionName->name "; ?></h4>
+																	</div>
+																	<div class="custom-select">
+																		<div class="form-group">
+																			<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="varientChang()">
+																				<?php foreach ($optionName->values as $optionValue) {
+																					echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
+																				}
+																				?>
+																			</select>
+																		</div>
 																	</div>
 																</div>
 													<?php }
@@ -279,8 +279,7 @@ get_header();
 					jQuery(".add-box > div > input").val("1");
 				}
 			});
-			varientChang();
-			novarientproduct();
+
 			$(".tab_content").hide();
 			$(".tab_content:first").show();
 
@@ -322,37 +321,7 @@ get_header();
 	var variantsJson = product.products[0].variants;
 	var json = {};
 	var variantquntity;
-	function novarientproduct()
-	{
-		var varients = document.getElementsByClassName("product-option-select");
-			for (var i = 0; i < varients.length; i++) {
-				json[varients[i].getAttribute('id')] = varients[i].value;
-			}
-			for (var key in variantsJson) {
-				
-					var variantquntity=variantsJson[key]['quantity'];
-					document.getElementById("quantity").max =variantquntity;
-					
-					if(variantquntity<=0)
-					{
-						const addtocart = document.getElementsByClassName("addToCart-container");
-						const addtocartbtn = document.getElementsByClassName("am-product-add-cart-btn");
-						addtocart[0].style.opacity='60%';
-						document.getElementById("quantity").max =1;
-						document.getElementById("quantity").disabled = true;
-						addtocartbtn[0].style.pointerEvents = "none";
-					
-						jQuery("<p style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'>Sold Out</p>").insertAfter(".addToCart-container");
-							
-						jQuery('.am-product-add-cart-btn').on('click', function(e) {
-						e.preventDefault();
-						jQuery(this).off("click").attr('href', "javascript: void(0);");
-					//add .off() if you don't want to trigger any event associated with this link
-					});
-					}
-	}
 
-}
 	function varientChang() {
 		var variantSelected = false;
 		var varients = document.getElementsByClassName("product-option-select");
@@ -364,7 +333,7 @@ get_header();
 		$(".onadd-box > div > input").val(1);
 		for (var key in variantsJson) {
 			var obj1 = variantsJson[key]['variantNameValue'];
-			if (_.isEqual(obj1,json)) {
+			if (isVariantSame(obj1,json)) {
 				variantSelected = true;
 				var productprice = variantsJson[key]['discountedPrice'];
 				variantquntity=variantsJson[key]['quantity'];
@@ -413,7 +382,11 @@ get_header();
 		button.style.pointerEvents = "";
 		document.getElementById('soldOut').remove();
 	}
-	
+
+	function isVariantSame(variant1, variant2){
+		return Object.keys(variant1).every(key=>variant2.hasOwnProperty(key)&&variant2[key]===variant1[key]);
+	}
+	window.onload = varientChang;
 </script>
 
 
