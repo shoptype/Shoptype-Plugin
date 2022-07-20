@@ -367,11 +367,13 @@ class STUser {
         var postBody={
           "device_id": deviceId,
           "url": window.location.href,
-          "tracker_id": tid,
-          "platform_id":platformId,
           "referrer": window.location.host
         };
-
+    if(tid && tid!=""){
+      postBody["tracker_id"]=tid;
+    }else{
+        postBody["platform_id"]=platformId;
+    }
         var endpoint = {
           resource: '/track/user-event',
           body: postBody,

@@ -195,9 +195,10 @@ get_header(null);
 	</div>
 
 	<script type="text/javascript">
+		var ignoreEvents = true;
 		const testCheckout = <?php echo json_encode( $st_checkout ); ?>;
 		let st_checkoutId = "<?php echo $checkoutId ?>";
-		const new_cart_id = "<?php echo $st_cart->id ?>";
+		const new_cart_id = "<?php if(isset($st_cart)){echo $st_cart->id;} ?>";
 		const st_currSymb = "<?php echo $prodCurrency ?>";
 		function checkoutSetCountry(){
 			STUtils.countries()
@@ -263,8 +264,8 @@ get_header(null);
 				let cartShipSelect = document.getElementById("st-shipping-"+key);
 				removeOptions(cartShipSelect);
 				for (var i = 0; i < vendorCart.shipping_options.length; i++) {
-					var option = document.createElement("option");
 					var shipOption = vendorCart.shipping_options[i];
+					var option = document.createElement("option");
 					option.text = shipOption.method_title;
 					option.value = shipOption.method_key;
 					cartShipSelect.add(option);
@@ -272,6 +273,14 @@ get_header(null);
 						option.setAttribute("selected","");
 					}
 				}
+				if(!checkout.requires_shipping && vendorCart.shipping_options.length==0){
+					var option = document.createElement("option");
+					option.text = "Shipping Not Required";
+					option.value = "No Shipping";
+					option.setAttribute("selected","");
+					cartShipSelect.add(option);
+				}
+
 			});
 			document.querySelector(".st-chkout-cost").innerHTML = st_currSymb+checkout.sub_total.amount;
 			document.querySelector(".st-chkout-shipping-tot").innerHTML = st_currSymb+checkout.shipping.amount;
@@ -314,6 +323,14 @@ get_header(null);
 					shoptype_UI.stHideLoader();
 					if(checkoutJson.error){
 						ShoptypeUI.showError(checkoutJson.message);
+						var shippingSelect = document.querySelector(".st-chkout-products").getElementsByClassName("st-chkout-billing-fld-val");
+						for (let i = 0; i < shippingSelect.length; i++) {
+							removeOptions(shippingSelect[i]);
+							var option = document.createElement("option");
+							option.text = checkoutJson.message;
+							option.value = "";
+							shippingSelect[i].add(option);
+						}
 					}else{
 						updateStCheckout(checkoutJson);
 						shoptype_UI.stHideLoader();
@@ -322,15 +339,26 @@ get_header(null);
 		}
 		
 		function showPayment(){
-			initSTPayment(st_checkoutId, STUtils.backendUrl, st_platform.apiKey, onPaymentReturn);
-			document.querySelector(".st-chkout-btn").style.display="none";
-			document.querySelector("#payment-container").style.display="";
+			var shippingSelect = document.querySelector(".st-chkout-products").getElementsByClassName("st-chkout-billing-fld-val");shippingSelect
+			for (let i = 0; i < shippingSelect.length; i++) {
+				if(shippingSelect[i].value == null ||shippingSelect[i].value == "" ){
+					ShoptypeUI.showError("Shipping method not selected");
+					return;
+				}
+			}
+			try{
+				initSTPayment(st_checkoutId, STUtils.backendUrl, st_platform.apiKey, onPaymentReturn);
+				document.querySelector(".st-chkout-btn").style.display="none";
+				document.querySelector("#payment-container").style.display="";
+			}catch(e){
+				ShoptypeUI.showError(e.message);
+			}
 		}
 
 		function onPaymentReturn(payload){
 			switch(payload.status){
 			case "failed":
-				ShoptypeUI.showMessage(payload.message);
+				ShoptypeUI.showError(payload.message);
 				document.querySelector(".st-chkout-btn").style.display="";
 				document.querySelector("#payment-container").style.display="none";
 				break;
@@ -341,11 +369,18 @@ get_header(null);
 			case "success":
 					window.location.href = "/chechout-success/"+st_checkoutId;
 				break;
+			default:
+				document.querySelector(".st-chkout-btn").style.display="";
+				document.querySelector("#payment-container").style.display="none";
+				break;
 			}
 		}
 		
 		function createCheckout(cartId){
 			if(st_checkoutId == "new"){
+				var currentUrl = new URL(window.location);
+				let tid = currentUrl.searchParams.get("tid");
+				STUser.sendUserEvent(tid, "<?php echo $stPlatformId ?>");
 				st_platform.createCheckout(data=>{
 					st_checkoutId = data.checkout_id;
 				},cartId);	

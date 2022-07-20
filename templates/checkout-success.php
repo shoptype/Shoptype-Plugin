@@ -65,6 +65,7 @@ get_header(null);
 	</div>
 
 	<script type="text/javascript">
+		var ignoreEvents = true;
 		if(wc_cart_fragments_params){
 			sessionStorage[wc_cart_fragments_params["fragment_name"]] = null;
 		}

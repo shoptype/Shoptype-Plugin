@@ -65,7 +65,8 @@ class ShoptypeUI{
 	}
 
 	setupShareUrl(){
-		const { history, location } = window;
+		if(ignoreEvents){return;}
+		const { location } = window;
 		const { search } = location;
 		var thisUrl = new URL(location);
 		this.#cosellerTId = sessionStorage["st-ctid"];
@@ -76,7 +77,7 @@ class ShoptypeUI{
 			sessionStorage["st-ctid"]=param_tid;
 			this.#cosellerTId = param_tid;
 		}
-		if(this.#cosellerTId || this.#platformId && (!this.#eventSent)){
+		if((this.#platformId||this.#cosellerTId) && (!this.#eventSent)){
 			STUser.sendUserEvent(this.#cosellerTId, this.#platformId);
 			this.#eventSent = true;
 		}
@@ -86,13 +87,18 @@ class ShoptypeUI{
 			.then(tracker=>{
 				if(tracker.trackerId){
 					sessionStorage["st-utid"] = tracker.trackerId;
-					this.#userTId = sessionStorage["st-utid"];				
+					this.#userTId = sessionStorage["st-utid"];
+					this.updateUrlTid();			
 				}
 			});
 		}
 
-		var newUrl = ShoptypeUI.replaceUrlParam(location.href, "tid", this.#userTId);
-		history.replaceState({}, '', newUrl);
+		this.updateUrlTid();
+	}
+
+	updateUrlTid(){
+		var newUrl = ShoptypeUI.replaceUrlParam(window.location.href, "tid", this.#userTId);
+		window.history.replaceState({}, '', newUrl);
 	}
 
 	sendViewEvent(platformId){

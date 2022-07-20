@@ -213,7 +213,12 @@ function awakenthemarket(){
 	if(typeof shoptype_UI !== 'undefined'){
 		shoptype_UI.setProductUrl("<?php echo $productUrl ?>");
 		shoptype_UI.setLoginUrl("<?php echo $loginUrl ?>");
-		document.addEventListener("cartQuantityChanged", (e)=>{document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count});
+		document.addEventListener("cartQuantityChanged", (e)=>{
+			var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
+			if(cartCount){
+				document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count;
+			}
+		});
 		if(typeof awakenTheMarket === 'function'){
 			awakenTheMarket();
 		}
@@ -225,7 +230,12 @@ function awakenthemarket(){
 			shoptype_UI.setProductUrl("<?php echo $productUrl ?>");
 			shoptype_UI.setLoginUrl("<?php echo $loginUrl ?>");
 			shoptype_UI.setPlatform("<?php echo $stPlatformId ?>");
-			document.addEventListener("cartQuantityChanged", (e)=>{document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count});
+			document.addEventListener("cartQuantityChanged", (e)=>{
+			var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
+				if(cartCount){
+					document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count;
+				}
+			});
 			if(typeof awakenTheMarket === 'function'){
 				awakenTheMarket();
 			}
@@ -318,7 +328,6 @@ function shoptypeLogout(){
 	if ( !is_user_logged_in() ) {
 		unset( $_COOKIE["stToken"] );
 		setcookie( "stToken", '', time() - ( 15 * 60 ) );
-		echo '<script>sessionStorage.removeItem("token");sessionStorage.removeItem("userId");</script>';
 	}
 }
 
@@ -326,8 +335,8 @@ function shoptypeLogout(){
 add_action( 'wp_logout','ST_logout' );
 function ST_logout() { 
 	?>
-<script type="text/javascript">shoptypeLogout();</script>;
-<?php
+	<script type="text/javascript">sessionStorage.clear();</script>;
+	<?php
 	wp_safe_redirect( home_url() );
     exit();
 }
@@ -605,8 +614,7 @@ function custom_search_template($template){
 
 define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
- remove_action( 'woocommerce_after_mini_cart', 'action_woocommerce_after_mini_cart', 10, 0 );
-add_action( 'woocommerce_after_mini_cart', get_template_part(ST__PLUGIN_DIR.'/templates/mini-cart.php'), 10, 0 );
+
 
 //Add snipet to manage cosell user
 add_action('admin_menu', 'register_cosell_user', 20 );

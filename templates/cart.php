@@ -107,7 +107,7 @@ get_header(null);
 <script type="text/javascript">
   const st_cartId = "<?php echo $st_cart->id ?>";
   const myCurrency = "<?php echo $prodCurrency ?>";
-
+  var ignoreEvents = true;
   function cartUpdateProductQuant(qtyInput){
     var productId = qtyInput.getAttribute("pid");
     var variantId = qtyInput.getAttribute("vid");
