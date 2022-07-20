@@ -65,7 +65,7 @@ class ShoptypeUI{
 	}
 
 	setupShareUrl(){
-		if(ignoreEvents){return;}
+		if((typeof ignoreEvents !== 'undefined') && ignoreEvents){return;}
 		const { location } = window;
 		const { search } = location;
 		var thisUrl = new URL(location);
