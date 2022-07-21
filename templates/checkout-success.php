@@ -39,7 +39,6 @@ catch(Exception $e) {
 
 if (isset($_COOKIE['carts'])) {
     unset($_COOKIE['carts']); 
-    setcookie('carts', null, -1, '/'); 
 } 
 	
 get_header(null);
@@ -47,8 +46,25 @@ get_header(null);
 
 	<div class="st-success">
 	<div class="div-block-21">
+<?php
+	if (isset($st_checkout->payment) && $st_checkout->payment->status == "success") {
+?>
 	<h2 class="st-success-heading">Checkout Successful!</h2>
 	<div class="st-success-txt">Thank you for shopping with us! <br>You’ll be notified about your order status and tracking by email.</div>
+<?php
+	}elseif(isset($st_checkout->id)){
+?>
+	<h2 class="st-success-heading">Checkout not complete!</h2>
+	<div class="st-success-txt">You can try to complete this order by clicking <a href="<?php echo "/checkout/{$st_checkout->id}"; ?>">here</a></div>		
+<?php
+	}else{
+		global $wp_query;
+		$wp_query->set_404();
+		status_header(404);
+		echo '<h2 class="st-success-heading">Checkout not found!</h2></div>';
+	}
+	if(isset($st_checkoutt->id)){
+?>
 	</div>
 		<div class="st-success-details">
 			<?php foreach($st_checkout->order_details_per_vendor as $vendorId=>$items): ?>
@@ -63,7 +79,7 @@ get_header(null);
 			<?php endforeach; ?>
 		</div>
 	</div>
-
+<?php } ?>
 	<script type="text/javascript">
 		var ignoreEvents = true;
 		if(wc_cart_fragments_params){
