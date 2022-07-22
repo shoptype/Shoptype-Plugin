@@ -61,9 +61,9 @@ get_header(null);
 		global $wp_query;
 		$wp_query->set_404();
 		status_header(404);
-		echo '<h2 class="st-success-heading">Checkout not found!</h2></div>';
+		echo '<h2 class="st-success-heading">Checkout not found!</h2></div></div>';
 	}
-	if(isset($st_checkoutt->id)){
+	if(isset($st_checkout->id)){
 ?>
 	</div>
 		<div class="st-success-details">
