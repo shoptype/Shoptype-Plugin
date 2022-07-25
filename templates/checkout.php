@@ -180,7 +180,7 @@ get_header(null);
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">TAX</div>
-					<div class="st-chkout-shipping-tot"><?php echo $prodCurrency.$st_checkout->taxes->amount ?></div>
+					<div id="st-chkout-tax-tot" class="st-chkout-shipping-tot"><?php echo $prodCurrency.$st_checkout->taxes->amount ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">TOTAL</div>
@@ -284,6 +284,7 @@ get_header(null);
 			});
 			document.querySelector(".st-chkout-cost").innerHTML = st_currSymb+checkout.sub_total.amount;
 			document.querySelector(".st-chkout-shipping-tot").innerHTML = st_currSymb+checkout.shipping.amount;
+			document.querySelector("#st-chkout-tax-tot").innerHTML = st_currSymb+checkout.taxes.amount;
 			document.querySelector(".st-chkout-tot-cost").innerHTML = st_currSymb+checkout.total.amount;
 		}
 
