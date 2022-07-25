@@ -368,7 +368,8 @@ get_header(null);
 				document.querySelector("#payment-container").style.display="none";
 				break;
 			case "success":
-					window.location.href = "/chechout-success/"+st_checkoutId;
+				STUtils.setCookie("carts","",0)
+				window.location.href = "/chechout-success/"+st_checkoutId;
 				break;
 			default:
 				document.querySelector(".st-chkout-btn").style.display="";
