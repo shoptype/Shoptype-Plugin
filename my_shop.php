@@ -22,7 +22,9 @@ function getUserProducts( $data ) {
 	$result = curl_exec($ch);
 	$products = json_decode($result);
 	foreach ($products->products as $product) {
-		$product->tid=$valuesParsed[$product->id];
+		if(isset($valuesParsed[$product->id])){
+			$product->tid=$valuesParsed[$product->id];
+		}
 	}
 	$products->avatar = get_avatar_url ( $the_user->id);
 	$products->cover = bp_attachments_get_attachment( 'url', array( 'item_id' => $the_user->id ) );
@@ -180,7 +182,7 @@ function my_shop_tab_content() {
 		let newProducts = {};
 		for (var i = 0; i < selectorNodes.length; i++) {
 			if(selectorNodes[i].checked && !products.includes(selectorNodes[i].value)){
-				newProducts[selectorNodes[i].value] = st_selectedProducts[selectorNodes[i].value];
+				newProducts[selectorNodes[i].value] = shoptype_UI.getUserTracker();
 			}
 		}
 		callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,x=>addProductByIdToShop(x, newProducts,x=>loadShopProducts(currentBpUser.user_login)),'get');
@@ -215,7 +217,7 @@ function my_shop_tab_content() {
 	}
 
 	function addProductDetails(productNode, product, imgTag, priceTag){
-		let pricePrefix = stCurrency[product.currency]??product.currency;
+		let pricePrefix = shoptype_UI.currency[product.currency]??product.currency;
 		productNode.querySelector(imgTag).src = product.primaryImageSrc.imageSrc;
 		productNode.querySelector(".st-product-name").innerHTML = product.title;
 		productNode.querySelector(priceTag).innerHTML = pricePrefix + product.variants[0].discountedPriceAsMoney.amount.toFixed(2);
@@ -223,12 +225,11 @@ function my_shop_tab_content() {
 	}
 
 	function searchProducts() {
-		let text = document.getElementById('st-search-box').value;
+		let options = {text: document.getElementById('st-search-box').value};
 		let productTemplate = document.getElementById("st-product-select-template");
 		let productsContainer = document.getElementById("st-product-search-results");
 		removeChildren(productsContainer,productTemplate);
-		fetch(st_backend + "/platforms/<?php echo $stPlatformId; ?>/products?text="+text)
-			.then(response => response.json())
+		st_platform.products(options)
 			.then(productsJson => {
 				for (var i = 0; i < productsJson.products.length; i++) {
 					let newProduct = productTemplate.cloneNode(true);
@@ -248,25 +249,9 @@ function my_shop_tab_content() {
 		}
 	}
 
-	function addProductToShop(productId){
-		headerOptions.method = "get";
-		fetch( `${st_backend}/track/publish-slug?productId=${productId}&platformId=<?php echo $stPlatformId; ?>`, headerOptions)
-			.then(response => response.json())
-			.then(trackerJson=>{
-				let products = {};
-				products[productId]=trackerJson.trackerId;
-				callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,x=>addProductByIdToShop(x, products),'get');
-			});
-	}
-
 	function productSelect(selectBox){
 		let productId = selectBox.value;
-		headerOptions.method = "get";
-		fetch( `${st_backend}/track/publish-slug?productId=${productId}&platformId=<?php echo $stPlatformId; ?>`, headerOptions)
-			.then(response => response.json())
-			.then(trackerJson=>{
-				st_selectedProducts[productId]=trackerJson.trackerId;
-			});
+		st_selectedProducts[productId]=shoptype_UI.getUserTracker();
 	}
 
 	function removeProductFromShop(productId){
@@ -319,6 +304,7 @@ function my_shop_tab_content() {
 		}
 	});
 	initMyShop();
+	getUserTracker();
 </script>
 <?php
 }

@@ -6,6 +6,8 @@ class ShoptypeUI{
 	#cosellerTId = null;
 	#rid = null;
 	#eventSent = false;
+	currency = {"USD":"$", "INR":"₹","GBP":"£"};
+
 	constructor(){
 		this.currentUrl = new URL(window.location);
 		this.st_Wraper = document.createElement("div");
@@ -70,7 +72,7 @@ class ShoptypeUI{
 		const { search } = location;
 		var thisUrl = new URL(location);
 		this.#cosellerTId = sessionStorage["st-ctid"];
-		this.#userTId = sessionStorage["st-utid"];
+		this.getUserTracker();
 		
 		var param_tid = thisUrl.searchParams.get("tid");
 		if(param_tid != this.#userTId && param_tid!="" && param_tid!=null){
@@ -81,7 +83,11 @@ class ShoptypeUI{
 			STUser.sendUserEvent(this.#cosellerTId, this.#platformId);
 			this.#eventSent = true;
 		}
-		
+		this.updateUrlTid();
+	}
+
+	getUserTracker(){
+		this.#userTId = sessionStorage["st-utid"];
 		if(!this.#userTId && this.user){
 			this.user.getNetworkTracker(location.href)
 			.then(tracker=>{
@@ -92,8 +98,7 @@ class ShoptypeUI{
 				}
 			});
 		}
-
-		this.updateUrlTid();
+		return this.#userTId;
 	}
 
 	updateUrlTid(){
