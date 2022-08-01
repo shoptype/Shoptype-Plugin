@@ -669,3 +669,4 @@ add_action('admin_init', 'coseller_new_role');
  require_once(ST__PLUGIN_DIR.'/my_shop.php');
  require_once(ST__PLUGIN_DIR.'/my_st_dashboard.php');
  require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');
+  require_once(ST__PLUGIN_DIR.'/shortcodes/coseller-shop.php');
