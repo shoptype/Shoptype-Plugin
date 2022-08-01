@@ -37,8 +37,8 @@ get_header(null);
 $user = get_user_by( 'email',$userName );
 
 
-$cover=(empty($st_user_products->cover)) ? '' : $st_user_products->cover ;
-$avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $st_user_products->avatar;
+$cover=(empty($st_user_products->cover)) ? $path.'/images/shop-banner.jpg' : $st_user_products->cover ;
+$avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-profile.jpg';
 $user_name=(isset($user->ID))? $user->display_name : 'Shoptype user';
 $shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user_products->shop_name;
 

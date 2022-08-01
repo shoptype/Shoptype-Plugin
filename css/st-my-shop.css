@@ -110,6 +110,7 @@
 }
 
 .st-product-img {
+	min-height: 200px;
 	width: 180px;
 	height: 200px;
 	-o-object-fit: contain;
@@ -745,6 +746,7 @@
     background-color: #fff;
 }
 .shop-main-area ul.products li.product a img {
+	min-height: 135px;
     width: 100%;
     height: auto;
     display: block;

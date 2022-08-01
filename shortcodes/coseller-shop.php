@@ -42,7 +42,7 @@ catch(Exception $e) {
 $user = get_user_by( 'email', $st_shop['shop_id'] );
 
 $cover=(empty($st_user_products->cover)) ? '' : $st_user_products->cover ;
-$avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $st_user_products->avatar;
+$avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-profile.jpg';
 $user_name=(isset($user->ID))? $user->display_name : 'Shoptype user';
 $shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user_products->shop_name;
 
@@ -307,6 +307,7 @@ article.st-store-item .ststore-products > a
 }
 article.st-store-item .st-store-products a img
 {
+    min-height: 150px;
     max-width: 135px;
         width: 100%;
 }
