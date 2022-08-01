@@ -17,7 +17,7 @@ function st_user_shop($atts) {
     //getting value from shortcode
     $st_shop = shortcode_atts($default, $atts);
     
-
+$path = dirname(plugin_dir_url( __FILE__ ));
 if(empty($userName)){
 }
 try {
@@ -53,7 +53,7 @@ $shop_page='/shop/'.$st_shop['shop_id'];
 
 
     ?>
-    <article class="table st-store-item" style="opacity: 1;">
+    <div class="table st-store-item" style="opacity: 1;">
        
 <div class="table-cell st-store-desc">
 <a href="<?php echo $shop_page?>" class="st-about-store">
@@ -113,10 +113,14 @@ if($st_user_products->count > 13)
 </div>
 
 </div>
-</article>
+</div>
 
     <style>
-article .st-store-item {
+ .st-store-item {
+    
+    margin:auto;
+    margin-top: 30px;
+    max-width: 80vw;
     min-width: 80vw;
     width: 100%;
     margin-bottom: 30px;
@@ -128,14 +132,18 @@ article .st-store-item {
     transition: all .15s ease-in-out;
     background-color: #f9f8f3;
     display: table;
+    display: flex
 }
-article .st-store-item .st-store-desc {
+ .st-store-item .st-store-desc {
+    min-width: 140px;
     position: relative;
     width: 140px;
     background-color: #fff;
     border: 1px solid #e1e1e1;
 }
 .st-store-item .st-about-store {
+        margin-top: 50px;
+
     border-bottom: 47px solid transparent;
     text-align: center;
     padding-left: 10px;
@@ -264,7 +272,7 @@ article .st-store-item .st-store-desc {
     display: block;
     line-height: 1;
 }
-article .st-store-item .st-store-products {
+ .st-store-item .st-store-products {
     padding-top: 15px;
     padding-left: 5px;
     display: table-cell;
@@ -283,13 +291,13 @@ article .st-store-item .st-store-products {
     display: table-cell;
     vertical-align: middle;
 }
-article .st-store-item:after
+ .st-store-item:after
 {
     content: "";
     display: table;
     clear: both
 }
-article.st-store-item .ststore-products > a
+.st-store-item .ststore-products > a
 {
     width: 14.2857%;
     -webkit-box-flex: 0;
@@ -305,11 +313,13 @@ article.st-store-item .ststore-products > a
     transition: all .15s ease-in-out;
     position: relative;
 }
-article.st-store-item .st-store-products a img
+.st-store-item .st-store-products a img
 {
-    min-height: 150px;
+    min-height: 135px;
     max-width: 135px;
         width: 100%;
+        max-height: 135px;
+        min-width: 135px;
 }
 .st-store-item .st-store-products .st-product-count
 {
@@ -341,13 +351,19 @@ article.st-store-item .st-store-products a img
     color: rgba(0,0,0,.6);
 }
 .st-store-item .table-cell {
-    display: table-cell;
+   
     vertical-align: middle;
 }
 .st-product-count img
 {
     min-width: 135px;
     min-height: 150px;
+}
+.store-item .store-desc {
+    width: 140px;
+    background-color: #fff;
+    border: 1px solid #e1e1e1;
+    position: relative;
 }
 
     </style>
