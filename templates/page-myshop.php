@@ -46,7 +46,7 @@ $shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user
   <div class='wrapper' id='main'>
     <div id="content">
     <div class="st-myshop-head">
-      <div class="st-shop-header-name"><?php echo $shop_name ?></div>
+      <div class="st-shop-header-name"></div>
 
      <div class="st-header-container">
       <div class="st-store-grid st-store-header">

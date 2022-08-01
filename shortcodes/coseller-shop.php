@@ -44,7 +44,7 @@ $user = get_user_by( 'email', $st_shop['shop_id'] );
 $cover=(empty($st_user_products->cover)) ? '' : $st_user_products->cover ;
 $avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-profile.jpg';
 $user_name=(isset($user->ID))? $user->display_name : 'Shoptype user';
-$shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user_products->shop_name;
+$shop_name=(empty($st_user_products->shop_name))? $user_name.'- store' : $st_user_products->shop_name;
 
 $shop_page='/shop/'.$st_shop['shop_id'];
 
@@ -273,6 +273,7 @@ if($st_user_products->count > 13)
     line-height: 1;
 }
  .st-store-item .st-store-products {
+    margin-bottom: 15px;
     padding-top: 15px;
     padding-left: 5px;
     display: table-cell;
@@ -313,13 +314,23 @@ if($st_user_products->count > 13)
     transition: all .15s ease-in-out;
     position: relative;
 }
+.st-store-item .st-store-products a
+{
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+        min-width: 150px;
+        min-height: 150px;
+}
 .st-store-item .st-store-products a img
 {
-    min-height: 135px;
-    max-width: 135px;
-        width: 100%;
-        max-height: 135px;
-        min-width: 135px;
+    display: flex;
+    margin:auto;
+    
+    max-width: 150px;
+    width: 100%;
+    max-height: 150px;
+       
 }
 .st-store-item .st-store-products .st-product-count
 {

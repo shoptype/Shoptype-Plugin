@@ -496,6 +496,7 @@
     z-index: -1;
 }
 .st-header-container #inner-element .store-brand {
+	margin-left: 10%;
     display: inline-flex;
     flex-flow: column;
     justify-content: center;
@@ -720,7 +721,11 @@
     text-decoration: none;
 }
  .shop-main-area .loop-product-image {
+ 	background: #fff;
+ 	overflow: hidden;
+ 	max-height: 230px;
     position: relative;
+    min-height: 230px;
 }
  .shop-main-area  ul.products li.type-product .image-link {
     display: block;
