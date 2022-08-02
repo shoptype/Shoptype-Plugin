@@ -41,6 +41,12 @@ catch(Exception $e) {
 //getting wordpress user by user email address
 $user = get_user_by( 'email', $st_shop['shop_id'] );
 
+if(!isset($user->ID))
+{
+  $user = get_user_by( 'login',$st_shop['shop_id']  );
+
+}
+
 $cover=(empty($st_user_products->cover)) ? '' : $st_user_products->cover ;
 $avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-profile.jpg';
 $user_name=(isset($user->ID))? $user->display_name : 'Shoptype user';
@@ -328,7 +334,7 @@ if($st_user_products->count > 13)
     margin:auto;
     
     max-width: 150px;
-    width: 100%;
+    width: auto;
     max-height: 150px;
        
 }

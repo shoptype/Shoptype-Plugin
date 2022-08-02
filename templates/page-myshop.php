@@ -35,7 +35,11 @@ catch(Exception $e) {
 
 get_header(null);
 $user = get_user_by( 'email',$userName );
+if(!isset($user->ID))
+{
+  $user = get_user_by( 'login',$userName );
 
+}
 
 $cover=(empty($st_user_products->cover)) ? $path.'/images/shop-banner.jpg' : $st_user_products->cover ;
 $avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-profile.jpg';
