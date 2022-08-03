@@ -43,6 +43,9 @@ if(!isset($user->ID))
 
 $cover=(empty($st_user_products->cover)) ? $path.'/images/shop-banner.jpg' : $st_user_products->cover ;
 $avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-profile.jpg';
+if (str_contains($avatar, 'gravatar.com')) { 
+   $avatar= $path.'/images/shop-profile.jpg';
+}
 $user_name=(isset($user->ID))? $user->display_name : 'Shoptype user';
 $shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user_products->shop_name;
 
