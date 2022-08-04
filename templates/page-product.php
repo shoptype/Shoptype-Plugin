@@ -29,9 +29,11 @@ try {
 		$vendorId = $st_product->catalogId;
 
 		try {
-			$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
-			$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
-			$groupSlug = strtolower($groupSlug);
+			if(isset($st_brand)){
+				$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
+				$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
+				$groupSlug = strtolower($groupSlug);
+			}
 		} catch (Exception $ex) {
 		}
 
@@ -66,43 +68,6 @@ try {
 wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
 get_header();
 ?>
-<script>
-	let eventSent = false;
-	function sendProductEvent(){
-		let thisUrl=new URL(window.location);
-		let tid = thisUrl.searchParams.get("tid");
-		if(typeof fingerprintExcludeOptions=== 'undefined'){
-			st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", sendProductEvent);
-		}else{
-			let payload = {
-				"url": window.location.href,
-				"tracker_id": tid,
-				"referrer": window.location.host
-			}
-			if(tid){
-				payload["tracker_id"]=tid;
-			}else{
-				payload["platform_id"]="<?php echo $stPlatformId ?>";
-			}
-			getDeviceId()
-				.then(deviceId =>{
-				payload["device_id"] = deviceId;
-				let headerOptions = {
-					method:'post',
-					'headers': {'content-type': 'application/json'},
-					body: JSON.stringify(payload)
-				};
-				fetch(st_backend + "/track/user-event", headerOptions)
-					.then(response=>response.json())
-					.then(eventJson=>{
-				});
-				eventSent=true;
-			});
-		}
-	}
-	sendProductEvent();
-
-</script>
 <style>
 .single-product-image-main
 {
@@ -161,20 +126,19 @@ get_header();
 													<?php if (count($st_product->options) > 0) {
 														foreach ($st_product->options as $optionName) {
 															if ($optionName->name != 'title') { ?>
-																<div class="product-option-text">
-																	<?php
-																	echo '<h4>' . $optionName->name . '</h4>';
-
-																	?>
-																</div>
-																<div class="custom-select">
-																	<div class="form-group">
-																		<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="varientChang()">
-																			<?php foreach ($optionName->values as $optionValue) {
-																				echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
-																			}
-																			?>
-																		</select>
+																<div>
+																	<div class="product-option-text">
+																		<h4> <?php echo "$optionName->name "; ?></h4>
+																	</div>
+																	<div class="custom-select">
+																		<div class="form-group">
+																			<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="varientChang()">
+																				<?php foreach ($optionName->values as $optionValue) {
+																					echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
+																				}
+																				?>
+																			</select>
+																		</div>
 																	</div>
 																</div>
 													<?php }
@@ -192,10 +156,26 @@ get_header();
 														</div>
 													</div>
 													<div class="addButton-container">
-														<button class="btn btn-standard am-product-add-cart-btn" role="button" onclick="addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" variantName='<?php echo json_encode($st_product->variants[0]->variantNameValue) ?>' productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</button>
+														<button class="btn btn-standard am-product-add-cart-btn" role="button" onclick="shoptype_UI.addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" variantName='<?php echo json_encode($st_product->variants[0]->variantNameValue) ?>' productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</button>
 													</div>
 												</div>
-												<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
+
+												<?php 
+                                                    if(is_user_logged_in())
+                                                    {
+                                                    $user = wp_get_current_user();
+                                                    $user = get_userdata( $user->ID  );
+                                                    $iscoseller=in_array( 'coseller', (array) $user->roles); 
+                                                    }
+                                                    else
+                                                    {
+                                                        $iscoseller=false;
+                                                    }
+                                                if(get_option('manage_coseller')== 1 || $iscoseller || current_user_can( 'manage_options' )) 
+                                                    {?>
+                                                <button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="shoptype_UI.showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
+
+												<?php } ?>
 												<!-- <div class="product-spec">
 											<h4>specs</h4>
 											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae commodi dolorem voluptate quisquam, quasi illo iste mollitia ex maiores facilis reprehenderit ipsa quod veritatis. Animi, eaque ipsa! Nihil, mollitia nisi?</p>
@@ -270,15 +250,16 @@ get_header();
 		<!-- End PDP Custom page -->
 	</main><!-- #main -->
 </div><!-- #primary -->
+
+<!-- PDP PAGE = PLUS/MINUS -->
 <script>
-	
+	sendUserEvent();
 	jQuery(function($) {
 
 		$(document).ready(function() {
 			//-- Click on QUANTITY
-			$(".btn-minus").click(function() {
-				var now = $(".add-box > div > input").val();
-					//alert(now);
+			$(".btn-minus").("click", function() {
+				var now = $(".onadd-box > div > input").val();
 				if ($.isNumeric(now)) {
 					if (parseInt(now) - 1 > 0) {
 						now--;
@@ -287,15 +268,12 @@ get_header();
 				} else {
 					$(".add-box > div > input").val("1");
 				}
-			});
-				$(".btn-plus").click(function() {
+			})
+				jQuery(".btn-plus").on("click", function() {
 				var now = jQuery(".add-box > div > input").val();
-
 				if (jQuery.isNumeric(now)) {
-
 					if(parseInt(now)<variantquntity){
-
-						 jQuery(".add-box > div > input").val(parseInt(now) + 1);
+						console.log(now); jQuery(".add-box > div > input").val(parseInt(now) + 1);
 					}
 				} else {
 					jQuery(".add-box > div > input").val("1");
@@ -345,27 +323,20 @@ get_header();
 	var variantquntity;
 
 	function varientChang() {
+		var variantSelected = false;
 		var varients = document.getElementsByClassName("product-option-select");
 		var addtocartbtn = document.querySelector(".am-product-add-cart-btn");
 		var addtocart = document.querySelector(".addToCart-container");
-		var variantSelected = (varients.length==0);
 		for (var i = 0; i < varients.length; i++) {
 			json[varients[i].getAttribute('id')] = varients[i].value;
 		}
-		$(".add-box > div > input").val(1);
+		$(".onadd-box > div > input").val(1);
 		for (var key in variantsJson) {
-
 			var obj1 = variantsJson[key]['variantNameValue'];
-         	
-
-
-			if (isVariantSame(obj1,json) || jQuery.isEmptyObject(json)) {
-
+			if (isVariantSame(obj1,json)) {
 				variantSelected = true;
 				var productprice = variantsJson[key]['discountedPrice'];
 				variantquntity=variantsJson[key]['quantity'];
-
-
 				document.getElementById("quantity").max =variantquntity;
 
 				if(variantquntity<=0)
@@ -386,7 +357,6 @@ get_header();
 				}
 
 				addtocartbtn.setAttribute("variantid", variantsJson[key]['id']);
-			
 				document.getElementById("productprice").innerHTML = productprice;
 			}
 		}
@@ -410,7 +380,9 @@ get_header();
 		container.style.opacity='';
 		document.getElementById("quantity").disabled = false;
 		button.style.pointerEvents = "";
-		document.getElementById('soldOut').remove();
+		if (document.getElementById("soldOut")){
+			document.getElementById('soldOut').remove();
+		} 
 	}
 
 	function isVariantSame(variant1, variant2){
@@ -418,7 +390,6 @@ get_header();
 	}
 	window.onload = varientChang;
 </script>
-
 
 
 <script type="text/javascript" src="<?php echo untrailingslashit( plugin_dir_url( __FILE__ ) ) ;?>/js/imageslider.js"></script>
