@@ -57,18 +57,18 @@ get_header(null);
               <div class="st-cart-product-sum">
                 <h2 class="st-cart-product-title"><?php echo $value->name ?></h2>
                 <div>
-                  <div id="st-cart-product-var" class="st-cart-product-var">
-          <?php if (isset($value->variant_name_value)) {?>
-                    <div class="st-cart-product-var-title">Variant:</div>
-                    <div class="st-cart-product-var-val"><?php echo $value->variant_name_value->title ?></div>
-          <?php } ?>
-                  </div>
+                    <?php foreach($value->variant_name_value as $varKey=>$varValue): ?>
+                      <div id="st-cart-product-var" class="st-cart-product-var">
+                        <div class="st-cart-product-var-title"><?php echo $varKey ?>:</div>
+                        <div class="st-cart-product-var-val"><?php echo $varValue ?></div>
+                      </div>
+                    <?php endforeach; ?>
                 </div>
               </div>
             </div>
             <div class="st-cart-product-pricing">
               <div class="st-cart-product-price"><?php echo $prodCurrency.$value->price->amount ?></div>
-              <input type="number" pid="<?php echo $value->product_id ?>" vid="<?php echo $value->product_variant_id ?>" name="<?php echo $value->product_id."_qty" ?>" class="st-cart-product-qty" value="<?php echo $value->quantity ?>" onchange="cartUpdateProductQuant(this)">
+              <input type="number" pid="<?php echo $value->product_id ?>" vid="<?php echo $value->product_variant_id ?>" vname='<?php echo json_encode($value->variant_name_value) ?>' name="<?php echo $value->product_id."_qty" ?>" class="st-cart-product-qty" value="<?php echo $value->quantity ?>" onchange="cartUpdateProductQuant(this)">
               <div class="st-cart-product-tot-price"><?php echo $prodCurrency.($value->price->amount*$value->quantity) ?></div>
             </div>
             <div class="st-cart-product-remove" onclick="removeProduct(this)"><img src="<?php echo $path ?>/images/delete.png" loading="lazy" alt=""></div>
@@ -111,9 +111,10 @@ get_header(null);
   function cartUpdateProductQuant(qtyInput){
     var productId = qtyInput.getAttribute("pid");
     var variantId = qtyInput.getAttribute("vid");
+    var variantName = JSON.parse(qtyInput.getAttribute("vname"));
     var quantity = parseInt(qtyInput.value);
     shoptype_UI.stShowLoader();
-    st_platform.updateCart(productId, variantId, quantity)
+    st_platform.updateCart(productId, variantId, variantName, quantity)
       .then(cartJson => {
         if(quantity==0){
           qtyInput.parentElement.parentElement.remove();

@@ -90,7 +90,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'shop/(.+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
 	add_rewrite_rule( 'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
 	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
-	add_rewrite_rule( 'chechout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
+	add_rewrite_rule( 'checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -204,46 +204,44 @@ function awakenthemarket(){
 
 	if(typeof STUtils !== 'undefined'){
 		st_platform = new STPlatform('<?php echo $stPlatformId ?>', '<?php echo $stApiKey ?>');
+		if(typeof shoptype_UI !== 'undefined'){
+			setupShoptypeUI();
+		}else{
+			document.addEventListener("ShoptypeUILoaded", ()=>{setupShoptypeUI()});
+		}
 	}else{
 		document.addEventListener("ShoptypeJsLoaded", ()=>{
 			st_platform = new STPlatform('<?php echo $stPlatformId ?>', '<?php echo $stApiKey ?>');
+			if(typeof shoptype_UI !== 'undefined'){
+				setupShoptypeUI();
+			}else{
+				document.addEventListener("ShoptypeUILoaded", ()=>{setupShoptypeUI()});
+			}
 		});
 	}
 
-	if(typeof shoptype_UI !== 'undefined'){
+	function setupShoptypeUI(){
 		shoptype_UI.setProductUrl("<?php echo $productUrl ?>");
 		shoptype_UI.setLoginUrl("<?php echo $loginUrl ?>");
+		shoptype_UI.setPlatform("<?php echo $stPlatformId ?>");
 		document.addEventListener("cartQuantityChanged", (e)=>{
-			var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
+		var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
 			if(cartCount){
 				document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count;
 			}
 		});
+		loadMarket()
+	}
+
+
+	function loadMarket(){
 		if(typeof awakenTheMarket === 'function'){
 			awakenTheMarket();
 		}
 		else{
 			document.addEventListener('marketLoaded', function(){awakenTheMarket()});
 		}
-	}else{
-		document.addEventListener("ShoptypeUILoaded", ()=>{
-			shoptype_UI.setProductUrl("<?php echo $productUrl ?>");
-			shoptype_UI.setLoginUrl("<?php echo $loginUrl ?>");
-			shoptype_UI.setPlatform("<?php echo $stPlatformId ?>");
-			document.addEventListener("cartQuantityChanged", (e)=>{
-			var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
-				if(cartCount){
-					document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count;
-				}
-			});
-			if(typeof awakenTheMarket === 'function'){
-				awakenTheMarket();
-			}
-			else{
-				document.addEventListener('marketLoaded', function(){awakenTheMarket()});
-			}
-		});
-	}	
+	}
 </script>
 
 <?php

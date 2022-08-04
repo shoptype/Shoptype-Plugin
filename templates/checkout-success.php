@@ -72,7 +72,14 @@ get_header(null);
 					<div class="st-success-product">
 						<div class="st-success-prod-img-box"><img src="<?php echo "{$product->image_src}" ?>" loading="lazy" alt="" class="st-success-prod-ing"></div>
 						<div class="st-success-desc">
-						  <div class="st-success-prod-details"><?php echo "{$product->name}"; if(isset($product->variant_name_value)){echo "- {$product->variant_name_value->title}";} echo "<br/>{$product->quantity} x {$prodCurrency}{$product->price->amount}"; ?></div>
+						  <div class="st-success-prod-details"><?php 
+						  		echo "{$product->name}<br/>"; 
+						  		if(isset($product->variant_name_value)){
+						  			foreach($product->variant_name_value as $varKey=>$varValue){
+										echo "{$varKey}:{$varValue},<br/>";
+									}
+						  		} 
+						  		echo "<br/>{$product->quantity} x {$prodCurrency}{$product->price->amount}"; ?></div>
 						</div>
 					</div>
 				<?php endforeach; ?>

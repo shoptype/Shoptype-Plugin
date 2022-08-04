@@ -84,6 +84,7 @@ if($checkoutId == "new"){
 
 get_header(null);
 ?>
+	<script>var modalCheckout=false;</script>
 	<div class="st-chkout-top">
 		<h1 class="st-chkout-title">Checkout</h1>
 		<div class="st-chkout-coupon" style="display:none;">
@@ -159,7 +160,11 @@ get_header(null);
 						<?php foreach($items->cart_lines as $key=>$product): ?>
 						<div id="st-chkout-product" class="st-chkout-product">
 							<div class="div-block-18">
-								<div class="st-chkout-product-title"><?php echo "{$product->name}"; if(isset($product->variant_name_value)){ echo "- {$product->variant_name_value->title}";} ?> <span class="st-chkout-product-qty">x <?php echo $product->quantity ?></span></div>
+								<div class="st-chkout-product-title"><?php echo "{$product->name} - " ?>
+									<?php foreach($product->variant_name_value as $varKey=>$varValue){
+										echo "{$varKey}:{$varValue}, ";
+									} ?>
+								<span class="st-chkout-product-qty"> x <?php echo $product->quantity ?></span></div>
 							</div>
 							<div class="st-chkout-product-tot"><?php echo $prodCurrency.number_format((float)($product->quantity*$product->price->amount), 2, '.', '')?></div>
 						</div>
@@ -369,7 +374,7 @@ get_header(null);
 				break;
 			case "success":
 				STUtils.setCookie("carts","",0)
-				window.location.href = "/chechout-success/"+st_checkoutId;
+				window.location.href = "/checkout-success/"+st_checkoutId;
 				break;
 			default:
 				document.querySelector(".st-chkout-btn").style.display="";

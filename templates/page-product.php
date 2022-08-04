@@ -323,7 +323,6 @@ get_header();
 	var variantquntity;
 
 	function varientChang() {
-		
 		var varients = document.getElementsByClassName("product-option-select");
 		var addtocartbtn = document.querySelector(".am-product-add-cart-btn");
 		var addtocart = document.querySelector(".addToCart-container");
