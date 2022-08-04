@@ -108,6 +108,7 @@ get_header(null);
   const st_cartId = "<?php echo $st_cart->id ?>";
   const myCurrency = "<?php echo $prodCurrency ?>";
   var ignoreEvents = true;
+  var modalCheckout = false;
   function cartUpdateProductQuant(qtyInput){
     var productId = qtyInput.getAttribute("pid");
     var variantId = qtyInput.getAttribute("vid");
