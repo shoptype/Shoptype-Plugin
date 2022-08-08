@@ -12,9 +12,7 @@ global $brandUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 
 $userName = get_query_var( 'shop' );
-//$the_user = get_user_by('login', $userName);
-if(empty($userName)){
-}
+
 try {
   $ch = curl_init();
   $urlparts = parse_url(home_url());
@@ -32,7 +30,7 @@ try {
 catch(Exception $e) {
   echo "Cart not found";
 }
-
+//print_r($st_user_products);
 get_header(null);
 $user = get_user_by( 'email',$userName );
 if(!isset($user->ID))
@@ -46,8 +44,9 @@ $avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-pr
 if (str_contains($avatar, 'gravatar.com')) { 
    $avatar= $path.'/images/shop-profile.jpg';
 }
-$user_name=(isset($user->ID))? $user->display_name : 'Shoptype user';
+$user_name= $user->display_name;
 $shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user_products->shop_name;
+$shop_bio = xprofile_get_field_data( 'st_shop_bio' , $user->id );
 
 ?>
   <div class='wrapper' id='main'>
@@ -68,7 +67,7 @@ $shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user
 <div class="store-info">
 <h3><?php echo $shop_name ?></h3>
 
-<p></p>
+<p><?php echo $shop_bio ?></p>
 </div>
 </div>
 </div>

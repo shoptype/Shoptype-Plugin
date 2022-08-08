@@ -52,7 +52,7 @@ $avatar=(isset($user->ID))? get_avatar_url( $user->ID ) : $path.'/images/shop-pr
 if (str_contains($avatar, 'gravatar.com')) { 
    $avatar= $path.'/images/shop-profile.jpg';
 }
-$user_name=(isset($user->ID))? $user->display_name : 'Shoptype user';
+$user_name= $user->display_name;
 $shop_name=(empty($st_user_products->shop_name))? $user_name.'- store' : $st_user_products->shop_name;
 
 $shop_page='/shop/'.$st_shop['shop_id'];
@@ -384,6 +384,49 @@ if($st_user_products->count > 13)
     background-color: #fff;
     border: 1px solid #e1e1e1;
     position: relative;
+}
+
+@media screen and (max-width: 667px)
+{
+.st-store-item .st-store-desc {
+    display: table;
+    width: 100%;
+    margin-bottom: 1px;
+    min-height: 200px;
+position: relative;
+}
+    .st-store-item .st-about-store{
+display: table-cell;
+    vertical-align: middle;
+    padding-bottom: 47px;}
+    
+.st-store-item .st-store-products
+    {       
+display: block;
+    width: 100%;
+    }
+.st-store-item .st-store-products a
+    {
+    max-width:25%;
+    width: 25%;
+    display: block;
+    float: left;
+    padding: 1px;
+min-width:25%;
+max-height:78px;
+min-height:78px;
+    }
+.st-store-item
+    {
+    flex-direction: column;
+    }
+.st-store-item .st-store-products a img
+    {
+        max-width:100%;
+min-width:100%;
+max-height:78px;
+min-height:100%;
+    }
 }
 
     </style>
