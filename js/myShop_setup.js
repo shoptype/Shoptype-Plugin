@@ -1,4 +1,4 @@
-bp.apiRequest( {
+wp.apiRequest( {
   path: 'buddypress/v1/xprofile/groups',
   type: 'POST',
   data: {
@@ -9,7 +9,7 @@ bp.apiRequest( {
   }
 } ).done( function( groupData ) {
     console.info(groupData);
-    bp.apiRequest( {
+    wp.apiRequest( {
       path: 'buddypress/v1/xprofile/fields',
       type: 'POST',
       data: {
@@ -25,7 +25,7 @@ bp.apiRequest( {
     } ).fail( function( error ) {
       console.error(error);
     } );
-    bp.apiRequest( {
+    wp.apiRequest( {
       path: 'buddypress/v1/xprofile/fields',
       type: 'POST',
       data: {
@@ -41,7 +41,7 @@ bp.apiRequest( {
     } ).fail( function( error ) {
       console.error(error);
     } );
-    bp.apiRequest( {
+    wp.apiRequest( {
       path: 'buddypress/v1/xprofile/fields',
       type: 'POST',
       data: {

@@ -143,7 +143,7 @@ function addProducts(productsContainer){
 	};
 
 	if(shopUrl){
-		var url = shopUrl+"?"+StUtils.toQueryString(options);
+		var url = shopUrl+"?"+STUtils.toQueryString(options);
 		fetchMyStoreProducts(url, productsContainer, productTemplate);
 	}else{
 		fetchProducts(options, productsContainer, productTemplate);
@@ -152,7 +152,7 @@ function addProducts(productsContainer){
 	if(removeTemplate){
 		productTemplate.remove();
 	}
-	offset+=count??10;
+	offset+=count;
 }
 
 function loadProduct(productId, successCB, failureCB){

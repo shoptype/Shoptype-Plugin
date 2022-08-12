@@ -127,10 +127,6 @@
 	}
 }
 
-.stripe-payment-modal.micromodal-slide {
-	display: none;
-}
-
 .stripe-payment-modal.micromodal-slide.is-open {
 	display: block;
 }
@@ -231,7 +227,6 @@
 	font-weight: 400;
 	width: 100%;
 	height: 40px;
-	line-height: 38px;
 	outline: none;
 }
 
