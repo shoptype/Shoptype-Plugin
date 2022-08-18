@@ -39,7 +39,6 @@ catch(Exception $e) {
 
 if (isset($_COOKIE['carts'])) {
     unset($_COOKIE['carts']); 
-    setcookie('carts', null, -1, '/'); 
 } 
 	
 get_header(null);
@@ -47,8 +46,25 @@ get_header(null);
 
 	<div class="st-success">
 	<div class="div-block-21">
+<?php
+	if (isset($st_checkout->payment) && $st_checkout->payment->status == "success") {
+?>
 	<h2 class="st-success-heading">Checkout Successful!</h2>
 	<div class="st-success-txt">Thank you for shopping with us! <br>You’ll be notified about your order status and tracking by email.</div>
+<?php
+	}elseif(isset($st_checkout->id)){
+?>
+	<h2 class="st-success-heading">Checkout not complete!</h2>
+	<div class="st-success-txt">You can try to complete this order by clicking <a href="<?php echo "/checkout/{$st_checkout->id}"; ?>">here</a></div>		
+<?php
+	}else{
+		global $wp_query;
+		$wp_query->set_404();
+		status_header(404);
+		echo '<h2 class="st-success-heading">Checkout not found!</h2></div></div>';
+	}
+	if(isset($st_checkout->id)){
+?>
 	</div>
 		<div class="st-success-details">
 			<?php foreach($st_checkout->order_details_per_vendor as $vendorId=>$items): ?>
@@ -56,14 +72,21 @@ get_header(null);
 					<div class="st-success-product">
 						<div class="st-success-prod-img-box"><img src="<?php echo "{$product->image_src}" ?>" loading="lazy" alt="" class="st-success-prod-ing"></div>
 						<div class="st-success-desc">
-						  <div class="st-success-prod-details"><?php echo "{$product->name}"; if(isset($product->variant_name_value)){echo "- {$product->variant_name_value->title}";} echo "<br/>{$product->quantity} x {$prodCurrency}{$product->price->amount}"; ?></div>
+						  <div class="st-success-prod-details"><?php 
+						  		echo "{$product->name}<br/>"; 
+						  		if(isset($product->variant_name_value)){
+						  			foreach($product->variant_name_value as $varKey=>$varValue){
+										echo "{$varKey}:{$varValue},<br/>";
+									}
+						  		} 
+						  		echo "<br/>{$product->quantity} x {$prodCurrency}{$product->price->amount}"; ?></div>
 						</div>
 					</div>
 				<?php endforeach; ?>
 			<?php endforeach; ?>
 		</div>
 	</div>
-
+<?php } ?>
 	<script type="text/javascript">
 		var ignoreEvents = true;
 		if(wc_cart_fragments_params){

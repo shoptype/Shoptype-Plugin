@@ -84,6 +84,7 @@ if($checkoutId == "new"){
 
 get_header(null);
 ?>
+	<script>var modalCheckout=false;</script>
 	<div class="st-chkout-top">
 		<h1 class="st-chkout-title">Checkout</h1>
 		<div class="st-chkout-coupon" style="display:none;">
@@ -159,9 +160,13 @@ get_header(null);
 						<?php foreach($items->cart_lines as $key=>$product): ?>
 						<div id="st-chkout-product" class="st-chkout-product">
 							<div class="div-block-18">
-								<div class="st-chkout-product-title"><?php echo "{$product->name}"; if(isset($product->variant_name_value)){ echo "- {$product->variant_name_value->title}";} ?> <span class="st-chkout-product-qty">x <?php echo $product->quantity ?></span></div>
+								<div class="st-chkout-product-title"><?php echo "{$product->name} - " ?>
+									<?php foreach($product->variant_name_value as $varKey=>$varValue){
+										echo "{$varKey}:{$varValue}, ";
+									} ?>
+								<span class="st-chkout-product-qty"> x <?php echo $product->quantity ?></span></div>
 							</div>
-							<div class="st-chkout-product-tot"><?php echo $prodCurrency.($product->quantity*$product->price->amount) ?></div>
+							<div class="st-chkout-product-tot"><?php echo $prodCurrency.number_format((float)($product->quantity*$product->price->amount), 2, '.', '')?></div>
 						</div>
 						<?php endforeach; ?>
 					<?php endforeach; ?>
@@ -172,19 +177,19 @@ get_header(null);
 			<div class="st-chkout-details">
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">SUBTOTAL</div>
-					<div class="st-chkout-cost"><?php echo $prodCurrency.$st_checkout->sub_total->amount ?></div>
+					<div class="st-chkout-cost"><?php echo number_format((float)$prodCurrency.$st_checkout->sub_total->amount, 2, '.', '') ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">SHIPPING</div>
-					<div class="st-chkout-shipping-tot"><?php echo $prodCurrency.$st_checkout->shipping->amount ?></div>
+					<div class="st-chkout-shipping-tot"><?php echo number_format((float)$prodCurrency.$st_checkout->shipping->amount, 2, '.', '') ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">TAX</div>
-					<div class="st-chkout-shipping-tot"><?php echo $prodCurrency.$st_checkout->taxes->amount ?></div>
+					<div id="st-chkout-tax-tot" class="st-chkout-shipping-tot"><?php echo number_format((float)$prodCurrency.$st_checkout->taxes->amount, 2, '.', '') ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">TOTAL</div>
-					<div class="st-chkout-tot-cost"><?php echo $prodCurrency.$st_checkout->total->amount ?></div>
+					<div class="st-chkout-tot-cost"><?php echo number_format((float)$prodCurrency.$st_checkout->total->amount, 2, '.', '') ?></div>
 				</div>
 			</div>
 			<div id="payment-container"></div>
@@ -282,9 +287,10 @@ get_header(null);
 				}
 
 			});
-			document.querySelector(".st-chkout-cost").innerHTML = st_currSymb+checkout.sub_total.amount;
-			document.querySelector(".st-chkout-shipping-tot").innerHTML = st_currSymb+checkout.shipping.amount;
-			document.querySelector(".st-chkout-tot-cost").innerHTML = st_currSymb+checkout.total.amount;
+			document.querySelector(".st-chkout-cost").innerHTML = st_currSymb+checkout.sub_total.amount.toFixed(2);
+			document.querySelector(".st-chkout-shipping-tot").innerHTML = st_currSymb+checkout.shipping.amount.toFixed(2);
+			document.querySelector("#st-chkout-tax-tot").innerHTML = st_currSymb+checkout.taxes.amount.toFixed(2);
+			document.querySelector(".st-chkout-tot-cost").innerHTML = st_currSymb+checkout.total.amount.toFixed(2);
 		}
 
 		function removeOptions(selectElement) {
@@ -367,7 +373,8 @@ get_header(null);
 				document.querySelector("#payment-container").style.display="none";
 				break;
 			case "success":
-					window.location.href = "/chechout-success/"+st_checkoutId;
+				STUtils.setCookie("carts","",0)
+				window.location.href = "/checkout-success/"+st_checkoutId;
 				break;
 			default:
 				document.querySelector(".st-chkout-btn").style.display="";
