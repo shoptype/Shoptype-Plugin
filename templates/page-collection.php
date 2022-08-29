@@ -14,14 +14,12 @@ $path = dirname(plugin_dir_url( __FILE__ ));
 $collection_id = get_query_var( 'collection' );
 
 try {
-  $ch = curl_init();
   $urlparts = parse_url(home_url());
   $domain = $urlparts['host'];
-  curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/{$stPlatformId}/collections/{$collection_id}");
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $result = curl_exec($ch);
-  curl_close($ch);
   
+  $response = wp_remote_get("{$stBackendUrl}/platforms/{$stPlatformId}/collections/{$collection_id}");
+  $result = wp_remote_retrieve_body( $response );
+ 
   if( !empty( $result ) ) {
     $st_collection = json_decode($result);
   }else{

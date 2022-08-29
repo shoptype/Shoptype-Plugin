@@ -60,16 +60,15 @@ function shoptype_login(){
 	if( empty( $token ) ) {return;}
 	
 	try {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/me");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-		   "Authorization: {$token}"
-		));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
-
-		curl_close($ch);
+		$args = array(
+			'headers' => array(
+			  'Authorization' => $token
+			  ));
+		$response = wp_remote_get("{$stBackendUrl}/me",$args);
+		$result = wp_remote_retrieve_body( $response );
+		
 	}
+	
 	catch(Exception $e) {
 		return false;
 	}

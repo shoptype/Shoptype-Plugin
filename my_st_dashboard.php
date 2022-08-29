@@ -64,28 +64,26 @@ function st_dashboard_tab_content() {
 	$prev = $offset-$count<0?0:$offset-$count;
 	$currencyStr = $stCurrency[$stDefaultCurrency];
 	try {
-		$headers = array(
-			"authorization: ".$stToken,
-		);
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/coseller-dashboard?viewType=cosellerProductView&currency=$stDefaultCurrency&count={$count}&offset={$offset}");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
-
-		curl_close($ch);
-
+		
+		$args = array(
+			'headers' => array(
+			  'authorization' => $stToken
+			  ));
+		$response = wp_remote_get("{$stBackendUrl}/coseller-dashboard?viewType=cosellerProductView&currency=$stDefaultCurrency&count={$count}&offset={$offset}",$args);
+		$result = wp_remote_retrieve_body( $response );
+		
+		
 		if( !empty( $result ) ) {
 			$cosellerDash = json_decode($result);
 		}
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/coseller-dashboard?viewType=cosellerView&currency=$stDefaultCurrency");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
-
-		curl_close($ch);
-
+		$args = array(
+			'headers' => array(
+			  'authorization' => $stToken
+			  ));
+		$response = wp_remote_get("{$stBackendUrl}/coseller-dashboard?viewType=cosellerView&currency=$stDefaultCurrency",$args);
+		$result = wp_remote_retrieve_body( $response );
+		
+		
 		if( !empty( $result ) ) {
 			$cosellerKpi = json_decode($result);
 		}

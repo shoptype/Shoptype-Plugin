@@ -8,11 +8,10 @@ global $stBackendUrl;
 $st_brand = [];
 try {
 	$brandId = get_query_var( 'brand' );
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$brandId");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
-	curl_close($ch);
+	
+	  $response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$brandId");
+	  $result = wp_remote_retrieve_body( $response );
+	 
 	if( !empty( $result ) ) {
 		$st_brands = json_decode($result);
 		$st_brand = $st_brands[0];

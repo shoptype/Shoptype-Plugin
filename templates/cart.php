@@ -21,18 +21,14 @@ if(empty($cartId)){
   $cartId = $cartsParsed->shoptypeCart;
 }
 try {
-  $headers = array(
-    "X-Shoptype-Api-Key: ".$stApiKey,
-    "X-Shoptype-PlatformId: ".$stPlatformId
-  );
-  $ch = curl_init();
+  $args = array(
+    'headers' => array(
+      "X-Shoptype-Api-Key" =>$stApiKey,
+      "X-Shoptype-PlatformId" =>$stPlatformId
+      ));
+  $response = wp_remote_get("{$stBackendUrl}/cart/$cartId",$args);
+  $result = wp_remote_retrieve_body( $response );
   
-  curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart/$cartId");
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $result = curl_exec($ch);
-  curl_close($ch);
-
   if( !empty( $result ) ) {
     $st_cart = json_decode($result);
     $prodCurrency = $stCurrency[$st_cart->sub_total->currency];

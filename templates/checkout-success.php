@@ -16,18 +16,14 @@ wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
 $checkoutId = get_query_var( 'success_chkout' );
 
 try {
-	$headers = array(
-		"X-Shoptype-Api-Key: ".$stApiKey,
-		"X-Shoptype-PlatformId: ".$stPlatformId
-	);
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/checkout/$checkoutId");
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
-
-	curl_close($ch);
-
+	$args = array(
+		'headers' => array(
+		  "X-Shoptype-Api-Key" =>$stApiKey,
+		  "X-Shoptype-PlatformId" =>$stPlatformId
+		  ));
+	  $response = wp_remote_get("{$stBackendUrl}/cart/$checkoutId",$args);
+	  $result = wp_remote_retrieve_body( $response );
+	 
 	if( !empty( $result ) ) {
 		$st_checkout = json_decode($result);
 		$prodCurrency = $stCurrency[$st_checkout->total->currency];

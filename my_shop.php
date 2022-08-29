@@ -16,10 +16,10 @@ function getUserProducts( $data ) {
 			$values = $values.$key.",";
 		}
 	}
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/products?count=$count&offset=$offset&productIds=$values");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
+	
+	$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/products?count=$count&offset=$offset&productIds=$values");
+	$result = wp_remote_retrieve_body( $response );
+	
 	$products = json_decode($result);
 	foreach ($products->products as $product) {
 		if(isset($valuesParsed[$product->id])){

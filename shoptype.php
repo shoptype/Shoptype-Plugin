@@ -262,15 +262,13 @@ if(isset($_GET['token'])){
 
 	
 	try {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/me");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-		   "Authorization: {$token}"
-		));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
-
-		curl_close($ch);
+		$args = array(
+			'headers' => array(
+			  'Authorization' => $token
+			  ));
+		$response = wp_remote_get("{$stBackendUrl}/me",$args);
+		$result = wp_remote_retrieve_body( $response );
+		
 	}
 	catch(Exception $e) {
 		return false;
@@ -362,11 +360,10 @@ function have_posts_override(){
 			$searchTxt .= "$term%20";
 		}
 		$url = "$stBackendUrl/platforms/$stPlatformId/products?count=20&text=$searchTxt";
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
-		curl_close($ch);
+	
+		$response = wp_remote_get("$stBackendUrl/platforms/$stPlatformId/products?count=20&text=$searchTxt");
+		$result = wp_remote_retrieve_body( $response );
+		
 
 		if( !empty( $result ) ) {
 			$st_products = json_decode($result);

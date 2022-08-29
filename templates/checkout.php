@@ -20,36 +20,46 @@ wp_enqueue_script('st-payment-handlers',"https://shoptype-scripts.s3.amazonaws.c
 wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
 wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
-$headers = array(
-	"Content-Type: application/json",
-	"X-Shoptype-Api-Key: ".$stApiKey,
-	"X-Shoptype-PlatformId: ".$stPlatformId
+$args = array(
+	'body'        => '',
+	'headers'     => array(
+		"Content-Type"=> "application/json",
+		"X-Shoptype-Api-Key"=>$stApiKey,
+		"X-Shoptype-PlatformId" =>$stPlatformId
+	)
+	
 );
 if($checkoutId == "new"){
 	$productId = $_GET["productid"];
 	$variantId = $_GET["variantid"];
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart");
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS,"{}");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
-	curl_close($ch);
+	
+	
+		
+	$result = wp_remote_post( '{$stBackendUrl}/cart', $args );
+	
+	
 	if( !empty( $result ) ) {
 		$st_cart = json_decode($result);
-		$ch = curl_init();
+		
 		$data = array(
 			'product_id' => $productId,
 			'product_variant_id' => $variantId,
 			'quantity' => 1
 		);
-		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/cart/{$st_cart->id}/add");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
+		$args = array(
+			'body'        => $data,
+			'headers'     => array(
+			"Content-Type"=> "application/json",
+			"X-Shoptype-Api-Key"=>$stApiKey,
+			"X-Shoptype-PlatformId" =>$stPlatformId
+
+			)
+			
+		);
+			
+		$result = wp_remote_post( '{$stBackendUrl}/cart/{$st_cart->id}/add', $args );
+		
+		
 		if( !empty( $result ) ) {
 			$new_cart = json_decode($result);
 			$st_checkout = new stdClass();
@@ -63,13 +73,10 @@ if($checkoutId == "new"){
 	}
 }else{
 	try {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/checkout/$checkoutId");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
-
-		curl_close($ch);
+			
+		  $response = wp_remote_get("{$stBackendUrl}/checkout/$checkoutId",$args);
+		  $result = wp_remote_retrieve_body( $response );
+		 
 
 		if( !empty( $result ) ) {
 			$st_checkout = json_decode($result);
@@ -177,19 +184,19 @@ get_header(null);
 			<div class="st-chkout-details">
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">SUBTOTAL</div>
-					<div class="st-chkout-cost"><?php echo number_format((float)$prodCurrency.$st_checkout->sub_total->amount, 2, '.', '') ?></div>
+					<div class="st-chkout-cost"><?php echo $prodCurrency.number_format((float)$st_checkout->sub_total->amount, 2, '.', '') ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">SHIPPING</div>
-					<div class="st-chkout-shipping-tot"><?php echo number_format((float)$prodCurrency.$st_checkout->shipping->amount, 2, '.', '') ?></div>
+					<div class="st-chkout-shipping-tot"><?php echo $prodCurrency.number_format((float)$st_checkout->shipping->amount, 2, '.', '') ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">TAX</div>
-					<div id="st-chkout-tax-tot" class="st-chkout-shipping-tot"><?php echo number_format((float)$prodCurrency.$st_checkout->taxes->amount, 2, '.', '') ?></div>
+					<div id="st-chkout-tax-tot" class="st-chkout-shipping-tot"><?php echo $prodCurrency.number_format((float)$st_checkout->taxes->amount, 2, '.', '') ?></div>
 				</div>
 				<div class="st-chkout-tot-row">
 					<div class="st-chkout-tot-title">TOTAL</div>
-					<div class="st-chkout-tot-cost"><?php echo number_format((float)$prodCurrency.$st_checkout->total->amount, 2, '.', '') ?></div>
+					<div class="st-chkout-tot-cost"><?php echo $prodCurrency.number_format((float)$st_checkout->total->amount, 2, '.', '') ?></div>
 				</div>
 			</div>
 			<div id="payment-container"></div>

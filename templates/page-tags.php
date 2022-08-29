@@ -17,12 +17,12 @@ try {
 	$vendorName = $vendorDescription = $vendorUrl = "";
 	$tag = get_query_var( 'sttag' );
 	$firstLoad = 20;
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://backend.shoptype.com/platforms/$stPlatformId/products?tags=$tag&count=$firstLoad");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
+	
 	$pluginUrl = plugin_dir_url( __FILE__ );
-	curl_close($ch);
+	
+	$response = wp_remote_get("https://backend.shoptype.com/platforms/$stPlatformId/products?tags=$tag&count=$firstLoad");
+  	$result = wp_remote_retrieve_body( $response );
+ 
 	if( !empty( $result ) ) {
 		$st_tag_products = json_decode($result);
 		add_filter('pre_get_document_title', function() use ($tag) {

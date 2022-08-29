@@ -74,12 +74,9 @@ $massage='';
         $q = $wp_query->query_vars;
         $searchTearms = preg_replace('/\s+/', '%20', $searchTearm);
         $url = "{$stBackendUrl}/platforms/$stPlatformId/products?count=30&text=$searchTearms";
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
-        curl_close($ch);
-
+        $response = wp_remote_get( $url);
+        $result = wp_remote_retrieve_body( $response );
+ 
         if (!empty($result)) {
             $st_products = json_decode($result);
 

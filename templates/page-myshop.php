@@ -14,13 +14,12 @@ $path = dirname(plugin_dir_url( __FILE__ ));
 $userName = get_query_var( 'shop' );
 
 try {
-  $ch = curl_init();
   $urlparts = parse_url(home_url());
   $domain = $urlparts['host'];
-  curl_setopt($ch, CURLOPT_URL, "https://$domain/wp-json/shoptype/v1/shop/".$userName);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $result = curl_exec($ch);
-  curl_close($ch);
+ 
+  $response = wp_remote_get("https://$domain/wp-json/shoptype/v1/shop/".$userName);
+  $result = wp_remote_retrieve_body( $response );
+ 
 
   if( !empty( $result ) ) {
     $st_user_products = json_decode($result);

@@ -21,14 +21,12 @@ $path = dirname(plugin_dir_url( __FILE__ ));
 if(empty($userName)){
 }
 try {
-  $ch = curl_init();
   $urlparts = parse_url(home_url());
   $domain = $urlparts['host'];
-  curl_setopt($ch, CURLOPT_URL, "https://$domain/wp-json/shoptype/v1/shop/".$st_shop['shop_id']);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $result = curl_exec($ch);
-  curl_close($ch);
-
+  
+  $response = wp_remote_get("https://$domain/wp-json/shoptype/v1/shop/".$st_shop['shop_id']);
+  $result = wp_remote_retrieve_body( $response );
+  
   if( !empty( $result ) ) {
     $st_user_products = json_decode($result);
   }else{

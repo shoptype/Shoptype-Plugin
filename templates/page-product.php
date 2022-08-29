@@ -12,15 +12,14 @@ global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
 try {
+	
 	$vendorId = 0;
 	$vendorName = $vendorDescription = $vendorUrl = "";
 	$productId = get_query_var('stproduct');
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/products?productIds=$productId");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
+	$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/products?productIds=$productId");
+	$result     = wp_remote_retrieve_body( $response );
 	$pluginUrl = plugin_dir_url(__FILE__);
-	curl_close($ch);
+	
 	if (!empty($result)) {
 		$st_products = json_decode($result);
 		$st_product = $st_products->products[0];
@@ -51,11 +50,9 @@ try {
 	}
 	// Get vendor details
 	if (!empty($vendorId)) {
-		$vendorch = curl_init();
-		curl_setopt($vendorch, CURLOPT_URL, "{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$vendorId");
-		curl_setopt($vendorch, CURLOPT_RETURNTRANSFER, true);
-		$vendorChResponse = curl_exec($vendorch);
-		curl_close($vendorch);
+		$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$vendorId");
+  		$result = wp_remote_retrieve_body( $response );
+ 
 		if (!empty($vendorChResponse)) {
 			$vendorDetails = json_decode($vendorChResponse);
 			$vendor = $vendorDetails[0];

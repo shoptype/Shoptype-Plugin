@@ -28,14 +28,12 @@ class Shoptype_Settings {
     public static function add_network_settings($token){
         try {
             global $stBackendUrl;
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/networks");
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                "Authorization: {$token}"
-            ));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
+            $args = array(
+                'headers' => array(
+                  'Authorizatione' => $token
+                  ));
+            $response = wp_remote_get("{$stBackendUrl}/networks",$args);
+	        $result = wp_remote_retrieve_body( $response );
             $st_network = json_decode($result);
             echo "<div id='networkData' nid='{$st_network->network->id}' pid='{$st_network->platforms[0]->id}' vid='{$st_network->platforms[0]->vendor_ids[0]}' url='{$st_network->platforms[0]->url}'></div>";
             return $st_network;
@@ -50,22 +48,17 @@ class Shoptype_Settings {
                 'userType' => 'network'
             );
             global $stBackendUrl;
-            $ch = curl_init("{$stBackendUrl}/authenticate");
-            curl_setopt_array($ch, array(
-                CURLOPT_POST => TRUE,
-                CURLOPT_RETURNTRANSFER => TRUE,
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: '.$token,
-                    'Content-Type: application/json'
-                ),
-                CURLOPT_POSTFIELDS => json_encode($postData)
-            ));
-            $response = curl_exec($ch);
-            if($response === FALSE){
-                die(curl_error($ch));
-            }
+                 $args = array(
+                'body'        => $body,
+                'headers'     => array(
+                    'Authorization'=> $token,
+                    'Content-Type'=> 'application/json'
+                )
+                
+            );
+            	
+            $response = wp_remote_post( '{$stBackendUrl}/authenticate', $args );
             $responseData = json_decode($response);
-            curl_close($ch);
             return $responseData->token;
         }
         catch(Exception $e) {
@@ -81,14 +74,14 @@ class Shoptype_Settings {
                     if(isset($_COOKIE["stToken"]) && !empty($_COOKIE["stToken"])) {
                         $token=$_COOKIE["stToken"];
                         try {
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/me");
-                            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                                "Authorization: {$token}"
-                            ));
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            $result = curl_exec($ch);
-                            curl_close($ch);
+                            
+                            $args = array(
+                                'headers' => array(
+                                  'Authorizatione' => $token
+                                  ));
+                            $response = wp_remote_get("{$stBackendUrl}/me",$args);
+                            $result = wp_remote_retrieve_body( $response );
+                            
                         }
                         catch(Exception $e) {
                         }
