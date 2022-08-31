@@ -603,7 +603,7 @@ input.st-product-search-results {
     margin-bottom: 30px;
     position: absolute;
     z-index: 999;
-    top: -270px;
+    top: -280px;
     right: 10px;
 }
 .show-owner-widget .owner-avatar {
@@ -635,8 +635,7 @@ input.st-product-search-results {
 .shop-sidebar .widget {
     background-color: #fff;
     border: 1px solid #e1e1e1;
-    margin-bottom: 30px;
-    border-radius: 50% 50% 0% 0%;
+    border-radius: 50% 0% 50% 0%;
 }
 
 .show-owner-widget {
