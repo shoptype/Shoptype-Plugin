@@ -62,7 +62,7 @@ try {
 	}
 } catch (Exception $e) {
 }
-wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
+//wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
 get_header();
 ?>
 <style>
@@ -250,13 +250,14 @@ get_header();
 
 <!-- PDP PAGE = PLUS/MINUS -->
 <script>
-	sendUserEvent();
+	
 	jQuery(function($) {
 
 		$(document).ready(function() {
 			//-- Click on QUANTITY
-			$(".btn-minus").("click", function() {
-				var now = $(".onadd-box > div > input").val();
+			$(".btn-minus").click(function() {
+				var now = $(".add-box > div > input").val();
+					//alert(now);
 				if ($.isNumeric(now)) {
 					if (parseInt(now) - 1 > 0) {
 						now--;
@@ -265,12 +266,15 @@ get_header();
 				} else {
 					$(".add-box > div > input").val("1");
 				}
-			})
-				jQuery(".btn-plus").on("click", function() {
+			});
+				$(".btn-plus").click(function() {
 				var now = jQuery(".add-box > div > input").val();
+
 				if (jQuery.isNumeric(now)) {
+
 					if(parseInt(now)<variantquntity){
-						console.log(now); jQuery(".add-box > div > input").val(parseInt(now) + 1);
+
+						 jQuery(".add-box > div > input").val(parseInt(now) + 1);
 					}
 				} else {
 					jQuery(".add-box > div > input").val("1");
@@ -320,20 +324,28 @@ get_header();
 	var variantquntity;
 
 	function varientChang() {
-		var variantSelected = false;
+		
 		var varients = document.getElementsByClassName("product-option-select");
 		var addtocartbtn = document.querySelector(".am-product-add-cart-btn");
 		var addtocart = document.querySelector(".addToCart-container");
+		var variantSelected = (varients.length==0);
 		for (var i = 0; i < varients.length; i++) {
 			json[varients[i].getAttribute('id')] = varients[i].value;
 		}
-		$(".onadd-box > div > input").val(1);
+		$(".add-box > div > input").val(1);
 		for (var key in variantsJson) {
+
 			var obj1 = variantsJson[key]['variantNameValue'];
-			if (isVariantSame(obj1,json)) {
+         	
+
+
+			if (isVariantSame(obj1,json) || jQuery.isEmptyObject(json)) {
+
 				variantSelected = true;
 				var productprice = variantsJson[key]['discountedPrice'];
 				variantquntity=variantsJson[key]['quantity'];
+
+
 				document.getElementById("quantity").max =variantquntity;
 
 				if(variantquntity<=0)
@@ -354,6 +366,7 @@ get_header();
 				}
 
 				addtocartbtn.setAttribute("variantid", variantsJson[key]['id']);
+			
 				document.getElementById("productprice").innerHTML = productprice;
 			}
 		}
@@ -377,9 +390,7 @@ get_header();
 		container.style.opacity='';
 		document.getElementById("quantity").disabled = false;
 		button.style.pointerEvents = "";
-		if (document.getElementById("soldOut")){
-			document.getElementById('soldOut').remove();
-		} 
+		document.getElementById('soldOut').remove();
 	}
 
 	function isVariantSame(variant1, variant2){
@@ -387,6 +398,7 @@ get_header();
 	}
 	window.onload = varientChang;
 </script>
+
 
 
 <script type="text/javascript" src="<?php echo untrailingslashit( plugin_dir_url( __FILE__ ) ) ;?>/js/imageslider.js"></script>

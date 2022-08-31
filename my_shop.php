@@ -107,7 +107,7 @@ function my_shop_tab_content() {
 				<div class="st-product-search-results" id="st-product-search-results">
 					<div class="st-product-select" id="st-product-select-template" style="display: none;">
 						<div class="st-product-select-main">
-							<div class="st-product-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img-select"></div>
+							<div class="st-product-img-div"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img-select"></div>
 							<div class="st-product-details-block">
 								<div class="st-product-name">Product Name</div>
 								<div class="st-product-cost-select">$00.00</div>
@@ -125,7 +125,7 @@ function my_shop_tab_content() {
 		<div id="st-myshop-main" class="st-groups-main" style="display:flex;">
 			<div id="st-product-template" style="display: none;position: relative;" onmouseout="hideRemoveBtn(this)">
 			<a href="#" class="st-product-link" >
-				<div class="st-product-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img"></div>
+				<div class="st-product-img-div"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img"></div>
 				<div class="st-product-cost">$00.00</div>
 				<div class="st-product-name">Product Name</div>
 			</a>

@@ -14,7 +14,7 @@ function renderAwakeBrands($atts = []){
         <div class="brand-container single-brand <?php echo $atts['brand_classes']; ?>" style="display: none;">
                 <div class="product-image">
                     <a href="demo/awake/bdp/?brand-id={{brandId}}" class="am-brand-link">
-                        <img class="am-brand-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">
+                        <img class="am-brand-image" src="<?php echo plugin_dir_url( __FILE__ ) ?>/images/Display-Pic.jpg" loading="lazy" alt="">
                     </a>
                 </div>
                 <div class="product-info">
@@ -39,7 +39,7 @@ function renderLatestBrands($atts = []){
         <div class="brand-container single-brand <?php echo $atts['brand_classes']; ?>">
             <div>
                 <div class="brand-image-container">
-                    <img class="am-brand-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">
+                    <img class="am-brand-image" src="<?php echo plugin_dir_url( __FILE__ ) ?>/images/Display-Pic.jpg" loading="lazy" alt="">
                     <p class="am-brand-name"></p>
                 </div>
             </div>

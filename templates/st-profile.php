@@ -48,9 +48,9 @@ get_header(null);
 			<div class="st-profile-content" id="st-profile-content">
 				<input type="file" id="profileImageFile" onchange="updateProfileImg()" style="display: none;">
 				<input type="file" id="profileBGFile" onchange="updateBgImg()" style="display: none;">
-				<div class="st-profile-cover-div"><img src="https://spiritful.co.uk/wp-content/uploads/2022/01/abstract-white-panoramic-background-lines-260nw-1858252165.jpg" loading="lazy" alt="" class="st-profile-cover" id="st-profile-cover"></div>
+				<div class="st-profile-cover-div"><img src="<?php echo plugin_dir_url( __FILE__ ) ?>/images/abstract-white-panoramic-background-lines-260nw-1858252165.jpg" loading="lazy" alt="" class="st-profile-cover" id="st-profile-cover"></div>
 				<div class="st-profile-header">
-					<div class="st-profile-image-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-profile-image" id="st-profile-image"></div>
+					<div class="st-profile-image-div"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-profile-image" id="st-profile-image"></div>
 					<div class="st-profile-name">Name</div>
 				</div>
 				<div class="st-profile-meta">
@@ -121,7 +121,7 @@ get_header(null);
 				<div class="st-profile-content-block">
 					<div id="st-friends-my" style="display: flex;"	class="st-groups-main">
 						<a id="st-user-profile-template" style="display: none;" href="#" class="st-user-link">
-							<div class="st-user-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-user-img"></div>
+							<div class="st-user-img-div"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-user-img"></div>
 							<div class="st-user-details">
 								<div class="st-user-rel-txt">You are now friends with</div>
 								<div class="st-user-name">Name</div>
@@ -141,7 +141,7 @@ get_header(null);
 				<div class="st-profile-content-block">
 					<div id="st-my-groups" style="display:flex;" class="st-groups-main">
 						<a id="st-my-group-template" style="display:none;" href="#" class="st-group-link">
-							<div class="st-group-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-group-img"></div>
+							<div class="st-group-img-div"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-group-img"></div>
 							<div class="st-group-name">Group Name</div>
 						</a>
 					</div>
@@ -162,7 +162,7 @@ get_header(null);
 							<div class="st-product-search-results" id="st-product-search-results">
 								<div class="st-product-select" id="st-product-select-template" style="display: none;">
 									<div class="st-product-select-main">
-										<div class="st-product-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img-select"></div>
+										<div class="st-product-img-div"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img-select"></div>
 										<div class="st-product-details-block">
 											<div class="st-product-name">Product Name</div>
 											<div class="st-product-cost-select">$00.00</div>
@@ -180,7 +180,7 @@ get_header(null);
 					<div id="st-myshop-main" class="st-groups-main" style="display:flex;">
 						<div id="st-product-template" style="display: none;position: relative;" onmouseout="hideRemoveBtn(this)">
 						<a href="#" class="st-product-link" >
-							<div class="st-product-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img"></div>
+							<div class="st-product-img-div"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img"></div>
 							<div class="st-product-cost">$00.00</div>
 							<div class="st-product-name">Product Name</div>
 						</a>

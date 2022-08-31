@@ -12,7 +12,19 @@ global $brandUrl;
 global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
-wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
+function st_load_scripts() {
+echo '<script>console.log</script>('.$path.');';
+wp_enqueue_script('triggerUserEvent',$path .'/js/stOccur.js');
+wp_localize_script( 'triggerUserEvent', 'triggerUserEvent_object',
+array( 
+      'path' =>$path
+       )
+      );
+
+
+}
+add_action('wp_enqueue_scripts', 'st_load_scripts');
+
 $cartId = get_query_var( 'cart' );
 
 if(empty($cartId)){

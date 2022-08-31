@@ -5,15 +5,15 @@ function coselluserlists($stRefcode)
 if( isset($_POST['id']) && isset($_POST['name'])  ){
     
     global $wpdb;
-     $to      = $_POST['mail'];
-     $subject = $_POST['name'].' You have been invited to become a coseller'; 
-     $message = $_POST['name'].' you have been invited by a network to become a coseller. Learn more about coselling at https://www.shoptype.com/creators/ <br>Your invite id is '.$_POST['refcode']; 
-     $headers = "From: ".$_POST['nam‌​e​']." <".$_POST['m‌​ail‌​'].">\r\n"; $headers = "Reply-To: ".$_POST['ma‌​il‌​']."\r\n"; 
+     $to      = sanitize_email($_POST['mail']);
+     $subject = sanitize_text_field($_POST['name']).' You have been invited to become a coseller'; 
+     $message = sanitize_text_field($_POST['name']).' you have been invited by a network to become a coseller. Learn more about coselling at https://www.shoptype.com/creators/ <br>Your invite id is '.$_POST['refcode']; 
+     $headers = "From: ".sanitize_text_field($_POST['nam‌​e​'])." <".sanitize_email($_POST['m‌​ail‌​']).">\r\n"; $headers = "Reply-To: ".sanitize_email($_POST['ma‌​il‌​'])."\r\n"; 
      $headers = "Content-type: text/html; charset=iso-8859-1\r\n";
      'X-Mailer: PHP/' . phpversion();
      if(mail($to, $subject, $message, $headers));
      $table_name=$wpdb->prefix.'usermeta'; 
-     $user_id=$_POST['id'];
+     $user_id=sanitize_text_field($_POST['id']);
      $user_role='a:2:{s:10:"subscriber";b:1;s:8:"coseller";b:1;}';
      
 

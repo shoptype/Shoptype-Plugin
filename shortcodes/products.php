@@ -24,7 +24,7 @@ function renderAwakeProducts($atts = []){
         <div class="product-container single-product" style="display: none;">
             <div class="product-image">
                 <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
-                    <img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">
+                    <img class="am-product-image" src="<?php echo plugin_dir_url( __FILE__ ) ?>/images/Display-Pic.jpg" loading="lazy" alt="">
                 </a>
                 <div class="market-product-price am-product-price">$ 00.00</div>
             </div>
