@@ -88,6 +88,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
 	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
+	add_rewrite_rule( 'shop-wizard/(.+)[/]?$', 'index.php?stwizard=$matches[1]', 'top' );
 	add_rewrite_rule( 'shop/(.+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
 	add_rewrite_rule( 'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
 	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
@@ -108,6 +109,10 @@ add_filter( 'query_vars', function( $query_vars ) {
 } );
 add_filter( 'query_vars', function( $query_vars ) {
     $query_vars[] = 'checkout';
+    return $query_vars;
+} );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'stwizard';
     return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
@@ -150,6 +155,12 @@ add_action( 'template_include', function( $template ) {
         return $template;
     }
     return plugin_dir_path( __FILE__ ) . '/templates/checkout.php';
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'stwizard' ) == false || get_query_var( 'stwizard' ) == '' ) {
+        return $template;
+    }
+    return plugin_dir_path( __FILE__ ) . '/templates/myshop-wizard.php';
 } );
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'shop' ) == false || get_query_var( 'shop' ) == '' ) {
@@ -265,13 +276,15 @@ function shoptype_login(){
 	if( empty( $token ) ) {return;}
 	setcookie( "stToken", $token, time() + ( 150000 * 60 ) );
 	try {
-		$args = array(
-			'headers' => array(
-			  'Authorization' => $token
-			  ));
-		$response = wp_remote_get("{$stBackendUrl}/me",$args);
-		$result = wp_remote_retrieve_body( $response );
-		
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, "{$stBackendUrl}/me");
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		   "Authorization: {$token}"
+		));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+
+		curl_close($ch);
 	}
 	catch(Exception $e) {
 		return false;
@@ -303,14 +316,10 @@ function shoptype_login(){
 		));
 		$wp_user = wp_set_current_user($user_id, $st_user->email);
 		wp_set_auth_cookie( $user->ID , true);
-		global $current_user;
-		$current_user = $wp_user;
 		do_action( 'wp_login', $wp_user->user_login, $wp_user );
 	}else{
 		$wp_user = wp_set_current_user($user->ID, $st_user->email);
 		wp_set_auth_cookie( $user->ID , true);
-		global $current_user;
-		$current_user = $wp_user;
 		do_action( 'wp_login', $wp_user->user_login, $wp_user );
 	}
 };
@@ -359,10 +368,11 @@ function have_posts_override(){
 			$searchTxt .= "$term%20";
 		}
 		$url = "$stBackendUrl/platforms/$stPlatformId/products?count=20&text=$searchTxt";
-	
-		$response = wp_remote_get("$stBackendUrl/platforms/$stPlatformId/products?count=20&text=$searchTxt");
-		$result = wp_remote_retrieve_body( $response );
-		
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		curl_close($ch);
 
 		if( !empty( $result ) ) {
 			$st_products = json_decode($result);
