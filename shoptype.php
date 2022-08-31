@@ -37,6 +37,7 @@ function shoptype_header(){
 	wp_enqueue_script( 'shoptype_ui_js', plugin_dir_url(__FILE__) . 'js/shoptype_ui.js');
 	wp_enqueue_script( 'awakeMarket_js', plugin_dir_url(__FILE__) . 'js/AwakeMarket.js');
 	wp_enqueue_style( 'shoptype_css', plugin_dir_url(__FILE__) . 'css/shoptype.css');
+	wp_enqueue_style( 'new-market', plugin_dir_url(__FILE__) . 'css/st-cart.css' );
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
 };
 add_action('wp_head', 'shoptype_header');
@@ -181,7 +182,6 @@ function login_load_js_script() {
 }
 
 add_action('wp_enqueue_scripts', 'login_load_js_script');
-add_action('wp_head', 'shoptypeLogout');
 
 //Enqueue Product and brand page css
 
@@ -204,44 +204,46 @@ function awakenthemarket(){
 
 	if(typeof STUtils !== 'undefined'){
 		st_platform = new STPlatform('<?php echo $stPlatformId ?>', '<?php echo $stApiKey ?>');
-		if(typeof shoptype_UI !== 'undefined'){
-			setupShoptypeUI();
-		}else{
-			document.addEventListener("ShoptypeUILoaded", ()=>{setupShoptypeUI()});
-		}
 	}else{
 		document.addEventListener("ShoptypeJsLoaded", ()=>{
 			st_platform = new STPlatform('<?php echo $stPlatformId ?>', '<?php echo $stApiKey ?>');
-			if(typeof shoptype_UI !== 'undefined'){
-				setupShoptypeUI();
-			}else{
-				document.addEventListener("ShoptypeUILoaded", ()=>{setupShoptypeUI()});
-			}
 		});
 	}
 
-	function setupShoptypeUI(){
+	if(typeof shoptype_UI !== 'undefined'){
 		shoptype_UI.setProductUrl("<?php echo $productUrl ?>");
 		shoptype_UI.setLoginUrl("<?php echo $loginUrl ?>");
-		shoptype_UI.setPlatform("<?php echo $stPlatformId ?>");
 		document.addEventListener("cartQuantityChanged", (e)=>{
-		var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
+			var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
 			if(cartCount){
 				document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count;
 			}
 		});
-		loadMarket()
-	}
-
-
-	function loadMarket(){
 		if(typeof awakenTheMarket === 'function'){
 			awakenTheMarket();
 		}
 		else{
 			document.addEventListener('marketLoaded', function(){awakenTheMarket()});
 		}
-	}
+	}else{
+		document.addEventListener("ShoptypeUILoaded", ()=>{
+			shoptype_UI.setProductUrl("<?php echo $productUrl ?>");
+			shoptype_UI.setLoginUrl("<?php echo $loginUrl ?>");
+			shoptype_UI.setPlatform("<?php echo $stPlatformId ?>");
+			document.addEventListener("cartQuantityChanged", (e)=>{
+			var cartCount = document.querySelector('<?php echo $cartCountMatch ?>');
+				if(cartCount){
+					document.querySelector('<?php echo $cartCountMatch ?>').innerHTML = e.detail.count;
+				}
+			});
+			if(typeof awakenTheMarket === 'function'){
+				awakenTheMarket();
+			}
+			else{
+				document.addEventListener('marketLoaded', function(){awakenTheMarket()});
+			}
+		});
+	}	
 </script>
 
 <?php
@@ -250,17 +252,18 @@ add_action('wp_head', 'awakenthemarket');
 
 /* Shoptype login */
 function shoptype_login(){
-if(isset($_GET['token'])){
+	if(isset($_GET['token'])){
 		$token = $_GET['token'];
-	}
-	else
-	{
+		if ( empty($token)) {return;}
+	}else{
 		return;
 	}
 	global $stBackendUrl;
-	if (is_user_logged_in()) {return;}
-
-	
+	if (is_user_logged_in()) {
+		return;
+	}
+	if( empty( $token ) ) {return;}
+	setcookie( "stToken", $token, time() + ( 150000 * 60 ) );
 	try {
 		$args = array(
 			'headers' => array(
@@ -279,20 +282,30 @@ if(isset($_GET['token'])){
 	$user = get_user_by( 'email', "{$st_user->email}" ); 
 
 	if ( empty( $user ) ) {
+		$parts = explode(" ", $st_user->name);
+		if(count($parts) > 1) {
+			$lastname = array_pop($parts);
+			$firstname = implode(" ", $parts);
+		}
+		else{
+			$firstname = $name;
+			$lastname = " ";
+		}
 		$user_id = wp_insert_user( array(
 			'user_login' => $st_user->email,
 			'user_pass' => $token,
 			'user_email' => $st_user->email,
-			'first_name' => $st_user->name,
+			'first_name' => $firstname,
+			'last_name' => $lastname,
 			'display_name' => $st_user->name,
 			'role' => 'subscriber',
 			'show_admin_bar_front' => false
-
 		));
 		$wp_user = wp_set_current_user($user_id, $st_user->email);
 		wp_set_auth_cookie( $user->ID , true);
 		global $current_user;
 		$current_user = $wp_user;
+		do_action( 'wp_login', $wp_user->user_login, $wp_user );
 	}else{
 		$wp_user = wp_set_current_user($user->ID, $st_user->email);
 		wp_set_auth_cookie( $user->ID , true);
@@ -300,10 +313,6 @@ if(isset($_GET['token'])){
 		$current_user = $wp_user;
 		do_action( 'wp_login', $wp_user->user_login, $wp_user );
 	}
-	
-	global $wp;
-	$url = add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
-	header("location: $url");
 };
 
 //Redirect users to home after logout
@@ -313,26 +322,16 @@ function ST_redirect_after_logout(){
          exit();
 }
 
-add_action('get_header', 'shoptype_login');
-
-
-
-
-
-/* Shoptype logout */
-function shoptypeLogout(){
-	if ( !is_user_logged_in() ) {
-		unset( $_COOKIE["stToken"] );
-		setcookie( "stToken", '', time() - ( 15 * 60 ) );
-	}
-}
-
+add_action('init', 'shoptype_login');
 
 add_action( 'wp_logout','ST_logout' );
 function ST_logout() { 
 	?>
 	<script type="text/javascript">sessionStorage.clear();</script>;
 	<?php
+	unset( $_COOKIE["stToken"] );
+	setcookie( "stToken", '', time() - ( 15 * 60 ) );
+	echo "Logout user";
 	wp_safe_redirect( home_url() );
     exit();
 }
@@ -664,4 +663,4 @@ add_action('admin_init', 'coseller_new_role');
  require_once(ST__PLUGIN_DIR.'/my_shop.php');
  require_once(ST__PLUGIN_DIR.'/my_st_dashboard.php');
  require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');
-  require_once(ST__PLUGIN_DIR.'/shortcodes/coseller-shop.php');
+ require_once(ST__PLUGIN_DIR.'/shortcodes/coseller-shop.php');

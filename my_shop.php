@@ -6,7 +6,7 @@ function getUserProducts( $data ) {
 	$count=isset($data['count'])?$data['count']:10;
 	$offset=isset($data['offset'])?$data['offset']:0;
 	$values = xprofile_get_field_data( 'st_products' , $the_user->id );
-	$shop_name = xprofile_get_field_data( 'st_shop_name' , $the_user->id );
+	$shop_theme = xprofile_get_field_data( 'st_shop_theme' , $the_user->id );
 	$valuesJson = str_replace(' ', ',', $values);
 	$valuesParsed = json_decode($valuesJson, true);
 	if(empty($values)){$values = 'nothing';}
@@ -26,9 +26,20 @@ function getUserProducts( $data ) {
 			$product->tid=$valuesParsed[$product->id];
 		}
 	}
-	$products->avatar = get_avatar_url ( $the_user->id);
-	$products->cover = bp_attachments_get_attachment( 'url', array( 'item_id' => $the_user->id ) );
-	$products->shop_name = $shop_name;
+	$groupSlug = strtolower($the_user->user_login."_coseller");
+	$group_id = BP_Groups_Group::group_exists( $groupSlug );
+	if(isset($group_id)){
+		$group = groups_get_group($group_id);
+		$products->cover = bp_get_group_cover_url($group);
+		$products->avatar = bp_get_group_avatar_url($group);
+		$products->shop_name = $group->name;
+		$products->shop_bio = $group->description;
+	}
+	$products->user_avatar = get_avatar_url ( $the_user->id);
+	$products->user_cover = bp_attachments_get_attachment( 'url', array( 'item_id' => $the_user->id ) );
+	$products->user_name = $the_user->display_name;
+	$products->theme = isset($shop_theme)?$shop_theme:"theme-01";
+	$products->url="{$stBackendUrl}/platforms/$stPlatformId/products?count=$count&offset=$offset&productIds=$values";
 	return $products;
 }
 
@@ -93,18 +104,60 @@ function my_shop_tab_title() {
  */
 function my_shop_tab_content() {
 	global $stPlatformId;
+	global $bp;
+	$displayUser = get_userdata(bp_displayed_user_id());
+	$groupSlug = strtolower($displayUser->user_login."_coseller");
+	//$cosellerGp = bp_get_group_by('slug', $groupSlug);
+	$group_id = BP_Groups_Group::group_exists( $groupSlug );
+	$user_id = get_current_user_id();
+	$currentUser = get_userdata($user_id);
+	$editable =	$currentUser==$displayUser;
+	if(!isset($group_id)){
+		if($editable){
+			$group_id = groups_create_group(array(
+				'creator_id'=>$user_id,
+				'name'=> $currentUser->user_login,
+				'slug'=> $groupSlug,
+				'enable_forum'=>1
+			));
+			groups_accept_invite($user_id, $group_id);
+		}
+	}
+
+	if(isset($group_id)){
+		$group = groups_get_group($group_id);
+		$group_cover = bp_get_group_cover_url($group);
+		$group_img = bp_get_group_avatar_url($group);
+	}
 ?>
 <div class="st-groups" id="st-myshop">
-	<div class="st-profile-subtitle">Shop</div>
 	<div class="st-profile-content-block">
-		<div class="st-add-product-drawer" id="st-add-product-drawer" style="right: -300px;">
-			<div class="st-product-drawer" onclick="toggleAddProducts()"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/shop.svg" loading="lazy" alt="" class="st-product-drawer-img"></div>
+		<div class="st-store-grid st-store-header">
+			<div id="banner-wrap">
+				<div class="st-store-banner-wrap" style="width: 100%; left: 0%;right: 0%;margin-left: 0;margin-right: 0;">
+					<img src="<?php echo $group_cover ?>" alt="" class="store-banner" width="439" height="115" onclick="document.getElementById('profileBGFile').click()">
+				</div>
+				<div id="inner-element" style="display: flex;">
+					<div class="store-brand" style="margin-right: 20px;">
+						<div class="store-icon-img"><img src="<?php echo $group_img ?>" onclick="document.getElementById('profileImageFile').click()" alt="" class="store-icon" width="150" height="150"> </div>
+					</div>
+					<div class="store-info">
+						<h3 id="store_title"  contenteditable="<?php echo $editable ? 'true' : 'false' ?>"><?php echo $group->name ?></h3>
+						<p id="store_bio"  contenteditable="<?php echo $editable ? 'true' : 'false' ?>"><?php echo $group->description ? $group->description : "description" ?></p>
+					</div>
+				</div>
+				<input type="file" id="profileImageFile" onchange="updateProfileImg()" style="display: none;">
+				<input type="file" id="profileBGFile" onchange="updateBgImg()" style="display: none;">
+			</div>
+		</div>
+
+		<div class="st-add-product-drawer" id="st-add-product-drawer">
 			<div class="st-product-add-drawer">
 				<div class="st-product-search">
 					<input class="st-product-search-box" id="st-search-box" name="Search" >
 					<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo plugin_dir_url( __FILE__ )  ?>/images/search.svg" loading="lazy" alt="" class="st-product-search-img"></div>
 				</div>
-				<div class="st-product-search-results" id="st-product-search-results">
+				<div class="st-product-search-results" id="st-product-search-results" style="display: none;">
 					<div class="st-product-select" id="st-product-select-template" style="display: none;">
 						<div class="st-product-select-main">
 							<div class="st-product-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img-select"></div>
@@ -118,7 +171,7 @@ function my_shop_tab_content() {
 				</div>
 				<div class="st-shop-buttons">
 					<div class="st-button" onclick="callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,addToShop,'get')">Add to Shop</div>
-					<div class="st-button">Cancel</div>
+					<div class="st-button" onclick="hideResults()">Cancel</div>
 				</div>
 			</div>
 		</div>
@@ -144,6 +197,7 @@ function my_shop_tab_content() {
 		} ).done( function( data ) {
 			callBack(data);
 		} ).fail( function( error ) {
+			ShoptypeUI.showError(error.responseJSON.message);
 			return error;
 		} );
 	}
@@ -158,6 +212,7 @@ function my_shop_tab_content() {
 		} ).done( function( data ) {
 			callBack(data);
 		} ).fail( function( error ) {
+			ShoptypeUI.showError(error.responseJSON.message);
 			return error;
 		} );
 	}
@@ -166,14 +221,13 @@ function my_shop_tab_content() {
 		currentBpUser = userData;
 		loadShopProducts(userData.user_login);
 	}
+	
+	function hideResults(){
+		document.getElementById("st-product-search-results").style.display = "none";
+	}
 
-	function toggleAddProducts(){
-		let drawer = document.getElementById("st-add-product-drawer");
-		if(drawer.style.right == "0px"){
-			drawer.style.right = "-300px";
-		}else{
-			drawer.style.right = "0px";
-		}
+	function showResults(){
+		document.getElementById("st-product-search-results").style.display = "";
 	}
 
 	function addToShop(shopProducts){
@@ -183,16 +237,35 @@ function my_shop_tab_content() {
 		for (var i = 0; i < selectorNodes.length; i++) {
 			if(selectorNodes[i].checked && !products.includes(selectorNodes[i].value)){
 				newProducts[selectorNodes[i].value] = shoptype_UI.getUserTracker();
+				productAddedActivity(selectorNodes[i]);
 			}
 		}
+		hideResults();
 		callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,x=>addProductByIdToShop(x, newProducts,x=>loadShopProducts(currentBpUser.user_login)),'get');
+	}
+	
+	function productAddedActivity(selector){
+		var productName = selector.parentNode.querySelector(".st-product-name").innerHTML;
+		var productImg = selector.parentNode.querySelector(".st-product-img-select").src;
+		var productId = selector.value;
+		data = {
+			context: 'edit',
+			user_id: profileUser,
+			component: 'activity',
+			group_id: groupId,
+			link: "/products/"+productId,
+			type: 'activity_update',
+			content: `<b>New Product Added to store</b><a href="/products/"${productId}><img src="${productImg}">${productName}</a>`
+		}
+		callBpApi(`activity`,x=>{},'POST',data);
 	}
 
 	function loadShopProducts(userName) {
 		let productTemplate = document.getElementById("st-product-template");
 		let productsContainer = document.getElementById("st-myshop-main");
+		hideResults();
 		removeChildren(productsContainer, productTemplate)
-		fetch('/wp-json/shoptype/v1/shop/' + userName)
+		fetch('/wp-json/shoptype/v1/shop/' + userName + '?count=100')
 			.then(response => response.json())
 			.then(productsJson => {
 				for (var i = 0; i < productsJson.products.length; i++) {
@@ -207,7 +280,49 @@ function my_shop_tab_content() {
 				}
 			});
 	}
-
+	
+	function updateStoreName(name){
+		clearTimeout(debounce_timer);
+		var data = {
+			context: 'edit',
+			name: name
+		}
+		debounce_timer = setTimeout(()=>{callBpApi("groups/"+groupId,(d)=>{document.getElementById("store_title").innerHTML=d[0].name},"put",data);}, 5000);
+	}
+	
+	function updateStoreBio(description){
+		clearTimeout(debounce_timer);
+		var data = {
+			context: 'edit',
+			description: description
+		}
+		debounce_timer = setTimeout(()=>{callBpApi("groups/"+groupId,(d)=>{document.getElementById("store_bio").innerHTML=d[0].description.rendered},"put",data);}, 5000);
+	}
+	
+	function updateProfileImg(){
+		console.info("updateProfileImg");
+		var fileSelect = document.getElementById("profileImageFile");
+		if ( ! fileSelect.files || ! fileSelect.files[0] ) {
+			return;
+		}
+		var formData = new FormData();
+		formData.append( 'action', 'bp_avatar_upload' );
+		formData.append( 'file', fileSelect.files[0] );
+		pushBpApi(`groups/${groupId}/avatar`, (d)=>{document.querySelector(".store-icon").src = d[0].full}, "post", formData);
+	}
+	
+	function updateBgImg(){
+		console.info("updateBgImg");
+		var fileSelect = document.getElementById("profileBGFile");
+		if ( ! fileSelect.files || ! fileSelect.files[0] ) {
+			return;
+		}
+		var formData = new FormData();
+		formData.append( 'action', 'bp_cover_image_upload' );
+		formData.append( 'file', fileSelect.files[0] );
+		pushBpApi(`groups/${groupId}/cover`, (d)=>{document.querySelector(".store-banner").src = d[0].image}, "post", formData);
+	}
+	
 	function showRemoveBtn(productNode){
 		productNode.querySelector(".st-remove-product").style.display = "block";
 	}
@@ -225,10 +340,15 @@ function my_shop_tab_content() {
 	}
 
 	function searchProducts() {
-		let options = {text: document.getElementById('st-search-box').value};
+		let options = {
+			text: document.getElementById('st-search-box').value,
+			offset:0
+		};
+		
 		let productTemplate = document.getElementById("st-product-select-template");
 		let productsContainer = document.getElementById("st-product-search-results");
 		removeChildren(productsContainer,productTemplate);
+		showResults();
 		st_platform.products(options)
 			.then(productsJson => {
 				for (var i = 0; i < productsJson.products.length; i++) {
@@ -282,6 +402,8 @@ function my_shop_tab_content() {
 	var currentBpUser = null;
 	let st_selectedProducts = {};
 	let productsDataId = null;
+	let debounce_timer;
+	let groupId = <?php echo $group_id ?>;
 
 	function initMyShop(){
 		if (typeof wp !== "undefined") { 
@@ -304,7 +426,8 @@ function my_shop_tab_content() {
 		}
 	});
 	initMyShop();
-	getUserTracker();
+	document.getElementById("store_title").addEventListener("input", (e) => updateStoreName(e.currentTarget.textContent), false);
+	document.getElementById("store_bio").addEventListener("input", (e) => updateStoreBio(e.currentTarget.textContent), false);
 </script>
 <?php
 }
@@ -329,3 +452,21 @@ function buddyboss_add_my_shop_menu() {
 }
 
 add_action( 'buddyboss_theme_after_bb_profile_menu', 'buddyboss_add_my_shop_menu' );
+
+function my_bp_custom_group_types() {
+    bp_groups_register_group_type( 'coseller_shop', array(
+        'labels' => array(
+            'name' => 'Coseller Shops',
+            'singular_name' => 'Coseller Shop'
+        ),
+ 
+        // New parameters as of BP 2.7.
+        'has_directory' => 'coseller_shop',
+        'show_in_create_screen' => false,
+        'show_in_list' => false,
+        'description' => 'Shoptype Coseller Shops groups',
+        'create_screen_checked' => false
+    ) );
+}
+add_action( 'bp_groups_register_group_types', 'my_bp_custom_group_types' );
+
