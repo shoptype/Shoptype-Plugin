@@ -1426,8 +1426,7 @@
 })
 
 var urlpath= triggerUserEvent_object.path +'/js/stOccur.js';
-console.log('run');
-console.log(urlpath);
+//console.log(urlpath);
 
 //wrapper
 function loadScript(url, callback) {
