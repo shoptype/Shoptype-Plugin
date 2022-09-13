@@ -16,7 +16,7 @@ function st_user_shop($atts) {
     );
     //getting value from shortcode
     $st_shop = shortcode_atts($default, $atts);
-    
+    ob_start(); 
 $path = dirname(plugin_dir_url( __FILE__ ));
 if(empty($userName)){
 }
@@ -432,6 +432,6 @@ min-height:100%;
 
 
 
-    return '';
+    return ob_get_clean();
 }
 add_shortcode('st-user-shop', 'st_user_shop');
