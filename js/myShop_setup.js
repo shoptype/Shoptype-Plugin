@@ -38,7 +38,8 @@ function setupFields(groupid){
       console.info(data);
       var stProducts = data.find(x=>x.name=="st_products");
       var stTheme = data.find(x=>x.name=="st_shop_theme");
-
+      var st_face_id = data.find(x=>x.name=="st_face_id");
+      var st_shop_url = data.find(x=>x.name=="st_shop_url");
       if(!stProducts){
         wp.apiRequest( {
           path: 'buddypress/v1/xprofile/fields',
@@ -79,6 +80,48 @@ function setupFields(groupid){
       }else{
         console.info("st_shop_theme exist --- skipped");
       }
+      if(!st_face_id){
+        wp.apiRequest( {
+          path: 'buddypress/v1/xprofile/fields',
+          type: 'POST',
+          data: {
+            context: 'edit',
+            group_id: groupid,         // Required
+            type: 'textbox',                // Required
+            name: 'st_face_id', // Required
+            can_delete: false,
+            allow_custom_visibility: "disabled"
+          }
+        } ).done( function( data ) {
+          console.info(data);
+        } ).fail( function( error ) {
+          console.error(error);
+        } );
+      }else{
+        console.info("st_face_id exist --- skipped");
+      }
+      if(!st_shop_url){
+        wp.apiRequest( {
+          path: 'buddypress/v1/xprofile/fields',
+          type: 'POST',
+          data: {
+            context: 'edit',
+            group_id: groupid,         // Required
+            type: 'textbox',                // Required
+            name: 'st_shop_url', // Required
+            can_delete: false,
+            allow_custom_visibility: "disabled"
+          }
+        } ).done( function( data ) {
+          console.info(data);
+        } ).fail( function( error ) {
+          console.error(error);
+        } );
+      }else{
+        console.info("st_shop_url exist --- skipped");
+      }
+
+
     } ).fail( function( error ) {
       console.error(error);
     } );

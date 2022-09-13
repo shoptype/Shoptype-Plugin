@@ -1,15 +1,45 @@
 <?php
 function getUserProducts( $data ) {
+	$store_url = $data['id'];
+	$the_user = get_user_by('login', $store_url);
+	if(isset($the_user->id)){
+		return getProductsByUser($the_user->id, $the_user->user_login, $the_user->display_name, $the_user->user_nicename, $store_url, $data);
+	}else{
+		$field_id = xprofile_get_field_id_from_name( 'st_shop_url');
+		global $wpdb;
+		$bp_table = $wpdb->prefix . 'bp_xprofile_data'; 
+
+		$query = $wpdb->prepare(
+			"SELECT user_id,user_login,user_nicename,user_email,display_name " .
+			"FROM $bp_table B, $wpdb->users U " .
+			"WHERE B.user_id = U.ID " .
+			"AND B.field_id = %d " .
+			"AND B.value = %s"
+		   , $field_id
+		   , $store_url
+		);
+		$get_desired = $wpdb->get_results($query);
+		
+		if(count($get_desired)) {
+			return getProductsByUser($get_desired[0]->user_id, $get_desired[0]->user_login, $get_desired[0]->display_name, $get_desired[0]->user_nicename, $store_url, $data);
+		}else{
+			return  $wpdb->last_query;
+		}
+	}
+}
+
+function getProductsByUser($user_id, $user_login, $display_name, $user_nicename, $store_url, $data){
 	global $stPlatformId;
 	global $stBackendUrl;
-	$the_user = get_user_by('login', $data['id']);
 	$count=isset($data['count'])?$data['count']:10;
 	$offset=isset($data['offset'])?$data['offset']:0;
-	$values = xprofile_get_field_data( 'st_products' , $the_user->id );
-	$shop_theme = xprofile_get_field_data( 'st_shop_theme' , $the_user->id );
+	$values = xprofile_get_field_data( 'st_products' , $user_id );
+	$shop_theme = xprofile_get_field_data( 'st_shop_theme' , $user_id );
 	$valuesJson = str_replace(' ', ',', $values);
 	$valuesParsed = json_decode($valuesJson, true);
-	if(empty($values)){$values = 'nothing';}
+	if(empty($values)){
+		$values = 'nothing';
+	}
 	else{
 		$values="";
 		foreach($valuesParsed as $key => $value) {
@@ -26,7 +56,7 @@ function getUserProducts( $data ) {
 			$product->tid=$valuesParsed[$product->id];
 		}
 	}
-	$groupSlug = strtolower($the_user->user_login."_coseller");
+	$groupSlug = strtolower($user_login."_coseller");
 	$group_id = BP_Groups_Group::group_exists( $groupSlug );
 	if(isset($group_id)){
 		$group = groups_get_group($group_id);
@@ -35,11 +65,13 @@ function getUserProducts( $data ) {
 		$products->shop_name = $group->name;
 		$products->shop_bio = $group->description;
 	}
-	$products->user_avatar = get_avatar_url ( $the_user->id);
-	$products->user_cover = bp_attachments_get_attachment( 'url', array( 'item_id' => $the_user->id ) );
-	$products->user_name = $the_user->display_name;
+	$products->user_avatar = get_avatar_url ( $user_id );
+	$products->user_cover = bp_attachments_get_attachment( 'url', array( 'item_id' => $user_id ) );
+	$products->user_name = $display_name;
+	$products->user_nicename = $user_nicename;
+	$products->user_login = $user_login;
+	$products->shop_url = $store_url;
 	$products->theme = isset($shop_theme)?$shop_theme:"theme-01";
-	$products->url="{$stBackendUrl}/platforms/$stPlatformId/products?count=$count&offset=$offset&productIds=$values";
 	return $products;
 }
 
@@ -48,7 +80,118 @@ add_action( 'rest_api_init', function () {
     'methods' => 'GET',
     'callback' => 'getUserProducts',
   ) );
+  register_rest_route( 'shoptype/v1', '/user', array(
+    'methods' => 'POST',
+    'callback' => 'getUserByFace',
+  ) );
+  register_rest_route( 'shoptype/v1', '/shop-url-check/(?P<shopurl>.+)', array(
+    'methods' => 'GET',
+    'callback' => 'checkUrlFree',
+  ) );
+  register_rest_route( 'shoptype/v1', '/registerface', array(
+    'methods' => 'POST',
+    'callback' => 'setUserFace',
+  ) );
 } );
+
+function getUserByFace( $data ) {
+	$userFaceImage = $data['imageBS64'];
+	$field_id = xprofile_get_field_id_from_name( 'st_face_id');
+	$body = array('imageBS64' => $userFaceImage);
+	$args = array(
+        'method'      => 'POST',
+        'headers'     => array(
+            'Authorization' => 'Basic ' . base64_encode( 'awakeme:ZLbdq25TangQwjAU'),
+            'Content-Type'  => 'application/json',
+        ),
+        'body'        => json_encode($body),
+    );
+	$response = wp_remote_post("https://s.tangent.ai/authenticate", $args);
+	$result     = wp_remote_retrieve_body( $response );
+	
+	if (!empty($result)) {
+		$matchUsers = json_decode($result);
+		$sql = "(";
+		foreach ($matchUsers->users as $matchedUser) {
+			$sql = "{$sql}B.value LIKE '%{$matchedUser}%' OR ";
+		}
+		$sql = substr($sql, 0, -4);
+		$sql = "{$sql})";
+		global $wpdb;
+		$bp_table = $wpdb->prefix . 'bp_xprofile_data'; 
+
+		$query = $wpdb->prepare(
+			"SELECT user_id,user_login,user_nicename,user_email,display_name " .
+			"FROM $bp_table B, $wpdb->users U " .
+			"WHERE B.user_id = U.ID " .
+			"AND B.field_id = $field_id " .
+			"AND $sql"
+		);
+
+		$get_desired = $wpdb->get_results($query);
+
+		if(count($get_desired)) {
+			return $get_desired[0];
+		} else {
+			return $wpdb->last_query;
+		}
+	}
+	return $body;
+}
+
+function setUserFace($data){
+	$userFaceImage = $data['imageBS64'];
+	$body = array('imageBS64' => $userFaceImage);
+	$args = array(
+        'method'      => 'POST',
+        'headers'     => array(
+            'Authorization' => 'Basic ' . base64_encode( 'awakeme:ZLbdq25TangQwjAU'),
+            'Content-Type'  => 'application/json',
+        ),
+        'body'        => json_encode($body),
+    );
+	$response = wp_remote_post("https://s.tangent.ai/consume", $args);
+	$result     = wp_remote_retrieve_body( $response );
+	
+	if (!empty($result)) {
+		$matchUsers = json_decode($result);
+		$user_id = get_current_user_id();
+		if(isset($matchUsers->id)){
+			xprofile_set_field_data( 'st_face_id' , $user_id, $matchUsers->id);
+			return true;
+		}
+	}
+	return false;
+}
+
+function checkUrlFree( $data ) {
+	$shop_url = $data['shopurl'];
+	$the_user = get_user_by('login', $shop_url);
+	if(isset($the_user->id)){
+		return array('status'=>"taken");
+	}
+	
+	$field_id = xprofile_get_field_id_from_name( 'st_shop_url');
+	global $wpdb;
+    $bp_table = $wpdb->prefix . 'bp_xprofile_data'; 
+
+    $query = $wpdb->prepare(
+        "SELECT user_id,user_login,user_nicename,user_email,display_name " .
+        "FROM $bp_table B, $wpdb->users U " .
+        "WHERE B.user_id = U.ID " .
+        "AND B.field_id = %d " .
+        "AND B.value = %s"
+       , $field_id
+       , $shop_url
+    );
+    $get_desired = $wpdb->get_results($query);
+
+    if(count($get_desired)) {
+        return array('status'=>"taken");
+    } else {
+        return array('status'=>"available");
+    }
+}
 
 /**
  * Add custom sub-tab on groups page.
@@ -61,9 +204,7 @@ function buddyboss_my_shop_tab() {
 	if ( ! function_exists( 'bp_core_new_nav_item' ) ||
 		 ! function_exists( 'bp_loggedin_user_domain' ) ||
 		 empty( bp_displayed_user_id() ) ) {
-
 		return;
-
 	  }
 
 	  global $bp;

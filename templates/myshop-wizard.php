@@ -14,6 +14,7 @@
   $group_id = BP_Groups_Group::group_exists( $groupSlug );
   $shop_products = xprofile_get_field_data( 'st_products' , $currentUser->id );
   $shop_theme = xprofile_get_field_data( 'st_shop_theme' , $currentUser->id );
+  $shop_url = xprofile_get_field_data( 'st_shop_url' , $currentUser->id );
   if(!isset($group_id)){
       $group_id = groups_create_group(array(
         'creator_id'=>$user_id,
@@ -29,7 +30,13 @@
     $group_cover = bp_get_group_cover_url($group);
     $group_img = bp_get_group_avatar_url($group);
   }
-  $encodedShopUrl = get_site_url()."/shop/".$currentUser->user_login;
+  $profileImage = get_avatar_url($user_id);
+  if(isset($shop_url)){
+    $encodedShopUrl = get_site_url()."/shop/".$shop_url;
+  }else{
+    $encodedShopUrl = get_site_url()."/shop/".$currentUser->user_login;
+  }
+  
   get_header(null);
 ?>
 
@@ -56,12 +63,16 @@
       <input class="st-myshop-bio" id="myshop-bio" value="<?php echo $group->description ?>"/>
     </div>
     <div class="st-myshop-details-div">
+      <div class="st-myshop-details-txt">Store URL</div>
+      <input class="st-myshop-bio" id="myshop-url" onchange="checkUrlAvailable(this)" value="<?php echo $shop_url ?>"/>
+    </div>
+    <div class="st-myshop-details-div">
       <div class="st-myshop-details-txt">Store Logo</div>
       <a href="#" onclick="document.getElementById('profileImageFile').click()" class="st-myshop-img-select" ><img id="store-icon" src="<?php echo $group_img ?>" loading="lazy" alt="" class="st-myshop-store-img">
         <div class="div-block-11">
           <div class="st-myshop-img-txt">JPG/PNG<br>To upload you file</div>
           <div class="st-myshop-img-lnk">Click here</div>
-                <input type="file" id="profileImageFile" onchange="updateProfileImg()" style="display: none;">
+                <input type="file" id="profileImageFile" onchange="updateShopImg()" style="display: none;">
         </div>
       </a>
     </div>
@@ -72,6 +83,16 @@
           <div class="st-myshop-img-txt">JPG/PNG min image size(1300px X 225px)<br>To upload you file</div>
           <div class="st-myshop-img-lnk">Click here</div>
                 <input type="file" id="profileBGFile" onchange="updateBgImg()" style="display: none;">
+        </div>
+      </a>
+    </div>
+  <div class="st-myshop-details-div">
+      <div class="st-myshop-details-txt">Profile Image</div>
+      <a href="#" onclick="document.getElementById('profileImgFile').click()" class="st-myshop-img-select"><img id="profile-img" src="<?php echo $profileImage ?>" loading="lazy" alt="" class="st-myshop-store-img">
+        <div class="div-block-11">
+          <div class="st-myshop-img-txt">JPG/PNG<br>To upload you file</div>
+          <div class="st-myshop-img-lnk">Click here</div>
+                <input type="file" id="profileImgFile" onchange="updateProfileImg()" style="display: none;">
         </div>
       </a>
     </div>
@@ -124,15 +145,15 @@
     <div>
       <div class="text-block-3">Share your store on social media</div>
       <div class="st-myshop-social">
-        <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $encodedShopUrl ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/fb_icon.png" loading="lazy" alt="" class="image"></a>
-        <a href="whatsapp://send?text=<?php echo "$sharetxt $encodedShopUrl" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/whatsapp_icon.png" loading="lazy" alt="" class="image"></a>
-        <a href="http://twitter.com/share?text=<?php echo "{$sharetxt}&url={$encodedShopUrl}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/twitter_icon.png" loading="lazy" alt="" class="image"></a>
-        <a href="https://pinterest.com/pin/create/link/?url=<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/insta_icon.png" loading="lazy" alt="" class="image"></a>
-        <a href="https://telegram.me/share/url?url=<?php echo "{$encodedShopUrl}&TEXT={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/telegram_icon.png" loading="lazy" alt="" class="image"></a>
-        <a href="https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=<?php echo "{$encodedShopUrl}&title={$group->name}&summary={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/linkedIn_icon.png" loading="lazy" alt="" class="image"></a>
+        <a id="fb_link" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $encodedShopUrl ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/fb_icon.png" loading="lazy" alt="" class="image"></a>
+        <a id="wa_link" href="whatsapp://send?text=<?php echo "$sharetxt $encodedShopUrl" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/whatsapp_icon.png" loading="lazy" alt="" class="image"></a>
+        <a id="tw_link" href="http://twitter.com/share?text=<?php echo "{$sharetxt}&url={$encodedShopUrl}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/twitter_icon.png" loading="lazy" alt="" class="image"></a>
+        <a id="pi_link" href="https://pinterest.com/pin/create/link/?url=<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/insta_icon.png" loading="lazy" alt="" class="image"></a>
+        <a id="tgram_link" href="https://telegram.me/share/url?url=<?php echo "{$encodedShopUrl}&TEXT={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/telegram_icon.png" loading="lazy" alt="" class="image"></a>
+        <a id="ln_link" href="https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=<?php echo "{$encodedShopUrl}&title={$group->name}&summary={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $path ?>/images/linkedIn_icon.png" loading="lazy" alt="" class="image"></a>
       </div>
     </div>
-    <a href="/shop/<?php echo $currentUser->user_login ?>" class="st-myshop-button">Go to Store</a>
+    <a href="<?php echo $encodedShopUrl ?>" class="st-myshop-button" id="goto_shop_btn">Go to Store</a>
   </div>
   <div class="st-myshop-bottom">
     <a id="st-next-button" href="#" onclick="moveState()" class="st-myshop-button">Save &amp; Continue</a>
@@ -205,9 +226,7 @@
           addProductDetails(newProduct, productsJson.products[i],".st-product-img",".st-product-cost");
           newProduct.querySelector(".st-product-link").href= "/products/"+productsJson.products[i].id+"/?tid="+productsJson.products[i].tid;
           newProduct.id = productsJson.products[i].id;
-          if(userId=='me'){
-            newProduct.querySelector(".st-remove-product").setAttribute("onclick",`event.stopPropagation(); removeProductFromShop("${productsJson.products[i].id}")`);
-          }
+          newProduct.querySelector(".st-remove-product").setAttribute("onclick",`event.stopPropagation(); removeProductFromShop("${productsJson.products[i].id}")`);
           productsContainer.appendChild(newProduct);
         }
       });
@@ -227,7 +246,7 @@
       ShoptypeUI.showError("Shop Icon cannot be empty.");
       return;
     }
-      moveToTheme();
+        moveToTheme();
       break;
       case 2:
     var selectedTheme = document.querySelector('input[name="theme_select"]:checked').value;
@@ -243,7 +262,7 @@
       moveToComplete();
       break;
     }
-  st_shop_state++;
+    st_shop_state++;
   }
   
   function moveToDetails(){
@@ -252,7 +271,7 @@
     document.querySelector(".st-myshop-products").style.display="none";
     document.querySelector(".st-myshop-complete").style.display="none";
     document.querySelector("#st-next-button").style.display="";
-  document.querySelector("#st-next-button").style.position="";  
+    document.querySelector("#st-next-button").style.position="";  
     document.getElementById("state-1").classList.add("st-myshop-state-selected");
     document.getElementById("state-2").classList.remove("st-myshop-state-selected");
     document.getElementById("state-3").classList.remove("st-myshop-state-selected");
@@ -263,9 +282,12 @@
     var data = {
       context: 'edit',
       name: document.getElementById("myshop-name").value,
-    description: document.getElementById("myshop-bio").value,
+      description: document.getElementById("myshop-bio").value,
     }
     callBpApi("groups/"+groupId,(d)=>{showThemeSelect();},"put",data);
+  var shopUrl = document.getElementById("myshop-url").value;
+  shopUrl = encodeURI(shopUrl);
+  callBpApi(`xprofile/${myshopUrlId}/data/${currentBpUser.id}`,(d)=>{},"post",{context: 'edit', value:shopUrl});
   }
   function moveToProducts(){
     searchProducts();
@@ -274,7 +296,7 @@
     document.querySelector(".st-myshop-products").style.display="";
     document.querySelector(".st-myshop-complete").style.display="none";
     document.querySelector("#st-next-button").style.display="";
-  document.querySelector("#st-next-button").style.position="fixed";
+    document.querySelector("#st-next-button").style.position="fixed";
     document.getElementById("state-3").classList.add("st-myshop-state-selected");
     document.getElementById("state-2").classList.remove("st-myshop-state-selected");
     document.getElementById("state-2").classList.add("st-myshop-state-done");
@@ -285,7 +307,7 @@
     document.querySelector(".st-myshop-products").style.display="none";
     document.querySelector(".st-myshop-complete").style.display="";
     document.querySelector("#st-next-button").style.display="none";
-  document.querySelector("#st-next-button").style.position="";
+    document.querySelector("#st-next-button").style.position="";
     document.getElementById("state-4").classList.add("st-myshop-state-selected");
     document.getElementById("state-3").classList.remove("st-myshop-state-selected");
     document.getElementById("state-3").classList.add("st-myshop-state-done");
@@ -296,14 +318,14 @@
     document.querySelector(".st-myshop-products").style.display="none";
     document.querySelector(".st-myshop-complete").style.display="none";
     document.querySelector("#st-next-button").style.display="";
-  document.querySelector("#st-next-button").style.position="";
+    document.querySelector("#st-next-button").style.position="";
     document.getElementById("state-1").classList.remove("st-myshop-state-selected");
     document.getElementById("state-1").classList.add("st-myshop-state-done");
     document.getElementById("state-2").classList.add("st-myshop-state-selected");
   }
   
    
-  function updateProfileImg(){
+  function updateShopImg(){
     var fileSelect = document.getElementById("profileImageFile");
     if ( ! fileSelect.files || ! fileSelect.files[0] ) {
       return;
@@ -315,7 +337,6 @@
   }
   
   function updateBgImg(){
-    console.info("updateBgImg");
     var fileSelect = document.getElementById("profileBGFile");
     if ( ! fileSelect.files || ! fileSelect.files[0] ) {
       return;
@@ -324,6 +345,29 @@
     formData.append( 'action', 'bp_cover_image_upload' );
     formData.append( 'file', fileSelect.files[0] );
     pushBpApi(`groups/${groupId}/cover`, (d)=>{document.getElementById("store-banner").src = d[0].image}, "post", formData);
+  }
+  
+  function updateProfileImg(){
+  var fileSelect = document.getElementById("profileImgFile");
+    if ( ! fileSelect.files || ! fileSelect.files[0] ) {
+      return;
+    }
+    var formData = new FormData();
+    formData.append( 'action', 'bp_avatar_upload' );
+    formData.append( 'file', fileSelect.files[0] );
+    pushBpApi(`members/${profileUser}/avatar`, (d)=>{document.getElementById("profile-img").src = d[0].image}, "post", formData);
+    var file = fileSelect.files[0];
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      fetch('https://shopthatface-com.ibrave.host/wp-json/shoptype/v1/registerface', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({'imageBS64':reader.result})
+      }).then(async (response) => {
+      }).catch((error) => {
+      });
+    }
+    reader.readAsDataURL(file);
   }
   
   function showRemoveBtn(productNode){
@@ -403,21 +447,52 @@
     productsJson = JSON.stringify(products);
     callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`, callBack, 'post',{context: 'edit', value:productsJson});
   }
+  
+  function checkUrlAvailable(element){
+    var testUrl = element.value;
+    testUrl= testUrl.trim();
+    testUrl = testUrl.replace(/[&\/\\#, +()$~%.':*?<>{}]/g, '-');
+    element.value = testUrl;
+    fetch("/wp-json/shoptype/v1/shop-url-check/"+testUrl)
+      .then((response) => response.json())
+      .then(data=>{
+      if(data.status === "taken"){
+        element.value = currentShopUrl;
+        if(testUrl != currentShopUrl){
+          ShoptypeUI.showError(`the url ${testUrl} is already in use please choose another one.`);
+        }
+      }else{
+        setShopUrl("/shop."+testUrl);
+      }
+      });
+  }
+  
+  function setShopUrl(shopUrl){
+    document.getElementById("fb_link").src = "https://www.facebook.com/sharer/sharer.php?u=" + shopUrl;
+    document.getElementById("wa_link").src = "whatsapp://send?text=<?php echo "$sharetxt" ?> " + shopUrl;
+    document.getElementById("tw_link").src = "http://twitter.com/share?text=<?php echo $sharetxt ?>&url=" + shopUrl;
+    document.getElementById("pi_link").src = "https://pinterest.com/pin/create/link/?url=" + shopUrl + "<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>";
+    document.getElementById("tgram_link").src = "https://telegram.me/share/url?url=" + shopUrl + "<?php echo "&TEXT={$sharetxt}" ?>";
+    document.getElementById("ln_link").src = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + shopUrl + "<?php echo "&title={$group->name}&summary={$sharetxt}" ?>";
+    document.getElementById("goto_shop_btn").src = shopUrl;
+  }
 
   var myUrl = new URL(window.location);
   var profileUser = <?php echo get_current_user_id() ?>;
-  let userId = <?php echo get_current_user_id() ?>==profileUser?"me":profileUser;
+  var currentShopUrl = "<?php echo $shop_url ?>";
   var currentBpUser = null;
   let st_selectedProducts = {};
   let productsDataId = null;
+  let myshopUrlId = null;
   let themesId = null;
   let debounce_timer;
   let groupId = <?php echo $group_id ?>;
   let st_shop_state = 0;
   let myshop_offset = 1;
+  
   function initMyShop(){
     if (typeof wp !== "undefined") { 
-      callBpApi("members/"+userId, addUserDetails, 'get',{populate_extras:true});
+      callBpApi("members/"+profileUser, addUserDetails, 'get',{populate_extras:true});
       callBpApi("xprofile/fields", setFieldId, 'get',{populate_extras:true});
     }else{
       setTimeout(initMyShop,200);
@@ -426,6 +501,7 @@
 
   function setFieldId(data){
     themesId = data.find(field=>field.name=="st_shop_theme").id;
+  myshopUrlId = data.find(field=>field.name=="st_shop_url").id;
     productsDataId = data.find(field=>field.name=="st_products").id;
   }
   

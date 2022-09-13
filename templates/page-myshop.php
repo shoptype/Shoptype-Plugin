@@ -14,12 +14,14 @@ $path = dirname(plugin_dir_url( __FILE__ ));
 $userName = urldecode(get_query_var( 'shop' ));
 
 try {
+  $ch = curl_init();
   $urlparts = parse_url(home_url());
   $domain = $urlparts['host'];
- 
-  $response = wp_remote_get("https://$domain/wp-json/shoptype/v1/shop/".$userName."?count=100");
-  $result = wp_remote_retrieve_body( $response );
- 
+  curl_setopt($ch, CURLOPT_URL, "https://$domain/wp-json/shoptype/v1/shop/".$userName."?count=100");
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $result = curl_exec($ch);
+  curl_close($ch);
+
   if( !empty( $result ) ) {
     $st_user_products = json_decode($result);
   }else{
@@ -33,7 +35,7 @@ add_action('wp_head', function () use ($st_product) {
       echo "<meta name='description' content='$description'>";
       echo "<meta property='og:title' content='$st_user_products->shop_name' />";
       echo "<meta property='og:description' content='$st_user_products->shop_bio' />";
-      echo "<meta property='og:image' content='{$st_user_products->primaryImageSrc->avatar}' />";
+      echo "<meta property='og:image' content='{$st_user_products->avatar}' />";
     }, 1);
 
 switch ($st_user_products->theme) {
@@ -70,7 +72,7 @@ $shop_bio = xprofile_get_field_data( 'st_shop_bio' , $user->id );
 <div id="inner-element">
 <div class="store-brand">
 <div class="store-icon-img">
-  <a href="/shop/<?php echo $user_name ?>"><img src="<?php echo $st_user_products->avatar ?>" alt="" class="store-icon"></a>
+  <a href="/shop/<?php echo $st_user_products->shop_url ?>"><img src="<?php echo $st_user_products->avatar ?>" alt="" class="store-icon"></a>
 </div>
 
 </div>
@@ -90,14 +92,14 @@ $shop_bio = xprofile_get_field_data( 'st_shop_bio' , $user->id );
 <div class="owner-info">
 <h3>Shop Owner</h3>
 <div class="inner-avatar-wrap owner-avatar author-follow">
-<a class="boss-avatar-container" href="/members/<?php echo $userName ?>">
+<a class="boss-avatar-container" href="/members/<?php echo $st_user_products->user_nicename ?>">
 <img alt="" src="<?php echo $st_user_products->user_avatar ?>" class="avatar avatar-90 photo" height="90" width="90" loading="lazy"> </a>
 </div>
-<a href="/members/<?php echo $userName ?>" class="owner-name"><?php echo $st_user_products->user_name ?></a>
+<a href="/members/<?php echo $st_user_products->user_nicename ?>" class="owner-name"><?php echo $st_user_products->user_name ?></a>
 <div class="shop-rating">
 </div>
 </div>
-<a class="send-message" href="/members/me/messages/compose/?r=<?php echo $userName ?>" data-next="" title="Send a private message to <?php echo $st_user_products->user_name ?>.">Ask a question</a>
+<a class="send-message" href="/members/me/messages/compose/?r=<?php echo $st_user_products->user_nicename ?>" data-next="" title="Send a private message to <?php echo $st_user_products->user_name ?>.">Ask a question</a>
 </aside>
 
 

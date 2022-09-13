@@ -1007,6 +1007,7 @@ li.product:hover{
   border-width: 1px;
   border-color: #bbb;
   border-radius: 5px;
+  width: 100%;
 }
 
 .st-myshop-name {
@@ -1015,6 +1016,7 @@ li.product:hover{
   border-width: 1px;
   border-color: #bbb;
   border-radius: 5px;
+  width: 100%;
 }
 
 .st-myshop-theme-list {
@@ -1042,6 +1044,7 @@ li.product:hover{
   -webkit-flex: 0 50%;
   -ms-flex: 0 50%;
   flex: 0 50%;
+  border: 1px solid #ccc;
 }
 
 .st-myshop-theme-select {
@@ -1050,6 +1053,7 @@ li.product:hover{
   -webkit-flex: 0 auto;
   -ms-flex: 0 auto;
   flex: 0 auto;
+  padding: 0px 0px 0px 20px;
 }
 
 .div-block-9 {
@@ -1064,8 +1068,10 @@ li.product:hover{
 }
 
 .st-myshop-button {
-  border-radius: 5px;
-  background-color: #6797f7;
+	border-radius: 5px;
+    background-color: #6797f7;
+    color: #ffffff;
+    padding: 15px 20px;
 }
 
 .st-myshop-theme-name {
