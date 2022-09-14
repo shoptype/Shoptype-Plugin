@@ -462,19 +462,19 @@
           ShoptypeUI.showError(`the url ${testUrl} is already in use please choose another one.`);
         }
       }else{
-        setShopUrl("/shop."+testUrl);
+        setShopUrl("/shop/"+testUrl);
       }
       });
   }
   
   function setShopUrl(shopUrl){
-    document.getElementById("fb_link").src = "https://www.facebook.com/sharer/sharer.php?u=" + shopUrl;
-    document.getElementById("wa_link").src = "whatsapp://send?text=<?php echo "$sharetxt" ?> " + shopUrl;
-    document.getElementById("tw_link").src = "http://twitter.com/share?text=<?php echo $sharetxt ?>&url=" + shopUrl;
-    document.getElementById("pi_link").src = "https://pinterest.com/pin/create/link/?url=" + shopUrl + "<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>";
-    document.getElementById("tgram_link").src = "https://telegram.me/share/url?url=" + shopUrl + "<?php echo "&TEXT={$sharetxt}" ?>";
-    document.getElementById("ln_link").src = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + shopUrl + "<?php echo "&title={$group->name}&summary={$sharetxt}" ?>";
-    document.getElementById("goto_shop_btn").src = shopUrl;
+    document.getElementById("fb_link").href = "https://www.facebook.com/sharer/sharer.php?u=" + shopUrl;
+    document.getElementById("wa_link").href = "whatsapp://send?text=<?php echo "$sharetxt" ?> " + shopUrl;
+    document.getElementById("tw_link").href = "http://twitter.com/share?text=<?php echo $sharetxt ?>&url=" + shopUrl;
+    document.getElementById("pi_link").href = "https://pinterest.com/pin/create/link/?url=" + shopUrl + "<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>";
+    document.getElementById("tgram_link").href = "https://telegram.me/share/url?url=" + shopUrl + "<?php echo "&TEXT={$sharetxt}" ?>";
+    document.getElementById("ln_link").href = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + shopUrl + "<?php echo "&title={$group->name}&summary={$sharetxt}" ?>";
+    document.getElementById("goto_shop_btn").href = shopUrl;
   }
 
   var myUrl = new URL(window.location);
