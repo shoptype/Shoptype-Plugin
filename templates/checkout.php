@@ -20,48 +20,48 @@ wp_enqueue_script('st-payment-handlers',"https://shoptype-scripts.s3.amazonaws.c
 wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
 wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
-$args = array(
-	'body'        => '',
-	'headers'     => array(
-		"Content-Type"=> "application/json",
-		"X-Shoptype-Api-Key"=>$stApiKey,
-		"X-Shoptype-PlatformId" =>$stPlatformId
-	)
-	
-);
+
 if($checkoutId == "new"){
 	$productId = $_GET["productid"];
 	$variantId = $_GET["variantid"];
-	
-	
-		
-	$result = wp_remote_post( '{$stBackendUrl}/cart', $args );
-	
-	
-	if( !empty( $result ) ) {
-		$st_cart = json_decode($result);
-		
+	$args = array(
+		'body'        => '{}',
+		'headers'     => array(
+			"Content-Type"=> "application/json",
+			"X-Shoptype-Api-Key" => $stApiKey,
+			"X-Shoptype-PlatformId" => $stPlatformId
+		)
+	);
+	$result = wp_remote_post( "{$stBackendUrl}/cart", $args );
+
+	if ( is_wp_error( $result ) ) {
+		$error_message = $result->get_error_message();
+		echo "Something went wrong: $error_message";
+	}
+	else {
+		$body = wp_remote_retrieve_body( $result );
+		$st_cart = json_decode($body);
 		$data = array(
-			'product_id' => $productId,
-			'product_variant_id' => $variantId,
-			'quantity' => 1
+			"product_id" => $productId,
+			"product_variant_id" => $variantId,
+			"quantity" => 1
 		);
 		$args = array(
-			'body'        => $data,
-			'headers'     => array(
-			"Content-Type"=> "application/json",
-			"X-Shoptype-Api-Key"=>$stApiKey,
-			"X-Shoptype-PlatformId" =>$stPlatformId
-
-			)
-			
+			"body"        => json_encode($data),
+			"headers"     => array(
+					"Content-Type"=> "application/json",
+					"X-Shoptype-Api-Key"=>$stApiKey,
+					"X-Shoptype-PlatformId" =>$stPlatformId
+				)
 		);
 			
-		$result = wp_remote_post( '{$stBackendUrl}/cart/{$st_cart->id}/add', $args );
-		
-		
-		if( !empty( $result ) ) {
-			$new_cart = json_decode($result);
+		$result = wp_remote_post( "{$stBackendUrl}/cart/{$st_cart->id}/add", $args );
+		if ( is_wp_error( $result ) ) {
+			$error_message = $result->get_error_message();
+		}
+		else {
+			$body = wp_remote_retrieve_body( $result );
+			$new_cart = json_decode($body);
 			$st_checkout = new stdClass();
 			$st_checkout->order_details_per_vendor = new stdClass();
 			$vendorId = $new_cart->cart_lines[0]->vendor_id;
@@ -72,11 +72,9 @@ if($checkoutId == "new"){
 		}
 	}
 }else{
-	try {
-			
-		  $response = wp_remote_get("{$stBackendUrl}/checkout/$checkoutId",$args);
-		  $result = wp_remote_retrieve_body( $response );
-		 
+	try {	
+		$response = wp_remote_get("{$stBackendUrl}/checkout/$checkoutId",$args);
+		$result = wp_remote_retrieve_body( $response );
 
 		if( !empty( $result ) ) {
 			$st_checkout = json_decode($result);
