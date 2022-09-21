@@ -24,11 +24,12 @@ try {
   $args = array(
     'headers' => array(
       "X-Shoptype-Api-Key" =>$stApiKey,
-      "X-Shoptype-PlatformId" =>$stPlatformId
+      "X-Shoptype-PlatformId" =>$stPlatformId,
+    "origin" => "https://".$_SERVER['HTTP_HOST']
       ));
   $response = wp_remote_get("{$stBackendUrl}/cart/$cartId",$args);
   $result = wp_remote_retrieve_body( $response );
-  
+
   if( !empty( $result ) ) {
     $st_cart = json_decode($result);
     $prodCurrency = $stCurrency[$st_cart->sub_total->currency];

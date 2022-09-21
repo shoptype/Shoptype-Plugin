@@ -29,7 +29,8 @@ if($checkoutId == "new"){
 		'headers'     => array(
 			"Content-Type"=> "application/json",
 			"X-Shoptype-Api-Key" => $stApiKey,
-			"X-Shoptype-PlatformId" => $stPlatformId
+			"X-Shoptype-PlatformId" => $stPlatformId,
+			"origin" => "https://".$_SERVER['HTTP_HOST']
 		)
 	);
 	$result = wp_remote_post( "{$stBackendUrl}/cart", $args );
@@ -51,7 +52,8 @@ if($checkoutId == "new"){
 			"headers"     => array(
 					"Content-Type"=> "application/json",
 					"X-Shoptype-Api-Key"=>$stApiKey,
-					"X-Shoptype-PlatformId" =>$stPlatformId
+					"X-Shoptype-PlatformId" =>$stPlatformId,
+					"origin" => "https://".$_SERVER['HTTP_HOST']
 				)
 		);
 			
@@ -72,7 +74,16 @@ if($checkoutId == "new"){
 		}
 	}
 }else{
-	try {	
+	try {
+		$args = array(
+			'body'        => '{}',
+			'headers'     => array(
+				"Content-Type"=> "application/json",
+				"X-Shoptype-Api-Key" => $stApiKey,
+				"X-Shoptype-PlatformId" => $stPlatformId,
+				"origin" => "https://".$_SERVER['HTTP_HOST']
+			)
+		);
 		$response = wp_remote_get("{$stBackendUrl}/checkout/$checkoutId",$args);
 		$result = wp_remote_retrieve_body( $response );
 

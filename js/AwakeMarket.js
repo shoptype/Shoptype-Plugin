@@ -1,4 +1,3 @@
-const am_backend = "https://backend.shoptype.com";
 let productPage = null;
 let brandPage = null;
 let offset = 0;
