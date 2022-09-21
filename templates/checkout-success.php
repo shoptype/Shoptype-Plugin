@@ -19,11 +19,12 @@ try {
 	$args = array(
 		'headers' => array(
 		  "X-Shoptype-Api-Key" =>$stApiKey,
-		  "X-Shoptype-PlatformId" =>$stPlatformId
+		  "X-Shoptype-PlatformId" =>$stPlatformId,
+		  "origin" => "https://".$_SERVER['HTTP_HOST']
 		  ));
-	  $response = wp_remote_get("{$stBackendUrl}/cart/$checkoutId",$args);
+	  $response = wp_remote_get("{$stBackendUrl}/checkout/$checkoutId",$args);
 	  $result = wp_remote_retrieve_body( $response );
-	 
+
 	if( !empty( $result ) ) {
 		$st_checkout = json_decode($result);
 		$prodCurrency = $stCurrency[$st_checkout->total->currency];
