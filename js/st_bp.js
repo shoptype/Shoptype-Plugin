@@ -139,8 +139,8 @@ function updateProfileImg(){
 
 	var formData = new FormData();
 	formData.append( 'action', 'bp_avatar_upload' );
-			formData.append( 'file', fileSelect.files[0] );
-			pushBpApi(`members/${currentBpUser.id}/avatar`, updateMyAvatar, "post", formData);
+	formData.append( 'file', fileSelect.files[0] );
+	pushBpApi(`members/${currentBpUser.id}/avatar`, updateMyAvatar, "post", formData);
 }
 
 function updateBgImg(){
@@ -150,8 +150,8 @@ function updateBgImg(){
 	}
 	var formData = new FormData();
 	formData.append( 'action', 'bp_cover_image_upload' );
-			formData.append( 'file', fileSelect.files[0] );
-			pushBpApi(`members/${currentBpUser.id}/cover`, setUserCover, "post", formData);
+	formData.append( 'file', fileSelect.files[0] );
+	pushBpApi(`members/${currentBpUser.id}/cover`, setUserCover, "post", formData);
 }
 
 function updateMyAvatar(data){

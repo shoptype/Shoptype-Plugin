@@ -129,9 +129,12 @@ function addProducts(productsContainer){
 	let vendorId = productsContainer.getAttribute('vendorId');
 	let count = productsContainer.getAttribute('count')?parseInt(productsContainer.getAttribute('count')):20;
 	let imageSize = productsContainer.getAttribute('imageSize');
-
+	let offsetAtt = productsContainer.getAttribute('offset');
+	offset = offsetAtt??offset;
+	
 	let options = {
 		count: count,
+		offset: offsetAtt??undefined,
 		imgSize: imageSize??undefined,
 		text: searchString??undefined,
 		minRange: minRange??undefined,

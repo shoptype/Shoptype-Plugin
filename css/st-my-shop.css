@@ -1072,6 +1072,8 @@ li.product:hover{
     background-color: #6797f7;
     color: #ffffff;
     padding: 15px 20px;
+    z-index: 9999;
+    bottom: 30px;
 }
 
 .st-myshop-theme-name {
@@ -1161,6 +1163,14 @@ li.product:hover{
   height: 120px;
   -o-object-fit: cover;
   object-fit: cover;
+}
+
+.st-myshop-search{
+	display: flex;
+}
+
+.st-myshop-search-box {
+    width: calc(100% - 40px);
 }
 
 @media screen and (max-width: 767px) {

@@ -76,7 +76,9 @@ class ShoptypeUI{
 		
 		var param_tid = thisUrl.searchParams.get("tid");
 		if(param_tid != this.#userTId && param_tid!="" && param_tid!=null){
-			sessionStorage["st-ctid"]=param_tid;
+			if(param_tid.startsWith("nv_")){
+				sessionStorage["st-ctid"]=param_tid;
+			}
 			this.#cosellerTId = param_tid;
 		}
 		if((this.#platformId||this.#cosellerTId) && (!this.#eventSent)){

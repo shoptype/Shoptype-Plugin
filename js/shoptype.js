@@ -186,7 +186,7 @@ class STPlatform {
       return this.productsCache[productId];
     }
     if(typeof fingerprintExcludeOptions=== 'undefined'){
-      st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", ()=>{this.product(productId, callback, tid);});
+      STUtils.st_loadScript("https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js", ()=>{this.product(productId, callback, tid);});
     }else{
       getDeviceId().then(deviceId =>{       
         return STUtils.request(this.endpoints.products.product(productId, deviceId, tid), (product)=>{ 
