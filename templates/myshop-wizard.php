@@ -387,12 +387,12 @@
   }
 
   function searchProducts(remove=true) {
-  let productTemplate = document.getElementById("st-product-select-template");
+    let productTemplate = document.getElementById("st-product-select-template");
     let productsContainer = document.getElementById("st-product-search-results");
-  if(remove){
-    removeChildren(productsContainer,productTemplate);
-    myshop_offset=1;
-  }
+    if(remove){
+      removeChildren(productsContainer,productTemplate);
+      myshop_offset=1;
+    }
  
     let options = {
       text: document.getElementById('st-search-box').value,
@@ -411,6 +411,7 @@
           newProduct.querySelector("input").value = productsJson.products[i].id;
           productsContainer.appendChild(newProduct);
         }
+        scrollLoading = false;
       });
   }
 
@@ -489,7 +490,8 @@
   let groupId = <?php echo $group_id ?>;
   let st_shop_state = 0;
   let myshop_offset = 1;
-  
+  let scrollLoading = false;
+
   function initMyShop(){
     if (typeof wp !== "undefined") { 
       callBpApi("members/"+profileUser, addUserDetails, 'get',{populate_extras:true});
@@ -501,14 +503,15 @@
 
   function setFieldId(data){
     themesId = data.find(field=>field.name=="st_shop_theme").id;
-  myshopUrlId = data.find(field=>field.name=="st_shop_url").id;
+    myshopUrlId = data.find(field=>field.name=="st_shop_url").id;
     productsDataId = data.find(field=>field.name=="st_products").id;
   }
   
   scrollContainer = document.getElementById("st-product-search-results");
   window.addEventListener('scroll',()=>{
     const {scrollHeight,scrollTop,clientHeight} = document.documentElement;
-    if(scrollTop + clientHeight > scrollHeight - 5){
+    if((scrollTop + clientHeight > scrollHeight - 5) && (!scrollLoading)){
+      scrollLoading = true;
       searchProducts(false);
     }
   });
