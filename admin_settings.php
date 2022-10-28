@@ -33,7 +33,7 @@ class Shoptype_Settings {
                   'Authorizatione' => $token
                   ));
             $response = wp_remote_get("{$stBackendUrl}/networks",$args);
-	        $result = wp_remote_retrieve_body( $response );
+            $result = wp_remote_retrieve_body( $response );
             $st_network = json_decode($result);
             echo "<div id='networkData' nid='{$st_network->network->id}' pid='{$st_network->platforms[0]->id}' vid='{$st_network->platforms[0]->vendor_ids[0]}' url='{$st_network->platforms[0]->url}'></div>";
             return $st_network;
@@ -56,7 +56,7 @@ class Shoptype_Settings {
                 )
                 
             );
-            	
+                
             $response = wp_remote_post( '{$stBackendUrl}/authenticate', $args );
             $responseData = json_decode($response);
             return $responseData->token;
@@ -163,14 +163,11 @@ class Shoptype_Settings {
         register_setting("shoptype_settings", "cartCountMatch");
         register_setting("shoptype_settings", "loginUrl");
         register_setting("shoptype_settings", "stDefaultCurrency");
+        register_setting("shoptype_settings", "stFilter");
         register_setting("shoptype_settings", "ServerName");
         register_setting("shoptype_settings", "myshopURL");
         register_setting("shoptype_settings", "productsInGroup");
         register_setting("shoptype_settings", "manage_coseller");
-        
-        
-
-
         add_settings_section("shoptype_settings", "Network Settings: ", array($this, 'section_callback'), "shoptype_settings");
         add_settings_field( 'shoptype_api_key', 'ST API Key: ', array( $this, 'field_callback' ), 'shoptype_settings', 'shoptype_settings', array("id"=>"shoptype_api_key","name"=>"ST API Key") );
         add_settings_field("platformID", "ST Platform ID: ", array($this, 'field_callback'), "shoptype_settings", 'shoptype_settings', array("id"=>"platformID","name"=>"ST Platform ID"));
@@ -180,6 +177,7 @@ class Shoptype_Settings {
         add_settings_field("cartCountMatch", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );
         add_settings_field("loginUrl", "ST Login Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"loginUrl","name"=>"ST Login Page URL") );
         add_settings_field("stDefaultCurrency", "ST Default Currency: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stDefaultCurrency","name"=>"ST Default Currency") );
+        add_settings_field("stFilter", "Product Filter JSON: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stFilter","name"=>"Product Filter JSON") );
                            
         add_settings_section( 'buddypress_groups_products', 'Buddypress group settings', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("productsInGroup", "Display products in Buddypress groups", array( $this, 'sandbox_checkbox_element_callback' ), "shoptype_settings", "buddypress_groups_products", array("id"=>"productsInGroup","name"=>"productsInGroup"));               
@@ -332,6 +330,8 @@ function shoptypeSettings() {
     $cartCountMatch = get_option('cartCountMatch');
     global $loginUrl;
     $loginUrl = get_option('loginUrl');
+    global $stFilterJson;
+    $stFilterJson = get_option('stFilter');
     global $stDefaultCurrency;
     $stDefaultCurrency = get_option('stDefaultCurrency');
     global $productUrl;
@@ -347,16 +347,6 @@ function shoptypeSettings() {
     $myshopUrl = get_option('myshopURL');
     flush_rewrite_rules();
 }
-
-
-
-
-
-
-
-
-
-
 
 
 add_action( 'after_setup_theme', 'shoptypeSettings' );

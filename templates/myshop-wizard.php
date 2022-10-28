@@ -5,6 +5,7 @@
 * @package shoptype
 */
   global $stPlatformId;
+  global $stFilterJson;
   global $bp;
   $path = dirname(plugin_dir_url( __FILE__ ));
   $user_id = get_current_user_id();
@@ -36,10 +37,279 @@
   }else{
     $encodedShopUrl = get_site_url()."/shop/".$currentUser->user_login;
   }
-  
   get_header(null);
 ?>
+  <style type="text/css">
+    .menu-main {
+    position: fixed;
+    left: -350px;
+    top: calc(50% - 250px);
+    right: auto;
+    bottom: auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    height: 100%;
+    border-radius: 20px 20px 0px 0px;
+    max-height: 500px;
+    margin-top: auto;
+    z-index: 999;
+    }
 
+    .menu-apply-div {
+      position: absolute;
+      left: 0%;
+      top: auto;
+      right: 0%;
+      bottom: 0%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      width: 100%;
+      height: 80px;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      background-color: #cab470;
+      color: #000;
+    }
+
+    .menu-container {
+      position: relative;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      width: 350px;
+      height: 100%;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+    background: #fff;
+      box-shadow: 1px 1px 5px 1px #666;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    overflow:hidden;
+    }
+
+    .menu-title-heading {
+      font-family: Georgia, Times, 'Times New Roman', serif;
+      color: #000;
+      font-size: 26px;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .menu-title {
+      -webkit-box-flex: 0;
+      -webkit-flex: 0 60px;
+      -ms-flex: 0 60px;
+      flex: 0 60px;
+    }
+
+    .menu-list {
+      overflow: auto;
+    }
+
+    .menu-apply-button {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      margin-right: 10px;
+      margin-left: 10px;
+      padding: 5px;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 1px 1px 3px 0 #000;
+      cursor: pointer;
+    }
+
+    .menu-apply-button-lable {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      padding-right: 10px;
+      padding-left: 10px;
+      border-style: solid;
+      border-width: 1px;
+      border-color: #696969;
+      border-radius: 4px;
+      font-family: 'Playfair Display', sans-serif;
+      color: #696969;
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .menu-option-block1 {
+      -webkit-box-flex: 0;
+      -webkit-flex: 0 140px;
+      -ms-flex: 0 140px;
+      flex: 0 140px;
+    }
+
+    .menu-option-select {
+      height: 30px;
+      -webkit-box-flex: 0;
+      -webkit-flex: 0 210px;
+      -ms-flex: 0 210px;
+      flex: 0 210px;
+    padding:0px 10px;
+    margin-right:5px;
+      border-radius: 15px;
+    }
+
+    .menu-option-title {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      padding-left: 10px;
+      font-family: 'PT Sans', sans-serif;
+      color: #696969;
+      font-size: 16px;
+      line-height: 30px;
+    }
+
+    .menu-brand-select {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .body {
+      border: 1px none #000;
+    }
+
+    .st-filter-btn {
+      position: relative;
+      left: auto;
+      top: 50%;
+      bottom: auto;
+      width: 42px;
+      height: 42px;
+      padding-left: 5px;
+      border-top-right-radius: 15px;
+      border-bottom-right-radius: 15px;
+      background-color: #fff;
+      box-shadow: 1px 1px 3px 0 #666;
+    }
+
+    .st-filter-img {
+      height: 38px;
+      padding-top: 2px;
+    }
+  </style>
+  <div id="filterContainer" class="menu-main" style="display:none">
+    <div class="menu-container" id="st-filter">
+      <div class="menu-title">
+        <h3 class="menu-title-heading">Filter Menu</h3>
+      </div>
+      <div class="menu-list">
+        <div id="menuOptionList" class="menu-options">
+      <div class="menu-filters">  
+      <?php
+        if(isset($stFilterJson)){
+        $stFilters = json_decode($stFilterJson);
+        foreach ($stFilters as $filter) {
+        ?>
+          <div class="menu-brand-select">
+            <div class="menu-option-block1">
+            <h4 class="menu-option-title"><?php echo $filter->name ?></h4>
+            </div>
+            <select name="<?php echo $filter->name ?>" key="<?php echo $filter->key ?>" id="<?php echo str_replace(" ","-",$filter->name) ?>" class="menu-option-select" <?php echo $filter->multi; ?>>
+            <?php foreach ($filter->values as $filterValue) {  ?>
+            <option value="<?php echo $filterValue->value ?>"><?php echo $filterValue->name ?></option>
+            <?php } ?>
+            </select>
+          </div>
+          
+          <?php
+        }
+        }
+      ?>
+            <div class="menu-brand-select">
+              <div class="menu-option-block1">
+            <h4 class="menu-option-title">Sort By</h4>
+            </div>
+            <select name="sortBy" key="sortBy" id="sortBy" class="menu-option-select">
+            <option value="">None</option>
+            <option value="price">Price</option>
+            <option value="createdAt">Latest</option>
+            <option value="quantitySold">Most Sold</option>
+            </select>
+            </div>
+            <div class="menu-brand-select">
+            <div class="menu-option-block1">
+            <h4 class="menu-option-title">Sort Order</h4>
+            </div>
+            <select name="sortOrder" key="orderBy" id="sortOrder" class="menu-option-select">
+            <option value="asc">ascending</option>
+            <option value="desc">descending</option>
+            </select>
+            </div>
+        </div>
+        </div>
+      </div>
+      <div class="menu-apply-div">
+        <div class="menu-apply-button">
+          <h3 class="menu-apply-button-lable" onclick="clearFilters()">Reset</h3>
+        </div>
+        <div class="menu-apply-button">
+          <h3 class="menu-apply-button-lable" onclick="filterProducts()">Apply &amp; Refresh</h3>
+        </div>
+      </div>
+    </div>
+    <div class="st-filter-btn" onclick="toggleFilter()"><img src="<?php echo $path ?>/images/settings.svg" loading="lazy" alt="" class="st-filter-img"></div>
+  </div>
+<script>
+  function filterProducts(){
+    var selected = {};
+    Array.from(document.getElementsByClassName("menu-option-select")).forEach(x=>{ 
+          selected[x.getAttribute("key")] = [...x.options]
+                    .filter(option => option.selected)
+                    .map(option => option.value);
+    });
+    for (const prop in selected) {
+      options[prop] = selected[prop].join(",");
+    }
+    searchProducts(true);
+    toggleFilter();
+  }
+  
+  function clearFilters(){
+    Array.from(document.getElementsByClassName("menu-option-select")).forEach(x=>x.selectedIndex=0);
+    filterProducts();
+  }
+  
+  function toggleFilter(){
+    var btn = document.getElementById("filterContainer");
+    if(btn.style.left=="0px"){
+       btn.style.left="-350px";
+    }else{
+       btn.style.left="0px";
+    }
+    
+  }
+</script>
 <div class="st-myshop">
   <div class="st-myshop-status">
     <div class="st-myshop-state st-myshop-state-selected" id="state-1">1</div>
@@ -294,6 +564,7 @@
     document.querySelector(".st-my-shop-details").style.display="none";
     document.querySelector(".st-myshop-style").style.display="none";
     document.querySelector(".st-myshop-products").style.display="";
+  document.querySelector("#filterContainer").style.display="";  
     document.querySelector(".st-myshop-complete").style.display="none";
     document.querySelector("#st-next-button").style.display="";
     document.querySelector("#st-next-button").style.position="fixed";
@@ -305,6 +576,7 @@
     document.querySelector(".st-my-shop-details").style.display="none";
     document.querySelector(".st-myshop-style").style.display="none";
     document.querySelector(".st-myshop-products").style.display="none";
+  document.querySelector("#filterContainer").style.display="none";
     document.querySelector(".st-myshop-complete").style.display="";
     document.querySelector("#st-next-button").style.display="none";
     document.querySelector("#st-next-button").style.position="";
@@ -390,14 +662,12 @@
     let productTemplate = document.getElementById("st-product-select-template");
     let productsContainer = document.getElementById("st-product-search-results");
     if(remove){
-      removeChildren(productsContainer,productTemplate);
-      myshop_offset=1;
+    removeChildren(productsContainer,productTemplate);
+    myshop_offset=1;
     }
  
-    let options = {
-      text: document.getElementById('st-search-box').value,
-      offset:myshop_offset
-    };
+    options['text'] = document.getElementById('st-search-box').value;
+    options['offset'] = myshop_offset;
     
     showResults();
     st_platform.products(options)
@@ -411,7 +681,7 @@
           newProduct.querySelector("input").value = productsJson.products[i].id;
           productsContainer.appendChild(newProduct);
         }
-        scrollLoading = false;
+      scrollLoading = false;
       });
   }
 
@@ -491,7 +761,7 @@
   let st_shop_state = 0;
   let myshop_offset = 1;
   let scrollLoading = false;
-
+  let options={};
   function initMyShop(){
     if (typeof wp !== "undefined") { 
       callBpApi("members/"+profileUser, addUserDetails, 'get',{populate_extras:true});
@@ -503,7 +773,7 @@
 
   function setFieldId(data){
     themesId = data.find(field=>field.name=="st_shop_theme").id;
-    myshopUrlId = data.find(field=>field.name=="st_shop_url").id;
+  myshopUrlId = data.find(field=>field.name=="st_shop_url").id;
     productsDataId = data.find(field=>field.name=="st_products").id;
   }
   
@@ -511,7 +781,7 @@
   window.addEventListener('scroll',()=>{
     const {scrollHeight,scrollTop,clientHeight} = document.documentElement;
     if((scrollTop + clientHeight > scrollHeight - 5) && (!scrollLoading)){
-      scrollLoading = true;
+    scrollLoading = true;
       searchProducts(false);
     }
   });
