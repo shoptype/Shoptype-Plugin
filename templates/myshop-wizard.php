@@ -278,7 +278,7 @@
         </div>
       </div>
     </div>
-    <div class="st-filter-btn" onclick="toggleFilter()"><img src="<?php echo $path ?>/images/settings.svg" loading="lazy" alt="" class="st-filter-img"></div>
+    <div class="st-filter-btn" onclick="toggleFilter()"><img src="<?php echo $path ?>/images/Filter-Icon.png" loading="lazy" alt="" class="st-filter-img"></div>
   </div>
 <script>
   function filterProducts(){
