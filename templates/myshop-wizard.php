@@ -202,7 +202,7 @@
     .st-filter-btn {
       position: relative;
       left: auto;
-      top: 50%;
+      top: calc(50% - 21px);
       bottom: auto;
       width: 42px;
       height: 42px;
