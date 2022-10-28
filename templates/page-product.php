@@ -17,11 +17,11 @@ try {
 	$vendorName = $vendorDescription = $vendorUrl = "";
 	$productId = get_query_var('stproduct');
 	$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/products?productIds=$productId");
-	$result     = wp_remote_retrieve_body( $response );
+	$resultProduct     = wp_remote_retrieve_body( $response );
 	$pluginUrl = plugin_dir_url(__FILE__);
 	
-	if (!empty($result)) {
-		$st_products = json_decode($result);
+	if (!empty($resultProduct)) {
+		$st_products = json_decode($resultProduct);
 		$st_product = $st_products->products[0];
 		$commission = $st_product->variants[0]->discountedPriceAsMoney->amount * $st_product->productCommission->percentage / 100;
 		$prodCurrency = $stCurrency[$st_product->currency];
@@ -313,7 +313,7 @@ get_header();
 
 </script>
 <script>
-	const product = <?php echo $result; ?>;
+	const product = <?php echo $resultProduct; ?>;
 
 	var variantsJson = product.products[0].variants;
 	var json = {};
