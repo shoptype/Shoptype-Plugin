@@ -250,12 +250,11 @@ get_header();
 
 <!-- PDP PAGE = PLUS/MINUS -->
 <script>
-	sendUserEvent();
 	jQuery(function($) {
 
 		$(document).ready(function() {
 			//-- Click on QUANTITY
-			$(".btn-minus").("click", function() {
+			$(".btn-minus").on("click", function() {
 				var now = $(".onadd-box > div > input").val();
 				if ($.isNumeric(now)) {
 					if (parseInt(now) - 1 > 0) {
@@ -333,6 +332,7 @@ get_header();
 			if (isVariantSame(obj1,json)) {
 				variantSelected = true;
 				var productprice = variantsJson[key]['discountedPrice'];
+				var productCommission = variantsJson[key].discountedPriceAsMoney.amount * product.products[0].productCommission.percentage / 100;
 				variantquntity=variantsJson[key]['quantity'];
 				document.getElementById("quantity").max =variantquntity;
 
@@ -352,7 +352,8 @@ get_header();
 						productimage.src(imagesrc);
 					}
 				}
-
+				var cosellBtn = document.querySelector(".am-cosell-btn");
+				cosellBtn.innerHTML = cosellBtn.innerHTML.replace(/(\d*\.)?\d+/g,productCommission.toFixed(2));
 				addtocartbtn.setAttribute("variantid", variantsJson[key]['id']);
 				document.getElementById("productprice").innerHTML = productprice;
 			}
