@@ -41,18 +41,44 @@ if (isset($_COOKIE['carts'])) {
 get_header(null);
 ?>
 
-	<div class="st-success">
+	<div class="st-success-chkout">
 	<div class="div-block-21">
 <?php
 	if (isset($st_checkout->payment) && $st_checkout->payment->status == "success") {
 ?>
-	<h2 class="st-success-heading">Checkout Successful!</h2>
-	<div class="st-success-txt">Thank you for shopping with us! <br>You’ll be notified about your order status and tracking by email.</div>
+	<h2 class="st-success-heading" id="chk_heading">Checkout Successful!</h2>
+	<div class="st-success-txt" id="chk_txt">Thank you for shopping with us! <br>You’ll be notified about your order status and tracking by email.</div>
 <?php
 	}elseif(isset($st_checkout->id)){
 ?>
-	<h2 class="st-success-heading">Checkout not complete!</h2>
-	<div class="st-success-txt">You can try to complete this order by clicking <a href="<?php echo "/checkout/{$st_checkout->id}"; ?>">here</a></div>		
+	<h2 class="st-success-heading" id="chk_heading">Processing you Checkout!</h2>
+	<div class="st-success-txt" id="chk_txt">We are just checking we have everything in order this will just take a couple of seconds</div>
+	<div class="st-success-txt" id="chk_failed" style="display:none">You can try to complete this order by clicking <a href="<?php echo "/checkout/{$st_checkout->id}"; ?>">here</a></div>
+		<script type="text/javascript">
+			var chkCount = 0;
+			var chkoutId = "<?php echo $st_checkout->id; ?>";
+			function updateCheckout(){
+				st_platform.checkout(chkoutId).then(chkout=>{
+					if(chkout.payment.status==="success"){
+						document.getElementById("chk_heading").innerHTML = "Checkout Successful!";
+						document.getElementById("chk_txt").innerHTML = "Thank you for shopping with us! <br>You’ll be notified about your order status and tracking by email.";
+					}else{
+						chkCount++;
+						if(chkCount<10){
+							setTimeout(function(){updateCheckout();},500);
+						}else{
+							document.getElementById("chk_heading").innerHTML = "Payment Failed!";
+							document.getElementById("chk_txt").style.display = "none";
+							document.getElementById("chk_failed").style.display = "";
+						}
+					}
+				});
+			}
+			document.addEventListener("ShoptypeUILoaded", ()=>{
+				updateCheckout();
+			});
+		</script>
+	
 <?php
 	}else{
 		global $wp_query;
@@ -86,6 +112,7 @@ get_header(null);
 <?php } ?>
 	<script type="text/javascript">
 		var ignoreEvents = true;
+
 		if(wc_cart_fragments_params){
 			sessionStorage[wc_cart_fragments_params["fragment_name"]] = null;
 		}
