@@ -17,15 +17,19 @@ get_header();
 
 	<script type="text/javascript">
 		var url = new URL(window.location.href);
-		url = url.searchParams.get("redirectUrl")??"<?php echo get_home_url(); ?>";
-		var returnUrl = new URL(url);
+		var retUrlStr = url.searchParams.get("redirectUrl")??"<?php echo get_home_url(); ?>";
+		var refTid = (url.searchParams.has("tid")&&url.searchParams.get("tid"))!=""?url.searchParams.get("tid"):null;
+		refTid = refTid??sessionStorage["st-ctid"];
+		var refCode = refTid?"":"<?php global $stRefcode; echo $stRefcode; ?>";
+		var returnUrl = new URL(retUrlStr);
 		 	const renderForm = () => {
 			stLoginHandler.renderSTLoginForm(
 				"login-form",
 				{
 				name: "<?php global $siteName; echo $siteName; ?>",
 				url: "<?php global $siteUrl; echo $siteUrl; ?>",
-				rid: "<?php global $stRefcode; echo $stRefcode; ?>",
+				rid: refCode,
+				tid: refTid
 				},
 				(appRes) => {
 					switch (appRes.app.event) {
