@@ -132,8 +132,22 @@ get_header(null);
 		}else{
 			 btn.style.left="0px";
 		}
-		
 	}
+
+	function ensureUserLogin(){
+		if(shoptype_UI.user==null){
+			window.location.replace(st_settings.loginUrl+"?redirectUrl="+window.location.href);
+		}
+	}
+
+	if(typeof shoptype_UI !== 'undefined'){
+		ensureUserLogin();
+	}else{
+		document.addEventListener("ShoptypeUILoaded", ()=>{
+			ensureUserLogin();
+		});
+	}
+
 </script>
 <div class="st-myshop">
 	<div class="st-myshop-status">
@@ -330,31 +344,31 @@ get_header(null);
 	function moveState(){
 		switch(st_shop_state+1) {
 			case 0:
-			moveToDetails();
+				moveToDetails();
 			break;
 			case 1:
-		if(document.getElementById("myshop-name").value == ""){
-			ShoptypeUI.showError("Shop Name cannot be empty.");
-			return;
-		}
-		if(document.getElementById("store-icon").src == ""){
-			ShoptypeUI.showError("Shop Icon cannot be empty.");
-			return;
-		}
+				if(document.getElementById("myshop-name").value == ""){
+					ShoptypeUI.showError("Shop Name cannot be empty.");
+					return;
+				}
+				if(document.getElementById("store-icon").src == ""){
+					ShoptypeUI.showError("Shop Icon cannot be empty.");
+					return;
+				}
 				moveToTheme();
 			break;
 			case 2:
-		var selectedTheme = document.querySelector('input[name="theme_select"]:checked').value;
-		if(!selectedTheme || selectedTheme === ""){
-			ShoptypeUI.showError("You must select a theme.");
-			return;
-		}
-			callBpApi(`xprofile/${themesId}/data/${currentBpUser.id}`, x=>{}, 'post',{context: 'edit', value:selectedTheme});
-			moveToProducts();
+				var selectedTheme = document.querySelector('input[name="theme_select"]:checked').value;
+				if(!selectedTheme || selectedTheme === ""){
+					ShoptypeUI.showError("You must select a theme.");
+					return;
+				}
+				callBpApi(`xprofile/${themesId}/data/${currentBpUser.id}`, x=>{}, 'post',{context: 'edit', value:selectedTheme});
+				moveToProducts();
 			break;
 			case 3:
-			callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,addToShop,'get');
-			moveToComplete();
+				callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,addToShop,'get');
+				moveToComplete();
 			break;
 		}
 		st_shop_state++;

@@ -1371,6 +1371,63 @@
     border-left: 5px solid #8a5700;
 }
 
+.st-cosell-btn {
+  position: fixed;
+  top: 50%;
+  right: 0px;
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
+  align-items: center;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: #ffffff70;
+  box-shadow: 0 1px 3px 0 #aaa;
+  z-index: 99999;
+  width: 44px;
+  height: 155px;
+}
+
+.st-cosell-btn:hover {
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 #333;
+  padding: 10px 10px 10px 10px;
+  height: 165px;
+  width: 62px;
+  top: calc(50% - 5px);
+}
+
+.div-block {
+  overflow: hidden;
+  width: 42px;
+  height: 42px;
+}
+
+.st-cosell-details {
+  display: block;
+  transform: rotate(-90deg) translateX(-100px) translateY(25px);
+  transform-origin: 0 0;
+}
+
+.st-cosell-wallet {
+  line-height: 20px;
+  text-align: center;
+}
+
+.st-cosell-txt {
+  width: 100px;
+  margin-top: 5px;
+  padding-left: 3px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.st-cosell-image {
+  max-height: 18px;
+}
+
     .menu-main {
       position: fixed;
       left: -350px;
@@ -1524,10 +1581,6 @@
       display: flex;
       margin-top: 10px;
       margin-bottom: 10px;
-    }
-
-    .body {
-      border: 1px none #000;
     }
 
     .st-filter-btn {
