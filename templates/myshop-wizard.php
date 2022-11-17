@@ -527,7 +527,9 @@ get_header(null);
 	function removeChildren(node, dontRemove){
 		let length = node.children.length;
 		for (var i = length - 1; i >= 0; i--) {
-			if(node.children[i]!=dontRemove){node.children[i].remove();}
+			if(node.children[i]!=dontRemove && !node.children[i].querySelector(".st-myshop-select").checked){
+				node.children[i].remove();
+			}
 		}
 	}
 

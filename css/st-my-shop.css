@@ -831,7 +831,9 @@ li.product:hover{
 {
 	padding-right: 5px;
 }
-
+.store-info p {
+    margin-right: 20px;
+}
 @media screen and (max-width: 768px)
 {
 	.st-header-container #inner-element {
@@ -1186,4 +1188,3 @@ li.product:hover{
     min-width: 40px;
   }
 }
-
