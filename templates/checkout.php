@@ -142,7 +142,7 @@ get_header(null);
 				</select>
 			</div>			
 			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">PIN *</div>
+				<div class="st-chkout-billing-fld-name">ZIP Code/PIN Code *</div>
 				<input type="text" name="pincode" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->postalCode;} ?>"	required onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
