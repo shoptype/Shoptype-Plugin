@@ -80,7 +80,7 @@ function shoptype_login_modal(){
 		};
 	</script>
 	<div class="st-cosell-btn">
-	  <a href="#" class="div-block w-inline-block" onclick="shoptype_UI.showCosell(null)"><img src="'.plugin_dir_url(__FILE__).'images/cosell_lightpink.png" style="width:42px;" loading="lazy" alt=""></a>
+	  <a href="#" class="div-block w-inline-block" onclick="shoptype_UI.showCosell(null)"><img src="'.plugin_dir_url(__FILE__).'images/cosell.png" style="width:42px;" loading="lazy" alt=""></a>
 	  <div class="st-cosell-details">
 		<div class="st-cosell-txt">Share &amp; Earn</div>
 	  </div>
