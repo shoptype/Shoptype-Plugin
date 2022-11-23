@@ -5,32 +5,34 @@ global $stRefcode;
 global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
+get_header();
 $st_brand = [];
 try {
 	$brandId = get_query_var( 'brand' );
-	
-	  $response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$brandId");
-	  $result = wp_remote_retrieve_body( $response );
+	$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$brandId");
+	$result = wp_remote_retrieve_body( $response );
 	 
 	if( !empty( $result ) ) {
 		$st_brands = json_decode($result);
 		$st_brand = $st_brands[0];
 		$productCategories = join(", ",$st_brand->productCategories);
 		$store = $st_brand->store;
-		$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
-		$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
-		$groupSlug = strtolower($groupSlug);
-		$group_id = groups_get_id( $groupSlug );
-		$group = groups_get_group( array( 'group_id' => (int) $group_id ) );
-		$user_id = get_current_user_id();
-		$isInGroup = groups_is_user_member( $user_id, $group_id );
+		if( function_exists('groups_get_id')) {
+			$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
+			$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
+			$groupSlug = strtolower($groupSlug);
+			$group_id = groups_get_id( $groupSlug );
+			$group = groups_get_group( array( 'group_id' => (int) $group_id ) );
+			$user_id = get_current_user_id();
+			$isInGroup = groups_is_user_member( $user_id, $group_id );
+		}
 	}
 }
 catch(Exception $e) {
 }
 // wp_enqueue_style( 'awake-prod-style', get_template_directory_uri() . '/css/awake-prod-style.css' );
 // wp_enqueue_style( 'awake-prod-media-style', get_template_directory_uri() . '/css/awake-prod-media-style.css' );
-get_header(); ?>
+ ?>
 <?php
 ?>
 <!-- ===================================== -->
@@ -44,7 +46,7 @@ get_header(); ?>
 					<div class="coseller-profile">
 						<div class="brand-image-container">
 							<img style="width:100%;" src="<?php echo $st_brand->logo ?>" loading="lazy" alt="" class="brand-image am-brand-logo">
-							<div class="follow-link"><a href="javascript:void()" class="btn-blueRounded">Follow</a></div>
+							<?php if(isset($group)){?><div class="follow-link"><a href="javascript:void()" class="btn-blueRounded">Follow</a></div> <?php } ?>
 						</div>
 						<div class="intro-box">
 							<h1 class="brand-name am-brand-name"><?php echo $st_brand->name; ?></h1>
@@ -104,25 +106,7 @@ get_header(); ?>
 			</div>
 		</div>
 		<!-- -------------- end brands section -------------- -->
-		<!-- -------------- content section -------------- -->
-		<div class="section">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="section-header">
-							<h1 class="section-title">Blogs related to <?php echo $st_brand->name; ?></h1>
-							<a href="javascript:void()" class="btn-blueRounded">See All</a>
-						</div>
-						<div class="blogs-container">
-							<div class="row">
-								<?php echo do_shortcode("[awake_editors_picks display_layout=\"1\" search=\"{$st_brand->name}\"]"); ?>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- -------------- end content section -------------- -->
+
 	</div>
 	<!-- ================= END COSELLER DETAILS SECTION FOR DESKTOP ================= -->
 </div>

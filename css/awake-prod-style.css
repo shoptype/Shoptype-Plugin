@@ -418,14 +418,15 @@ SINGLE BRAND PAGE
   box-sizing: border-box;
   cursor: pointer;
   margin-bottom: 0px;
-  color: var(--primary-comp);
+  color: var(--button-text-color);
   font-family: inherit;
   font-size: 18px;
   font-weight: 500;
   border: none;
   border-radius: 20px;
   outline: none;
-  background-color: var(--primary-color);
+  padding: 2px 15px;
+  background-color: var(--button-color);
 }
 .btn-blueRounded::-moz-focus-inner {
   border: 0;
