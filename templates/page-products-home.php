@@ -131,7 +131,7 @@ get_header();
 	<input class="st-myshop-search-box" id="st-search-box" name="Search" >
 	<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo $path ?>/images/search.svg" loading="lazy" alt="" class="st-product-search-img"></div>
 </div>
-<div count="10" imageSize="200x200" loadmore class="products-container" id="st-product-search-results">
+<div count="10" imageSize="200x0" loadmore class="products-container" id="st-product-search-results">
 	<div class="product-container single-product" style="display: none;" id="st-product-select-template">
 		<div class="product-image">
 			<a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">

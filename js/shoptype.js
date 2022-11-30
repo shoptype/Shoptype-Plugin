@@ -29,6 +29,24 @@ class STPlatform {
         },
       },
 
+      collections: {
+        list: (options = {}) => {
+          var endpoint = {
+            resource: `/platforms/${this.platformId}/collections?`+STUtils.toQueryString(options),
+            method: 'get' 
+          };
+          return endpoint;
+        },
+        collection: (collectionId) => {
+          var endpoint = {
+            resource: `/platforms/${this.platformId}/collections/${collectionId}`,
+            method: 'get' 
+          };
+          return endpoint;
+        },
+      },
+
+
       vendors: {
         list: (options = {}) => {
           var endpoint = {
@@ -196,6 +214,15 @@ class STPlatform {
       });
     }
   }
+
+  collections(options = {}) {
+    return STUtils.request(this.endpoints.collections.list(options));
+  }
+
+  collection(collectionId) {
+    return STUtils.request(this.endpoints.collections.collection(collectionId));
+  }
+
 
   vendors(options = {}) {
     return STUtils.request(this.endpoints.vendors.list(options));

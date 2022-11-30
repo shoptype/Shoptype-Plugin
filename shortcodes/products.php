@@ -19,9 +19,11 @@ function renderAwakeProducts($atts = []){
     if(isset($atts['tags']) && !empty($atts['tags'])) $tags = "tags=".$atts['tags'];
     if(isset($atts['loadmore']) && !empty($atts['loadmore'])) $loadmore = "loadmore=".$atts['loadmore'];
     if(isset($atts['my_shop']) && !empty($atts['my_shop'])) $my_shop = "myshop=".$atts['my_shop']; 
-    if(isset($atts['offset']) && !empty($atts['offset'])) $offset = "offset=".$atts['offset'];?>
+    if(isset($atts['offset']) && !empty($atts['offset'])) $offset = "offset=".$atts['offset'];
+    if(isset($atts['collection']) && !empty($atts['collection'])) $collection = "collection_id=".$atts['collection'];?>
 
-    <div count="<?php echo $perRow; ?>" <?php echo "$my_shop $offset"; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
+
+    <div count="<?php echo $perRow; ?>" <?php echo "$my_shop $offset $collection"; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
         <div class="product-container single-product" style="display: none;">
             <div class="product-image">
                 <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">

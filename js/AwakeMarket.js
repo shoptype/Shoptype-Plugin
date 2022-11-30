@@ -130,6 +130,7 @@ function addProducts(productsContainer){
 	let count = productsContainer.getAttribute('count')?parseInt(productsContainer.getAttribute('count')):20;
 	let imageSize = productsContainer.getAttribute('imageSize');
 	let offsetAtt = productsContainer.getAttribute('offset');
+	let collectionId = productsContainer.getAttribute('collection_id');
 	offset = offsetAtt??offset;
 	
 	let options = {
@@ -147,6 +148,8 @@ function addProducts(productsContainer){
 	if(shopUrl){
 		var url = shopUrl+"?"+STUtils.toQueryString(options);
 		fetchMyStoreProducts(url, productsContainer, productTemplate);
+	}else if(collectionId){
+		fetchCollectionProducts(collectionId, productsContainer, productTemplate);
 	}else{
 		fetchProducts(options, productsContainer, productTemplate);
 	}
@@ -260,7 +263,19 @@ function fetchProducts(options, productsContainer, productTemplate){
 		var amProductsLoaded = new CustomEvent("amProductsLoaded", {'container': productsContainer});
 		document.dispatchEvent(amProductsLoaded);
 	})
+}
 
+function fetchCollectionProducts(collectionId, productsContainer, productTemplate){
+	st_platform.collection(collectionId).then(collectionJson=>{
+		for (var i = 0; i < collectionJson.product_details.length; i++) {
+			let product = collectionJson.products[i];
+			let newProduct = createProduct(productTemplate, product);
+			newProduct.style.display = "";
+			productsContainer.appendChild(newProduct);
+		}
+		var amProductsLoaded = new CustomEvent("amProductsLoaded", {'container': productsContainer});
+		document.dispatchEvent(amProductsLoaded);
+	})
 }
 
 function fetchMyStoreProducts(url, productsContainer, productTemplate){

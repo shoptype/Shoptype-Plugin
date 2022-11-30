@@ -76,9 +76,7 @@ if($checkoutId == "new"){
 }else{
 	try {
 		$args = array(
-			'body'        => '{}',
 			'headers'     => array(
-				"Content-Type"=> "application/json",
 				"X-Shoptype-Api-Key" => $stApiKey,
 				"X-Shoptype-PlatformId" => $stPlatformId,
 				"origin" => "https://".$_SERVER['HTTP_HOST']

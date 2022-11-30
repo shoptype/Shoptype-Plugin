@@ -142,8 +142,20 @@ PDP PAGE
   height: 500px;
   object-fit: contain;
 }
+img.xzoom {
+  max-height: 400px;
+  margin: auto;
+  object-fit: contain;
+}
+.single-product-image-container {
+  min-height: 320px;
+  clear: both;
+  margin: auto;
+  width: 400px;
+}
 .product-info {
   padding: 20px 20px 0 20px;
+  flex: 1 1 100%;
 }
 .am-product-display-container{
   max-width: 1240px;
