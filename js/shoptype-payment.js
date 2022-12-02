@@ -285,9 +285,6 @@ const initStripePayment = async (
         <div class="stripe-payment-modal micromodal-slide" id="stripe-payment-modal" aria-hidden="true">
         <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
             <header class="modal__header">
-            <h2 class="modal__title" id="modal-1-title">
-                Powered by Stripe
-            </h2>
             </header>
             <main class="modal__content" id="modal-1-content">
             <form class="stripe-payment-form">
@@ -307,7 +304,7 @@ const initStripePayment = async (
                     <div id="card-element" class="field"></div>
                 </label>
                 </div>
-                <button class="stripe-pay-btn" type="submit">Pay ${amount} ${currency}</button>
+                <button class="st-chkout-btn" type="submit">Pay ${amount} ${currency}</button>
                 <div class="outcome">
                 <div class="error"></div>
                 <div class="wait">

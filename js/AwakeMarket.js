@@ -268,7 +268,7 @@ function fetchProducts(options, productsContainer, productTemplate){
 function fetchCollectionProducts(collectionId, productsContainer, productTemplate){
 	st_platform.collection(collectionId).then(collectionJson=>{
 		for (var i = 0; i < collectionJson.product_details.length; i++) {
-			let product = collectionJson.products[i];
+			let product = collectionJson.product_details[i];
 			let newProduct = createProduct(productTemplate, product);
 			newProduct.style.display = "";
 			productsContainer.appendChild(newProduct);
