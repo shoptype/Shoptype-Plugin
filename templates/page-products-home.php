@@ -101,8 +101,10 @@ get_header();
 	}
 
 	window.addEventListener('scroll',()=>{
+		let productLists = document.querySelector('.products-container');
+		var offsetBottom = document.documentElement.offsetHeight - productLists.offsetTop - productLists.offsetHeight;
 		const {scrollHeight,scrollTop,clientHeight} = document.documentElement;
-		if(scrollTop + clientHeight > scrollHeight - 5){
+		if((scrollTop + clientHeight > scrollHeight - offsetBottom-5) && !am_loading){
 			searchProducts(false);
 		}
 	});

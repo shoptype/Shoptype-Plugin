@@ -1,4 +1,4 @@
-<?php /* Template Name: Brand Detail Template */
+<?php /* Template Name: Shoptype Brand Detail Template */
 global $stApiKey;
 global $stPlatformId;
 global $stRefcode;
@@ -98,9 +98,9 @@ catch(Exception $e) {
 					<div class="col-sm-12">
 						<div class="section-header">
 							<h1 class="section-title">Products by <?php echo $st_brand->name; ?></h1>
-							<a href="<?php echo home_url('all-products'); ?>" class="btn-blueRounded">See All</a>
+							<a href="/market" class="btn-blueRounded">See All</a>
 						</div>
-						<?php echo do_shortcode( '[awake_products per_row="12" slider="0" vendor_id="'.$st_brand->id.'" product_classes="product-container  single-product"]' ); ?>
+						<?php echo do_shortcode( '[awake_products per_row="20" vendor_id="'.$st_brand->id.'" loadmore="true" product_classes="product-container  single-product"]' ); ?>
 					</div>
 				</div>
 			</div>

@@ -41,7 +41,7 @@ class ShoptypeUI{
 		if(this.user){
 			this.user.setPlatform(this.#platformId);
 		}
-		this.setupShareUrl();
+		this.setupShare();
 	}
 
 	setRefferId(rid){
@@ -63,10 +63,10 @@ class ShoptypeUI{
 				this.user.setPlatform(this.#platformId);
 			}
 		}
-		this.setupShareUrl();
+		this.setupShare();
 	}
 
-	setupShareUrl(){
+	setupShare(){
 		if((typeof ignoreEvents !== 'undefined') && ignoreEvents){return;}
 		const { location } = window;
 		const { search } = location;
@@ -166,27 +166,47 @@ class ShoptypeUI{
 			sessionStorage["autoOpen"] = '{"tab":"Cosell","pid":"'+productId+'"}';
 			document.getElementById("st-cosell-intro-mask").style.display="flex";
 		}else{
-			st_platform.product(productId, product=>{this.setupShare(product)});
+			if(productId==null){
+				this.setupShareUrl(window.location.href);
+			}else{
+				st_platform.product(productId, product=>{this.setupShareinfo(product)});
+			}
+			document.getElementById("st-cosell-sharewidget").style.display="none";
 			document.getElementById("st-cosell-mask").style.display="flex";
 		}
 	}
 
-	setupShare(product){
-		document.getElementById("st-cosell-sharewidget").style.display="none";
+	setupShareinfo(product){
 		product = product.product;
 		this.user.getTracket(product.id)
 			.then(trackerJson=>{
-				let sharetxt = "Hey found this really interesting product you may be iterested in ";
 				let refUrl = window.location.protocol + "//" + window.location.host + this.#productUrl.replace("{{productId}}",product.id).replace("{{tid}}",trackerJson.trackerId);
-				let encodedUrl = encodeURIComponent(refUrl);
-				document.getElementById("st-fb-link").href = "https://www.facebook.com/sharer/sharer.php?u="	+ encodedUrl;
-				document.getElementById("st-whatsapp-link").href = "whatsapp://send?text=" + sharetxt + product.title + " " + encodedUrl;
-				document.getElementById("st-twitter-link").href = "http://twitter.com/share?text=" + sharetxt + "&url="	+ encodedUrl;
-				document.getElementById("st-pinterest-link").href = "https://pinterest.com/pin/create/link/?url=" + encodedUrl + "&media=" + product.primaryImageSrc.imageSrc + "&description=" + product.title;
-				let description = product.description?product.description.substr(0,250):"";
-				document.getElementById("st-linkedin-link").href = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + encodedUrl + "&title=" + product.title + "&summary=" + description;
-				document.getElementById("st-cosell-url-input").value = refUrl;
+				this.setupShareDetails(refUrl, product);
 			});
+	}
+
+	setupShareDetails(shareUrl, product){
+		let sharetxt = "Hey found this really interesting product you may be iterested in ";
+		let encodedUrl = encodeURIComponent(shareUrl);
+		document.getElementById("st-fb-link").href = "https://www.facebook.com/sharer/sharer.php?u="	+ encodedUrl;
+		document.getElementById("st-whatsapp-link").href = "whatsapp://send?text=" + sharetxt + product.title + " " + encodedUrl;
+		document.getElementById("st-twitter-link").href = "http://twitter.com/share?text=" + sharetxt + "&url="	+ encodedUrl;
+		document.getElementById("st-pinterest-link").href = "https://pinterest.com/pin/create/link/?url=" + encodedUrl + "&media=" + product.primaryImageSrc.imageSrc + "&description=" + product.title;
+		let description = product.description?product.description.substr(0,250):"";
+		document.getElementById("st-linkedin-link").href = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + encodedUrl + "&title=" + product.title + "&summary=" + description;
+		document.getElementById("st-cosell-url-input").value = shareUrl;
+	}
+
+	setupShareUrl(shareUrl){
+		if(shareUrl){}
+		let sharetxt = "Hey found this really interesting article you may be iterested in.";
+		let encodedUrl = encodeURIComponent(shareUrl);
+		document.getElementById("st-fb-link").href = "https://www.facebook.com/sharer/sharer.php?u="	+ encodedUrl;
+		document.getElementById("st-whatsapp-link").href = "whatsapp://send?text=" + sharetxt + " " + encodedUrl;
+		document.getElementById("st-twitter-link").href = "http://twitter.com/share?text=" + sharetxt + "&url="	+ encodedUrl;
+		document.getElementById("st-pinterest-link").href = "https://pinterest.com/pin/create/link/?url=" + encodedUrl ;
+		document.getElementById("st-linkedin-link").href = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + encodedUrl;
+		document.getElementById("st-cosell-url-input").value = shareUrl;
 	}
 
 	showLogin(){

@@ -1623,3 +1623,13 @@
   min-height: 50px;
   color: var(--button-text-color);
 }
+
+.outer-container {
+    max-width: 1240px;
+    margin: auto;
+}
+
+div#login-form {
+    max-width: 600px;
+    margin: auto;
+}

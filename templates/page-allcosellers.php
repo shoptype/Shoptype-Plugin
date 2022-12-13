@@ -1,5 +1,5 @@
 <?php
-/* Template Name: Cosellers Listing Page */
+/* Template Name: Shoptype Cosellers Listing Page */
 get_header() ?>
 
 <div class="main-content m-body">

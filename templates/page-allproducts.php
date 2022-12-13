@@ -1,5 +1,5 @@
 <?php
-/* Template Name:Products Listing Template */
+/* Template Name: Shoptype Products Listing Template */
 get_header();
 $tags = "";
 if (isset($_GET) && isset($_GET['tags']) && !empty($_GET['tags'])) $tags = $_GET['tags']; ?>

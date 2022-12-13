@@ -37,7 +37,6 @@ function shoptype_header(){
 	wp_enqueue_script( 'shoptype_ui_js', plugin_dir_url(__FILE__) . 'js/shoptype_ui.js');
 	wp_enqueue_script( 'awakeMarket_js', plugin_dir_url(__FILE__) . 'js/AwakeMarket.js');
 	wp_enqueue_style( 'shoptype_css', plugin_dir_url(__FILE__) . 'css/shoptype.css');
-	wp_enqueue_style( 'new-market', plugin_dir_url(__FILE__) . 'css/st-cart.css' );
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
 };
 add_action('wp_head', 'shoptype_header');
@@ -235,6 +234,16 @@ function awakenthemarket(){
 	}
 
 	if(typeof shoptype_UI !== 'undefined'){
+		loadShoptypeJs();
+	}else{
+		document.addEventListener("ShoptypeUILoaded", ()=>{
+			loadShoptypeJs();
+		});
+	}
+	
+	
+	
+	function loadShoptypeJs(){
 		shoptype_UI.setProductUrl(st_settings.productUrl);
 		shoptype_UI.setLoginUrl(st_settings.loginUrl);
 		shoptype_UI.setPlatform(st_settings.platformId);
@@ -250,25 +259,7 @@ function awakenthemarket(){
 		else{
 			document.addEventListener('marketLoaded', function(){awakenTheMarket()});
 		}
-	}else{
-		document.addEventListener("ShoptypeUILoaded", ()=>{
-			shoptype_UI.setProductUrl(st_settings.productUrl);
-			shoptype_UI.setLoginUrl(st_settings.loginUrl);
-			shoptype_UI.setPlatform(st_settings.platformId);
-			document.addEventListener("cartQuantityChanged", (e)=>{
-			var cartCount = document.querySelector(st_settings.cartCount);
-				if(cartCount){
-					document.querySelector(st_settings.cartCount).innerHTML = e.detail.count;
-				}
-			});
-			if(typeof awakenTheMarket === 'function'){
-				awakenTheMarket();
-			}
-			else{
-				document.addEventListener('marketLoaded', function(){awakenTheMarket()});
-			}
-		});
-	}	
+	}
 </script>
 
 <?php

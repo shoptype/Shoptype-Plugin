@@ -1,6 +1,6 @@
 <?php
 /*
-* Template name: Shoptype My Shop
+* Template name: Shoptype My Shop Wizard
 * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
 * @package shoptype
 */

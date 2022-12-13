@@ -304,7 +304,7 @@ const initStripePayment = async (
                     <div id="card-element" class="field"></div>
                 </label>
                 </div>
-                <button class="st-chkout-btn" type="submit">Pay ${amount} ${currency}</button>
+                <button class="stripe-pay-btn" type="submit">Pay ${amount} ${currency}</button>
                 <div class="outcome">
                 <div class="error"></div>
                 <div class="wait">

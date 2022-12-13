@@ -1,6 +1,6 @@
 <?php
 /*
- * Template name: Product Detail template
+ * Template name: Shoptype Product Detail template
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  *
  *@package shoptype
@@ -223,23 +223,23 @@ get_header();
 					</div>
 					<!-- ends product description section -->
 				</div>
-
 				<div>
-					<h2>Related Products</h2>
-				</div>
-
-				<div count="4" imagesize="250x0" vendorId="<?php echo $st_product->catalogId ?>" removetemplate class="products-container grid-two-by-two">
-					<div class="product-container single-product " style="display: none">
-						<a href="" class="am-product-link">
-							<div class="product-image">
-								<img class="am-product-image" src="product-image.png" alt="">
-								<div class="market-product-price am-product-price">$ 00.00</div>
-							</div>
-							<div class="product-content">
-								<p class="am-product-vendor">Brand Name</p>
-								<h4 class="am-product-title">Product name</h4>
-							</div>
-						</a>
+					<div>
+						<h2>Related Products</h2>
+					</div>
+					<div count="4" imagesize="250x0" vendorId="<?php echo $st_product->catalogId ?>" removetemplate class="products-container grid-two-by-two">
+						<div class="product-container single-product " style="display: none">
+							<a href="" class="am-product-link">
+								<div class="product-image">
+									<img class="am-product-image" src="product-image.png" alt="">
+									<div class="market-product-price am-product-price">$ 00.00</div>
+								</div>
+								<div class="product-content">
+									<p class="am-product-vendor">Brand Name</p>
+									<h4 class="am-product-title">Product name</h4>
+								</div>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -329,7 +329,7 @@ get_header();
 		$(".onadd-box > div > input").val(1);
 		for (var key in variantsJson) {
 			var obj1 = variantsJson[key]['variantNameValue'];
-			if (isVariantSame(obj1,json)) {
+			if (isVariantSame(obj1,json)||Object.keys(json)==0) {
 				variantSelected = true;
 				var productprice = variantsJson[key]['discountedPrice'];
 				var productCommission = variantsJson[key].discountedPriceAsMoney.amount * product.products[0].productCommission.percentage / 100;

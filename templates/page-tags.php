@@ -1,6 +1,6 @@
 <?php
 /*
- * Template name: Products by tag template
+ * Template name: Shoptype Products by tag template
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  *
  *@package shoptype

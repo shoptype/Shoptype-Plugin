@@ -661,76 +661,6 @@ body.menu-active nav#slide-menu {
   left: 0px;
 }
 
-.menu {
-  margin: 0 56px;
-}
-
-.menu ul {
-  margin-bottom: 0px;
-  padding-left: 0px;
-  list-style: none;
-}
-
-.menu ul li {
-  margin-bottom: 25px;
-}
-
-.menu ul .seperater {
-  height: 3px;
-  width: 100%;
-  background: #c4c4c4;
-  border-radius: 10px;
-}
-
-.menu ul li a {
-  font-size: 22px;
-  color: #222;
-  text-transform: uppercase;
-  text-decoration: none;
-  font-weight: 400;
-}
-
-.menu ul li .extra-link {
-  font-size: 18px;
-  color: #222;
-  text-transform: uppercase;
-  font-weight: 400;
-}
-
-.menu ul li .extra-link span {
-  color: #4c74f2;
-}
-
-li[tabindex] > a {
-  pointer-events: none;
-}
-
-li[tabindex]:before {
-  content: "";
-  font-family: "FontAwesome";
-  float: right;
-  padding-right: 0.5em;
-  font-weight: bold;
-  color: #333;
-  font-size: 120%;
-  line-height: 26px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-li[tabindex]:focus:before {
-  content: "";
-  font-family: "FontAwesome";
-}
-
-li:focus {
-  pointer-events: none;
-}
-
-li:focus ul li a {
-  pointer-events: auto;
-}
-
 .top-offers-section {
   margin: 20px 0 30px 0;
 }
@@ -1349,11 +1279,9 @@ li:focus ul li a {
 .st-myshop-prod {
   position: relative;
   margin: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #aaa;
-  color: #000;
+  border: 1px solid var(--tertiary-color-2);
   width: 200px;
+  color: var(--secondary-color-comp);
 }
 
 .st-myshop-prod-price {
@@ -1362,12 +1290,10 @@ li:focus ul li a {
   right: -1px;
   padding-right: 10px;
   padding-left: 10px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #aaa;
+  border: 1px solid var(--tertiary-color-2);
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
-  background-color: #fff;
+  background: var(--secondary-color);
   font-size: 14px;
   line-height: 20px;
 }

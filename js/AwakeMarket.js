@@ -7,6 +7,7 @@ const am_currentUrl = new URL(window.location);
 const am_Currency = {"USD":"$", "INR":"₹","GBP":"£"};
 const marketLoaded = new Event('marketLoaded');
 let am_loadedContainers = [];
+let am_loading=false;
 
 function initMarket(){
 	let awakeTags = document.getElementsByTagName("awakeMarket");
@@ -37,9 +38,10 @@ function populateProducts(){
 		addProducts(productLists[i]);
 		if(productLists[i].getAttribute('loadmore')=='true'){
 			scrollContainer = productLists[i];
+			var offsetBottom = document.documentElement.offsetHeight - scrollContainer.offsetTop - scrollContainer.offsetHeight;
 			window.addEventListener('scroll',()=>{
 				const {scrollHeight,scrollTop,clientHeight} = document.documentElement;
-				if(scrollTop + clientHeight > scrollHeight - 5){
+				if(scrollTop + clientHeight > (scrollHeight + (offsetBottom - 5))){
 					addProducts(scrollContainer);
 				}
 			});
@@ -114,6 +116,8 @@ function tagChanged(){
 
 function addProducts(productsContainer){
 	if(am_loadedContainers.includes(productsContainer)){return;}
+	if(am_loading){return;}
+	am_loading = true;
 	let skip = productsContainer.getAttribute('skip')==null?false:true;
 	let removeTemplate = productsContainer.getAttribute('removeTemplate')==null?false:true && !(productsContainer.getAttribute('loadmore')=='true');
 	if(skip){return;}
@@ -253,13 +257,19 @@ function updateBrand(brand){
 }
 
 function fetchProducts(options, productsContainer, productTemplate){
+	if(am_loadedContainers.includes(productsContainer)){return;}
 	st_platform.products(options).then(productsJson=>{
+		if(!productsJson.products){
+			am_loadedContainers.push(productsContainer);
+			return;
+		}
 		for (var i = 0; i < productsJson.products.length; i++) {
 			let product = productsJson.products[i];
 			let newProduct = createProduct(productTemplate, product);
 			newProduct.style.display = "";
 			productsContainer.appendChild(newProduct);
 		}
+		am_loading = false;
 		var amProductsLoaded = new CustomEvent("amProductsLoaded", {'container': productsContainer});
 		document.dispatchEvent(amProductsLoaded);
 	})
@@ -269,6 +279,7 @@ function fetchCollectionProducts(collectionId, productsContainer, productTemplat
 	st_platform.collection(collectionId).then(collectionJson=>{
 		for (var i = 0; i < collectionJson.product_details.length; i++) {
 			let product = collectionJson.product_details[i];
+			product.vendorName="";
 			let newProduct = createProduct(productTemplate, product);
 			newProduct.style.display = "";
 			productsContainer.appendChild(newProduct);
@@ -284,6 +295,7 @@ function fetchMyStoreProducts(url, productsContainer, productTemplate){
 			if (response.status >= 200 && response.status < 300) {
 				return Promise.resolve(response.json());
 			}else{
+				am_loading = false;
 				return Promise.reject("nothing here");
 			}
 		})
@@ -295,9 +307,11 @@ function fetchMyStoreProducts(url, productsContainer, productTemplate){
 				productsContainer.appendChild(newProduct);
 			}
 			var amProductsLoaded = new CustomEvent("amProductsLoaded", {'container': productsContainer});
+			am_loading = false;
 			document.dispatchEvent(amProductsLoaded);
 		})		
 		.catch(function() {
+			am_loading = false;
 			console.log("No more products to load");
 			var amProductsLoadFailed = new CustomEvent("amProductsLoadFailed", {'container': productsContainer});
 			document.dispatchEvent(amProductsLoadFailed);

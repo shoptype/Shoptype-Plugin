@@ -1,5 +1,5 @@
 <?php
-/* Template Name:Brands Listing Template */
+/* Template Name:Shoptype Brands Listing Template */
 get_header(); ?>
 <!-- ===================================== -->
 <div class="main-content m-body">

@@ -12,15 +12,15 @@ global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
-wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
-wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
+wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css?4' );
+wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css?ff' );
 wp_enqueue_style( 'authnetCss', $path.'/css/authnet.css' );
 wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
-wp_enqueue_script('st-payment-handlers',"https://shoptype-scripts.s3.amazonaws.com/payment_js/st-payment-handlers-bundle.js");
+wp_enqueue_script('st-payment-handlers',$path."/js/shoptype-payment.js");
 wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
 wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
-
+get_header(null);
 if($checkoutId == "new"){
 	$productId = $_GET["productid"];
 	$variantId = $_GET["variantid"];
@@ -77,26 +77,38 @@ if($checkoutId == "new"){
 	try {
 		$args = array(
 			'headers'     => array(
+				"timeout" => 8,
 				"X-Shoptype-Api-Key" => $stApiKey,
-				"X-Shoptype-PlatformId" => $stPlatformId,
-				"origin" => "https://".$_SERVER['HTTP_HOST']
+				"origin" => "https://".$_SERVER['HTTP_HOST'],
 			)
 		);
-		$response = wp_remote_get("{$stBackendUrl}/checkout/$checkoutId",$args);
+		$response = wp_remote_get("{$stBackendUrl}/checkout/$checkoutId/",$args);
 		$result = wp_remote_retrieve_body( $response );
-
+		$http_code = wp_remote_retrieve_response_code( $response );
+		
 		if( !empty( $result ) ) {
 			$st_checkout = json_decode($result);
 			$prodCurrency = $stCurrency[$st_checkout->total->currency];
+			if(isset($st_checkout->shipping_address)){
+				$parts = explode(" ", $st_checkout->shipping_address->name);
+				$st_checkout->shipping_address->lastname = array_pop($parts);
+				$st_checkout->shipping_address->firstname = implode(" ", $parts);
+			}
+			if(isset($st_checkout->billing_address)){
+				$parts = explode(" ", $st_checkout->billing_address->name);
+				$st_checkout->billing_address->lastname = array_pop($parts);
+				$st_checkout->billing_address->firstname = implode(" ", $parts);
+			}
+		}else{
+			echo "<h1>Cart not found</h1>";
+			echo $response->get_error_message();
 		}
 	}
 	catch(Exception $e) {
-		echo "Cart not found";
+		echo "<h1>Cart not found</h1>";
 	}
 }
-
-
-get_header(null);
+if(isset($st_checkout)){
 ?>
 	<script>var modalCheckout=false;</script>
 	<div class="st-chkout-top">
@@ -108,11 +120,17 @@ get_header(null);
 	</div>
 	<div class="st-chkout-main">
 		<div class="st-chkout-billing">
-		<form id="addressForm">
-			<div class="st-chkout-billing-title">BILLING DETAILS</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Name *</div>
-				<input type="text" name="name" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->name;} ?>" onchange="updateAddress()" required>
+		<form id="shippingAddressForm">
+			<div class="st-chkout-billing-title">Shipping Details</div>
+			<div class="st-chkout-billing-fld st-chkout-billing-fullname">
+				<div class="st-chkout-billing-fname">
+					<div class="st-chkout-billing-fld-name">First Name *</div>
+					<input type="text" name="fname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->firstname;} ?>" onchange="updateAddress()" required>
+				</div>
+				<div class="st-chkout-billing-fname">
+					<div class="st-chkout-billing-fld-name">Last Name *</div>
+					<input type="text" name="lname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
+				</div>
 			</div>
 			<div class="st-chkout-billing-fld" style="display: none;">
 				<div class="st-chkout-billing-fld-name">Last Name</div>
@@ -152,13 +170,68 @@ get_header(null);
 				<input type="text" name="email" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->email;} ?>"	required onchange="updateAddress()">
 			</div>
 		</form>
+		<div>
+			<input type="checkbox" id="billingDifferent" name="billingDifferent" value="true" onchange="billingSelectChanged()" <?php if(isset($st_checkout->billing_address)&&(!$st_checkout->is_shipping_billing)){echo "checked";} ?>>
+  			<label for="vehicle1"> Billing address is different</label>
+		</div>
+		<form id="billingAddressForm" style="display:none;">
+			<div class="st-chkout-billing-title">Shipping Details</div>
+			<div class="st-chkout-billing-fld st-chkout-billing-fullname">
+				<div class="st-chkout-billing-fname">
+					<div class="st-chkout-billing-fld-name">First Name *</div>
+					<input type="text" name="fname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->firstname;} ?>" onchange="updateAddress()" required>
+				</div>
+				<div class="st-chkout-billing-fname">
+					<div class="st-chkout-billing-fld-name">Last Name *</div>
+					<input type="text" name="lname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->lastname;} ?>" onchange="updateAddress()" required>
+				</div>
+			</div>
+			<div class="st-chkout-billing-fld" style="display: none;">
+				<div class="st-chkout-billing-fld-name">Last Name</div>
+				<input type="text" name="lastName" class="st-chkout-billing-fld-val">
+			</div>
+			<div class="st-chkout-billing-fld">
+				<div class="st-chkout-billing-fld-name">Street Address *</div>
+				<input type="text" name="address" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->street1;} ?>"	required onchange="updateAddress()">
+				<input type="text" name="address2" class="st-chkout-billing-fld-val" onchange="updateAddress()">
+			</div>
+			<div class="st-chkout-billing-fld">
+				<div class="st-chkout-billing-fld-name">Town / City *</div>
+				<input type="text" name="city" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->city;} ?>"	required onchange="updateAddress()">
+			</div>
+			<div class="st-chkout-billing-fld">
+				<div class="st-chkout-billing-fld-name">State *</div>
+				<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->state;} ?>"	required onchange="updateAddress()">
+					 <option value="">Select state</option>
+				</select>
+			</div>
+			<div class="st-chkout-billing-fld">
+				<div class="st-chkout-billing-fld-name">Country *</div>
+				<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->country;} ?>"	required onchange="updateAddress()">
+					 <option value="">Select Country</option>
+				</select>
+			</div>			
+			<div class="st-chkout-billing-fld">
+				<div class="st-chkout-billing-fld-name">ZIP Code/PIN Code *</div>
+				<input type="text" name="pincode" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->postalCode;} ?>"	required onchange="updateAddress()">
+			</div>
+			<div class="st-chkout-billing-fld">
+				<div class="st-chkout-billing-fld-name">Phone</div>
+				<input type="text" name="phone" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->phone;} ?>"	onchange="updateAddress()">
+			</div>
+			<div class="st-chkout-billing-fld">
+				<div class="st-chkout-billing-fld-name">Email Address *</div>
+				<input type="text" name="email" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->email;} ?>"	required onchange="updateAddress()">
+			</div>
+		</form>
 		</div>
 
 		<div class="st-chkout-sum">
 			<div class="st-chkout-products">
 				<div id="st-chkout-products-list" class="st-chkout-products-list">
 					<?php foreach($st_checkout->order_details_per_vendor as $vendorId=>$items): ?>
-						<select name="shippingOption" orderId="<?php echo $vendorId ?>" class="st-chkout-billing-fld-val" id="st-shipping-<?php echo $vendorId ?>" value=""	required onchange="onShippingChanged(this)">
+						<div class="st-chkout-vendor-cart">
+						<select name="shippingOption" orderId="<?php echo $vendorId ?>" class="st-chkout-billing-fld-val st-chkout-shipping-select" id="st-shipping-<?php echo $vendorId ?>" value=""	required onchange="onShippingChanged(this)">
 						<?php if(!empty($items->shipping_options)) : ?>
 							<?php foreach($items->shipping_options as $key=>$shipping_options): ?>
 								 <option value="<?php echo $shipping_options->method_key ?>" <?php if($shipping_options->method_key == $items->shipping_selected->method_key){echo "selected";} ?> ><?php echo $shipping_options->method_title ?></option>
@@ -183,9 +256,11 @@ get_header(null);
 							<div class="st-chkout-product-tot"><?php echo $prodCurrency.number_format((float)($product->quantity*$product->price->amount), 2, '.', '')?></div>
 						</div>
 						<?php endforeach; ?>
+						</div>
 					<?php endforeach; ?>
 				</div>
 			</div>
+
 
 
 			<div class="st-chkout-details">
@@ -208,7 +283,7 @@ get_header(null);
 			</div>
 			<div id="payment-container"></div>
 			<div class="st-chkout-btn" onclick="showPayment()">
-				<div class="st-chkout-btn-txt">PLACE ORDER</div>
+				<div class="st-chkout-btn-txt">Pay Now</div>
 			</div>
 		</div>
 	</div>
@@ -219,44 +294,54 @@ get_header(null);
 		let st_checkoutId = "<?php echo $checkoutId ?>";
 		const new_cart_id = "<?php if(isset($st_cart)){echo $st_cart->id;} ?>";
 		const st_currSymb = "<?php echo $prodCurrency ?>";
+
 		function checkoutSetCountry(){
 			STUtils.countries()
-			.then(countriesJson => {
-				let countryField = document.getElementById("st-chkout-country");
-				let selectedCntry =	countryField.getAttribute("value");
-				let selectedVal = null;
-				for (var i = 0; i < countriesJson.data.length; i++) {
-					var option = document.createElement("option");
-					option.text = countriesJson.data[i].name;
-					option.value = countriesJson.data[i].iso2;
-					if(selectedCntry==countriesJson.data[i].name){
-						option.setAttribute("selected","");
-					}
-					countryField.add(option);
-				}
-				countryField.addEventListener('change', () => {
-					if(countryField.value && countryField.value != ""){
-						STUtils.states(countryField.value)
-						.then(statesJson => {
-							let stateField = document.getElementById("st-chkout-state");
-							let selectedState =	stateField.getAttribute("value");
-							for (var i = stateField.options.length-1; i > 0; i--) {
-								stateField.options[i] = null;
-							}
-							for (var i = 0; i < statesJson.data.length; i++) {
-								var option = document.createElement("option");
-								option.text = statesJson.data[i].name;
-								option.value = statesJson.data[i].state_code;
-								if(selectedState==statesJson.data[i].name){
-									option.setAttribute("selected","");
-								}
-								stateField.add(option);
-							}
-						});
-					}
+				.then(countriesJson => {
+					var billingForm = document.getElementById("billingAddressForm");
+					var shippingForm = document.getElementById("shippingAddressForm");
+					addCountriesTo(shippingForm.querySelector("#st-chkout-country"), countriesJson, shippingForm.querySelector("#st-chkout-state"));
+					addCountriesTo(billingForm.querySelector("#st-chkout-country"), countriesJson, billingForm.querySelector("#st-chkout-state"));
 				});
-        		countryField.dispatchEvent(new Event('change'));
+		}
+
+		function addCountriesTo(countryField,countriesJson,stateField){
+			let selectedCntry =	countryField.getAttribute("value");
+			let selectedVal = null;
+			for (var i = 0; i < countriesJson.data.length; i++) {
+				var option = document.createElement("option");
+				option.text = countriesJson.data[i].name;
+				option.value = countriesJson.data[i].iso2;
+				if(selectedCntry==countriesJson.data[i].name){
+					option.setAttribute("selected","");
+				}
+				countryField.add(option);
+			}
+			countryField.addEventListener('change', () => {
+				if(countryField.value && countryField.value != ""){
+					STUtils.states(countryField.value)
+						.then(statesJson => {
+							addStatesTo(stateField,statesJson);
+						});
+				}
 			});
+			countryField.dispatchEvent(new Event('change'));
+		}
+
+		function addStatesTo(stateField, statesJson){
+			let selectedState =	stateField.getAttribute("value");
+			for (var i = stateField.options.length-1; i > 0; i--) {
+				stateField.options[i] = null;
+			}
+			for (var i = 0; i < statesJson.data.length; i++) {
+				var option = document.createElement("option");
+				option.text = statesJson.data[i].name;
+				option.value = statesJson.data[i].state_code;
+				if(selectedState==statesJson.data[i].name){
+					option.setAttribute("selected","");
+				}
+				stateField.add(option);
+			}
 		}
 
 		function onShippingChanged(shippingSelect){
@@ -315,28 +400,23 @@ get_header(null);
 		}
 
 		function updateAddress(){
-			var addressForm = document.getElementById("addressForm");
+			var addressForm = document.getElementById("shippingAddressForm");
 			if(!addressForm.checkValidity()){
 				return;
 			}
-			let countrySelect = document.getElementById("st-chkout-country");
-			let stateSelect = document.getElementById("st-chkout-state");
-			let checkoutBody = {
-				"shipping_address": {
-					"name": addressForm.querySelector('[name="name"]').value,
-					"phone": addressForm.querySelector('[name="phone"]').value,
-					"email": addressForm.querySelector('[name="email"]').value,
-					"street1": addressForm.querySelector('[name="address"]').value+ " " + addressForm.querySelector('[name="address2"]').value,
-					"city": addressForm.querySelector('[name="city"]').value,
-					"country": countrySelect.options[countrySelect.selectedIndex].text,
-					"countryCode": countrySelect.value,
-					"state": stateSelect.options[stateSelect.selectedIndex].text,
-					"stateCode": stateSelect.value,
-					"postalCode": addressForm.querySelector('[name="pincode"]').value
-				},
-				"is_shipping_billing": true
-			};
-			checkoutBody.billing_address = checkoutBody.shipping_address
+			shoptype_UI.stShowLoader();
+
+			let checkoutBody = {};
+			checkoutBody.shipping_address = getAddressFromForm(addressForm);
+
+			if(document.getElementById("billingDifferent").checked){
+				checkoutBody.is_shipping_billing = false;
+				checkoutBody.billing_address = getAddressFromForm(document.getElementById("billingAddressForm"));
+			}else{
+				checkoutBody.is_shipping_billing = true;
+				checkoutBody.billing_address = checkoutBody.shipping_address;
+			}
+			
 
 			st_platform.updateAddress(st_checkoutId,checkoutBody)
 				.then(checkoutJson => {
@@ -356,6 +436,33 @@ get_header(null);
 						shoptype_UI.stHideLoader();
 					}
 				});
+		}
+
+		function getAddressFromForm(addressForm){
+			let countrySelect = addressForm.querySelector("#st-chkout-country");
+			let stateSelect = addressForm.querySelector("#st-chkout-state");
+			let shipping_address = {
+				"name": addressForm.querySelector('[name="fname"]').value + " " +addressForm.querySelector('[name="lname"]').value,
+				"phone": addressForm.querySelector('[name="phone"]').value,
+				"email": addressForm.querySelector('[name="email"]').value,
+				"street1": addressForm.querySelector('[name="address"]').value+ " " + addressForm.querySelector('[name="address2"]').value,
+				"city": addressForm.querySelector('[name="city"]').value,
+				"country": countrySelect.options[countrySelect.selectedIndex].text,
+				"countryCode": countrySelect.value,
+				"state": stateSelect.options[stateSelect.selectedIndex].text,
+				"stateCode": stateSelect.value,
+				"postalCode": addressForm.querySelector('[name="pincode"]').value
+			};
+			return shipping_address;
+		}
+
+		function billingSelectChanged(){
+			if(document.getElementById("billingDifferent").checked){
+				document.getElementById("billingAddressForm").style.display="";
+			}else{
+				document.getElementById("billingAddressForm").style.display="none";
+			}
+			updateAddress();
 		}
 		
 		function showPayment(){
@@ -417,8 +524,9 @@ get_header(null);
 				setTimeout(()=>{createCheckout(new_cart_id);}, 10);
 			});
 		}
-		
+		billingSelectChanged();
 	</script>
 
 <?php
+}
 get_footer();

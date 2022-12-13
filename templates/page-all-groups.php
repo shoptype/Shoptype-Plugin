@@ -1,5 +1,5 @@
 <?php
-/* Template Name: Groups Listing Page */
+/* Template Name: Shoptype Groups Listing Page */
 get_header() ?>
 
 <div class="main-content m-body">
