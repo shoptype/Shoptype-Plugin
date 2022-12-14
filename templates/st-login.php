@@ -30,7 +30,6 @@ get_header();
 				url: "<?php global $siteUrl; echo $siteUrl; ?>",
 				rid: refCode,
 				tid: refTid,
-				env:beta
 				},
 				(appRes) => {
 					switch (appRes.app.event) {

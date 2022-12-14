@@ -192,7 +192,7 @@ class STPlatform {
   }
 
   products(options = {}) {
-    if(!options.offset){options.offset = this.offset;}
+    if(typeof options.offset === 'undefined' || options.offset === null){options.offset = this.offset;}
     if(!options.count){options.count = this.count;}
     var products = STUtils.request(this.endpoints.products.list(options));
     this.offset = this.offset + this.count;
@@ -413,7 +413,7 @@ class STUser {
 }
 
 class STUtils{
-  static backendUrl ='https://beta-backend.shoptype.com';
+  static backendUrl ='https://backend.shoptype.com';
   
   static request(endpoint = {},callback=null) {
     if(endpoint.header){
@@ -421,7 +421,7 @@ class STUtils{
     }else{
       endpoint.header={'Content-Type':'application/json'};
     }
-    return fetch(`https://beta-backend.shoptype.com${endpoint.resource}`, {
+    return fetch(`https://backend.shoptype.com${endpoint.resource}`, {
       method: endpoint?.method,
       headers: endpoint?.header,
       body: endpoint?.body ? JSON.stringify(endpoint.body) : null,

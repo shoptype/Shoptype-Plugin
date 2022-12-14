@@ -257,10 +257,8 @@ function updateBrand(brand){
 }
 
 function fetchProducts(options, productsContainer, productTemplate){
-	if(am_loadedContainers.includes(productsContainer)){return;}
 	st_platform.products(options).then(productsJson=>{
 		if(!productsJson.products){
-			am_loadedContainers.push(productsContainer);
 			return;
 		}
 		for (var i = 0; i < productsJson.products.length; i++) {
