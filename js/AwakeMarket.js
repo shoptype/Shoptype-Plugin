@@ -38,10 +38,9 @@ function populateProducts(){
 		addProducts(productLists[i]);
 		if(productLists[i].getAttribute('loadmore')=='true'){
 			scrollContainer = productLists[i];
-			var offsetBottom = document.documentElement.offsetHeight - scrollContainer.offsetTop - scrollContainer.offsetHeight;
 			window.addEventListener('scroll',()=>{
 				const {scrollHeight,scrollTop,clientHeight} = document.documentElement;
-				if(scrollTop + clientHeight > (scrollHeight + (offsetBottom - 5))){
+				if(scrollTop + clientHeight > (scrollHeight - 5)){
 					addProducts(scrollContainer);
 				}
 			});
@@ -259,6 +258,8 @@ function updateBrand(brand){
 function fetchProducts(options, productsContainer, productTemplate){
 	st_platform.products(options).then(productsJson=>{
 		if(!productsJson.products){
+			var amProductsLoadFailed = new CustomEvent("amProductsLoadFailed", {'container': productsContainer});
+			document.dispatchEvent(amProductsLoadFailed);
 			return;
 		}
 		for (var i = 0; i < productsJson.products.length; i++) {

@@ -71,6 +71,9 @@ get_header();
 <script>
 	let options={};
 	let myshop_offset=0;
+	let allLoaded = false;
+	let productsLoading = false;
+	
 	function filterProducts(){
 		var selected = {};
 		Array.from(document.getElementsByClassName("menu-option-select")).forEach(x=>{ 
@@ -102,20 +105,24 @@ get_header();
 
 	window.addEventListener('scroll',()=>{
 		let productLists = document.querySelector('.products-container');
-		var offsetBottom = document.documentElement.offsetHeight - productLists.offsetTop - productLists.offsetHeight;
 		const {scrollHeight,scrollTop,clientHeight} = document.documentElement;
-		if((scrollTop + clientHeight > scrollHeight - offsetBottom-5) && !am_loading){
+		if((scrollTop + clientHeight > scrollHeight-5) && !am_loading){
 			searchProducts(false);
 		}
 	});
 	
 	function searchProducts(remove=true) {
+		if(productsLoading){return;}
 		let productTemplate = document.getElementById("st-product-select-template");
 		let productsContainer = document.getElementById("st-product-search-results");
 		if(remove){
 			removeChildren(productsContainer,productTemplate);
+			allLoaded = false;
 			myshop_offset=0;
 		}
+		if(allLoaded){return;}
+		productsLoading = true;
+		document.querySelector(".st-button-div button").disabled = true;
 		options['text'] = document.getElementById('st-search-box').value;
 		options['offset'] = myshop_offset;
 		fetchProducts(options, productsContainer, productTemplate);
@@ -128,23 +135,40 @@ get_header();
 			if(node.children[i]!=dontRemove){node.children[i].remove();}
 		}
 	}
+	
+	document.addEventListener("amProductsLoaded", ()=>{
+		productsLoading = false;
+		document.querySelector(".st-button-div button").disabled = false;
+	});
+		
+	document.addEventListener("amProductsLoadFailed", ()=>{
+		allLoaded = true;
+		productsLoading = false;
+		document.querySelector(".st-button-div button").disabled = true;
+	});
+	
 </script>
-<div class="st-myshop-search" style="margin:auto; padding:10px 20px;">
-	<input class="st-myshop-search-box" id="st-search-box" name="Search" >
-	<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo $path ?>/images/search.svg" loading="lazy" alt="" class="st-product-search-img"></div>
-</div>
-<div count="10" imageSize="200x0" loadmore class="products-container" id="st-product-search-results">
-	<div class="product-container single-product" style="display: none;" id="st-product-select-template">
-		<div class="product-image">
-			<a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
-				<img class="am-product-image" src="" loading="lazy" alt="">
-			</a>
-			<div class="market-product-price am-product-price">$ 00.00</div>
+<div>
+	<div class="st-myshop-search" style="margin:auto; padding:10px 20px;">
+		<input class="st-myshop-search-box" id="st-search-box" name="Search" >
+		<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo $path ?>/images/search.svg" loading="lazy" alt="" class="st-product-search-img"></div>
+	</div>
+	<div count="10" imageSize="200x0" loadmore class="products-container" id="st-product-search-results">
+		<div class="product-container single-product" style="display: none;" id="st-product-select-template">
+			<div class="product-image">
+				<a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
+					<img class="am-product-image" src="" loading="lazy" alt="">
+				</a>
+				<div class="market-product-price am-product-price">$ 00.00</div>
+			</div>
+			<div class="product-info">
+				<p class="am-product-title product-title">Product Title</p>
+				<p class="am-product-vendor brand-title">Brand Title</p>
+			</div>
 		</div>
-		<div class="product-info">
-			<p class="am-product-title product-title">Product Title</p>
-			<p class="am-product-vendor brand-title">Brand Title</p>
-		</div>
+	</div>
+	<div class="st-button-div">
+		<button onclick="searchProducts(false)">Load More</button>
 	</div>
 </div>
 

@@ -1633,3 +1633,33 @@ div#login-form {
     max-width: 600px;
     margin: auto;
 }
+
+.st-cart-menu{
+  position:relative;
+}
+
+.st-cart-menu img {
+    width: 24px;
+    margin-top: -3px;
+}
+
+.st-cart-menu span {
+    position: absolute;
+    top: 8px;
+    right: calc(50% - 8px);
+    padding: 1px;
+    line-height: 12px;
+    text-align: center;
+    background: #fff;
+    border-radius: 50%;
+    min-width: 14px;
+}
+
+.st-button-div{
+  display: flex;
+}
+
+.st-button-div button {
+    padding: 5px 10px;
+    margin: 10px auto 40px;
+}

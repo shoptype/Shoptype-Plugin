@@ -241,16 +241,17 @@ function awakenthemarket(){
 		});
 	}
 	
-	
-	
 	function loadShoptypeJs(){
+		createCartMenu();
 		shoptype_UI.setProductUrl(st_settings.productUrl);
 		shoptype_UI.setLoginUrl(st_settings.loginUrl);
 		shoptype_UI.setPlatform(st_settings.platformId);
 		document.addEventListener("cartQuantityChanged", (e)=>{
-			var cartCount = document.querySelector(st_settings.cartCount);
-			if(cartCount){
-				document.querySelector(st_settings.cartCount).innerHTML = e.detail.count;
+			var cartCounts = document.querySelectorAll(st_settings.cartCount);
+			if(cartCounts.length>0){
+				cartCounts.forEach((x)=>{
+					x.innerHTML = e.detail.count;
+				});
 			}
 		});
 		if(typeof awakenTheMarket === 'function'){
@@ -258,6 +259,15 @@ function awakenthemarket(){
 		}
 		else{
 			document.addEventListener('marketLoaded', function(){awakenTheMarket()});
+		}
+	}
+	
+	function createCartMenu(){
+		var cartMenus = document.querySelectorAll(".st-cart-menu a");
+		if(cartMenus.length>0){
+		   cartMenus.forEach((x)=>{
+			  x.innerHTML="<img src='<?php echo plugin_dir_url(__FILE__) . 'images/shopping-cart.png' ?>'><span>0</span>"; 
+		   });
 		}
 	}
 </script>
