@@ -74,9 +74,12 @@ $massage='';
         $q = $wp_query->query_vars;
         $searchTearms = preg_replace('/\s+/', '%20', $searchTearm);
         $url = "{$stBackendUrl}/platforms/$stPlatformId/products?count=30&text=$searchTearms";
-        $response = wp_remote_get( $url);
-        $result = wp_remote_retrieve_body( $response );
- 
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
         if (!empty($result)) {
             $st_products = json_decode($result);
 
@@ -110,16 +113,31 @@ $massage='';
         }
                 ?>
                 <?php
+ global $query_string;
+
+                $query_args = explode("&", $searchTearm);
+                $search_query = array();
+                
+                foreach($query_args as $key => $string) {
+                    $query_split = explode("=", $string);
+                    $search_query[$query_split[0]] = $query_split[1];
+                } // foreach
+                
+                $search = new WP_Query($search_query,array( 's' => 'WAIKIKI'));
                 global $wp_query;
-                ?>
+$total_results = $wp_query->found_posts;
+                
+
+              ?>
 
                 <?php
                 /* loping for each post */
-                if (have_posts()) {$massage=''; ?>
-                    <?php while (have_posts()) {
-                        the_post(); ?>
+                if ($search->have_posts()) {$massage=''; ?>
+                    <?php while ($search->have_posts()) {
+                       $search-> the_post(); ?>
                         <div class="single-product">
-                            <a href="/products/<?php echo get_permalink(); ?>">
+<?php// echo $total_results;?>
+                            <a href="<?php echo get_permalink(); ?>">
                             <div class="product-image"><?php the_post_thumbnail('medium') ?></div>
 
                             <div class="product-title">
