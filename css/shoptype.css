@@ -1655,6 +1655,14 @@ div#login-form {
     min-width: 14px;
 }
 
+@media screen and (max-width: 479px) {
+  .st-cart-menu span {
+    top: 2px;
+    right: auto;
+    left: 16px;
+  }
+}
+
 .st-button-div{
   display: flex;
 }
