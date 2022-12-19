@@ -1,0 +1,242 @@
+.st-order-header {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  background-color: #eee;
+}
+
+.st-order-product-info {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #bbb;
+}
+
+.st-order-product-div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.st-order-col {
+  margin: 10px;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 120px;
+  -ms-flex: 0 120px;
+  flex: 0 120px;
+}
+
+.st-order-col-full {
+  margin: 10px;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+.st-order {
+  overflow: hidden;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #aaa;
+  border-radius: 10px;
+}
+
+.st-order-product {
+  padding: 10px;
+}
+
+.st-order-details {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 150px;
+  -ms-flex: 0 150px;
+  flex: 0 150px;
+}
+
+.div-block-7 {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+.st-order-product-details {
+  padding-right: 10px;
+  padding-left: 10px;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+.div-block-9 {
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
+  align-self: center;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 auto;
+  -ms-flex: 0 auto;
+  flex: 0 auto;
+}
+
+.st-order-product-img {
+  width: 80px;
+  height: 80px;
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+
+.st-order-vendor {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.st-order-status {
+  margin-bottom: 10px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #aaa;
+  line-height: 24px;
+  text-align: center;
+}
+
+.st-order-cosell {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #97811e;
+  background-color: #e7c118;
+  line-height: 24px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.st-orders {
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.st-account-details {
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.st-coseller {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.st-order-profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.st-order-title-div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  line-height: 24px;
+}
+
+.st-order-title {
+  padding-right: 5px;
+}
+
+.st-coseller-info {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 20px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.st-coseller-info-div {
+  margin-left: 20px;
+}
+
+.st-coseller-kpi {
+  margin: 10px;
+  padding: 10px;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 200px;
+  -ms-flex: 0 200px;
+  flex: 0 200px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ddd;
+  background-color: #eee;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.st-coseller-kpi-name {
+  margin-bottom: 10px;
+}
+
+.st-order-product-name {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.st-order-product-cost {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+@media screen and (max-width: 767px) {
+  .st-order-product-div {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .st-order-product-info {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+}
