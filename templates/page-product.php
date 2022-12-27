@@ -147,9 +147,9 @@ get_header();
 												<div class="addToCart-container">
 													<div class="add-box">
 														<div>
-															<div class="btn-minus">-</div>
-															<input class="product-quantity am-add-cart-quantity" type="number" id="quantity" name="quantity" value="1" />
-															<div class="btn-plus">+</div>
+															<div class="btn-minus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)<1?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)-1">-</div>
+															<input class="product-quantity am-add-cart-quantity" type="number" id="quantity" name="quantity" value="1" max=""/>
+															<div class="btn-plus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)>(document.getElementById('quantity').max)?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)+1">+</div>
 														</div>
 													</div>
 													<div class="addButton-container">
@@ -250,32 +250,12 @@ get_header();
 
 <!-- PDP PAGE = PLUS/MINUS -->
 <script>
+
 	jQuery(function($) {
 
 		$(document).ready(function() {
 			//-- Click on QUANTITY
-			$(".btn-minus").on("click", function() {
-				var now = $(".onadd-box > div > input").val();
-				if ($.isNumeric(now)) {
-					if (parseInt(now) - 1 > 0) {
-						now--;
-					}
-					$(".add-box > div > input").val(now);
-				} else {
-					$(".add-box > div > input").val("1");
-				}
-			})
-				jQuery(".btn-plus").on("click", function() {
-				var now = jQuery(".add-box > div > input").val();
-				if (jQuery.isNumeric(now)) {
-					if(parseInt(now)<variantquntity){
-						console.log(now); jQuery(".add-box > div > input").val(parseInt(now) + 1);
-					}
-				} else {
-					jQuery(".add-box > div > input").val("1");
-				}
-			});
-
+			
 			$(".tab_content").hide();
 			$(".tab_content:first").show();
 
@@ -335,7 +315,7 @@ get_header();
 				var productCommission = variantsJson[key].discountedPriceAsMoney.amount * product.products[0].productCommission.percentage / 100;
 				variantquntity=variantsJson[key]['quantity'];
 				document.getElementById("quantity").max =variantquntity;
-
+				jQuery("#quantity").prop('max',variantquntity);
 				if(variantquntity<=0)
 				{
 					variantSoldOut(addtocart,addtocartbtn);
