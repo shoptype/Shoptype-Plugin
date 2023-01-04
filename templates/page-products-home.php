@@ -1,5 +1,5 @@
 <?php
-/* Template Name:Products Home */
+/* Template Name:Shoptype Products Home */
 get_header();
 ?>
 <div id="filterContainer" class="menu-main">
@@ -70,7 +70,7 @@ get_header();
 
 <script>
 	let options={};
-	let myshop_offset=0;
+	let myshop_offset=10;
 	let allLoaded = false;
 	let productsLoading = false;
 	

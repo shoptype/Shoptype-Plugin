@@ -30,8 +30,7 @@ try {
 }
 catch(Exception $e) {
 }
-// wp_enqueue_style( 'awake-prod-style', get_template_directory_uri() . '/css/awake-prod-style.css' );
-// wp_enqueue_style( 'awake-prod-media-style', get_template_directory_uri() . '/css/awake-prod-media-style.css' );
+
  ?>
 <?php
 ?>
@@ -68,37 +67,14 @@ catch(Exception $e) {
 				</div>
 			</div>
 		</div>
-		<!-- -------------- end coseller intro section -------------- -->
-		<!-- -------------- preferences section -------------- -->
-		<!-- <div class="container">
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="preferences-container">
-						<h2>Brand Key Tags</h2>
-						<ul class="preferences-list">
-							<li><a href="#">Fashion</a></li>
-							<li><a href="#">Wine & Spirits</a></li>
-							<li><a href="#">Vegan Diet</a></li>
-							<li><a href="#">Home Decor</a></li>
-							<li><a href="#">Lifestyle</a></li>
-							<li><a href="#">Products for Women</a></li>
-							<li><a href="#">Photography</a></li>
-							<li><a href="#">Travel</a></li>
-							<li><a href="#">Action Figures / Collectibles</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div> -->
-		<!-- -------------- end preferences section -------------- -->
-		<!-- -------------- brands section -------------- -->
+
 		<div class="section">
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="section-header">
 							<h1 class="section-title">Products by <?php echo $st_brand->name; ?></h1>
-							<a href="/market" class="btn-blueRounded">See All</a>
+							<a href="<?php global $marketUrl; echo $marketUrl; ?>" class="btn-blueRounded">See All</a>
 						</div>
 						<?php echo do_shortcode( '[awake_products per_row="20" vendor_id="'.$st_brand->id.'" loadmore="true" product_classes="product-container  single-product"]' ); ?>
 					</div>

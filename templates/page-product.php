@@ -241,6 +241,10 @@ get_header();
 							</a>
 						</div>
 					</div>
+					<div>
+						<a href="<?php global $marketUrl; echo $marketUrl; ?>"><h3>View All Products</h3></a>
+						
+					</div>
 				</div>
 			</div>
 		</div>
