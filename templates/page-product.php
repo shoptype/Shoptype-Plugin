@@ -339,6 +339,7 @@ get_header();
 				var cosellBtn = document.querySelector(".am-cosell-btn");
 				cosellBtn.innerHTML = cosellBtn.innerHTML.replace(/(\d*\.)?\d+/g,productCommission.toFixed(2));
 				addtocartbtn.setAttribute("variantid", variantsJson[key]['id']);
+				addtocartbtn.setAttribute("variantname", JSON.stringify(variantsJson[key]['variantNameValue']));
 				document.getElementById("productprice").innerHTML = productprice;
 			}
 		}
