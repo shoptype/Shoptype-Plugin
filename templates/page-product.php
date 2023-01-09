@@ -241,9 +241,8 @@ get_header();
 							</a>
 						</div>
 					</div>
-					<div>
+					<div class="st-market-link">
 						<a href="<?php global $marketUrl; echo $marketUrl; ?>"><h3>View All Products</h3></a>
-						
 					</div>
 				</div>
 			</div>

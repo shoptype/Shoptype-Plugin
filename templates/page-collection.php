@@ -50,6 +50,9 @@ get_header(null);
           </a>
         <?php endforeach; ?>
     </div>
+    <div class="st-market-link">
+      <a href="<?php global $marketUrl; echo $marketUrl; ?>"><h3>View All Products</h3></a>
+    </div>
   </div>
 
 <?php

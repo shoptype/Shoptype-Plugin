@@ -1655,6 +1655,22 @@ div#login-form {
     min-width: 14px;
 }
 
+.st-market-link {
+    margin: 20px auto;
+    padding: 5px;
+    background: var( --button-color);
+    color: var( --button-text-color);
+    width: 300px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.st-market-link h4 {
+    font-size: 20px;
+    font-family: sans-serif;
+    color: var( --button-text-color);
+}
+
 @media screen and (max-width: 479px) {
   .st-cart-menu span {
     top: 2px;
