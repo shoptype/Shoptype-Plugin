@@ -133,6 +133,8 @@ function addProducts(productsContainer){
 	let count = productsContainer.getAttribute('count')?parseInt(productsContainer.getAttribute('count')):20;
 	let imageSize = productsContainer.getAttribute('imageSize');
 	let offsetAtt = productsContainer.getAttribute('offset');
+	let sortBy = productsContainer.getAttribute('sortBy');
+	let orderBy = productsContainer.getAttribute('orderBy');
 	let collectionId = productsContainer.getAttribute('collection_id');
 	offset = offsetAtt??offset;
 	
@@ -145,6 +147,8 @@ function addProducts(productsContainer){
 		maxRange: maxRange??undefined,
 		category: category??undefined,
 		tags: tags??undefined,
+		orderBy: orderBy??undefined,
+		sortBy: sortBy??undefined,
 		vendorId:vendorId??undefined
 	};
 
