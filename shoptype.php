@@ -141,25 +141,41 @@ add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'stproduct' ) == false || get_query_var( 'stproduct' ) == '' ) {
         return $template;
     }
-    return plugin_dir_path( __FILE__ ) . '/templates/page-product.php';
+    $tmpl = get_stylesheet_directory() . '/shoptype/page-product.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-product.php';
+    }
+    return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'brand' ) == false || get_query_var( 'brand' ) == '' ) {
         return $template;
     }
-    return plugin_dir_path( __FILE__ ) . '/templates/page-brand.php';
+    $tmpl = get_stylesheet_directory() . '/shoptype/page-brand.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-brand.php';
+    }
+    return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'cart' ) == false || get_query_var( 'cart' ) == '' ) {
         return $template;
     }
-    return plugin_dir_path( __FILE__ ) . '/templates/cart.php';
+    $tmpl = get_stylesheet_directory() . '/shoptype/cart.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/cart.php';
+    }
+    return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'checkout' ) == false || get_query_var( 'checkout' ) == '' ) {
         return $template;
     }
-    return plugin_dir_path( __FILE__ ) . '/templates/checkout.php';
+    $tmpl = get_stylesheet_directory() . '/shoptype/checkout.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout.php';
+    }
+    return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'stwizard' ) == false || get_query_var( 'stwizard' ) == '' ) {
@@ -171,13 +187,21 @@ add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'shop' ) == false || get_query_var( 'shop' ) == '' ) {
         return $template;
     }
-    return plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
+    $tmpl = get_stylesheet_directory() . '/shoptype/page-myshop.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
+    }
+    return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'collection' ) == false || get_query_var( 'collection' ) == '' ) {
         return $template;
     }
-    return plugin_dir_path( __FILE__ ) . '/templates/page-collection.php';
+    $tmpl = get_stylesheet_directory() . '/shoptype/page-collection.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-collection.php';
+    }
+    return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'sttag' ) == false || get_query_var( 'sttag' ) == '' ) {
@@ -189,7 +213,11 @@ add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'success_chkout' ) == false || get_query_var( 'success_chkout' ) == '' ) {
         return $template;
     }
-    return plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
+    $tmpl = get_stylesheet_directory() . '/shoptype/checkout-success.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
+    }
+    return $tmpl;
 } );
 
 //Shoptype login handler
@@ -488,18 +516,13 @@ class PageTemplater {
 
 		// Add your templates to this array.
 		$this->templates = array(
-			'templates/page-product.php' => 'Product Details Page',
-			'templates/page-brand.php' => 'Brand Details Page',
 			'templates/st-login.php' => 'Shoptype Login Page',
-			'templates/page-all-groups.php' => 'All Groups Page',
 			'templates/page-allbrands.php' => 'All Brands Page',
 			'templates/page-allcosellers.php' => 'All Cosellers Page',
-			'templates/page-allproducts.php' => 'All Products Page',
 			'templates/page-coseller.php' => 'Coseller Details Page',
 			'templates/page-products-home.php' => 'Products Home Page',
-			'templates/page-shop.php' => 'Shop Page',
-			'templates/st-profile.php' => 'Shoptype Profile Page',
 			'templates/cart.php' => 'Shoptype Cart Page',
+			'templates/my-account.php' => 'Shoptype MyAccount Page',
 		);
 			
 	} 

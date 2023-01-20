@@ -14,7 +14,7 @@ global $brandUrl;
 global $stBackendUrl;
 
 $path = dirname(plugin_dir_url( __FILE__ ));
-wp_enqueue_style( 'cartCss', $path.'/css/st-myaccount.css?1' );
+wp_enqueue_style( 'cartCss', $path.'/css/st-myaccount.css' );
 
 get_header(null);
 
