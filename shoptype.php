@@ -98,6 +98,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
 	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
+	add_rewrite_rule( 'cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[1]', 'top' );
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -136,6 +137,11 @@ add_filter( 'query_vars', function( $query_vars ) {
     $query_vars[] = 'success_chkout';
     return $query_vars;
 } );
+add_filter( 'query_vars', function( $query_vars ) {
+    $query_vars[] = 'cosell_link';
+    return $query_vars;
+} );
+
 
 add_action( 'template_include', function( $template ) {
     if ( get_query_var( 'stproduct' ) == false || get_query_var( 'stproduct' ) == '' ) {
@@ -216,6 +222,16 @@ add_action( 'template_include', function( $template ) {
     $tmpl = get_stylesheet_directory() . '/shoptype/checkout-success.php';
     if ( ! file_exists( $tmpl ) ) {
     	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
+    }
+    return $tmpl;
+} );
+add_action( 'template_include', function( $template ) {
+    if ( get_query_var( 'cosell_link' ) == false || get_query_var( 'cosell_link' ) == '' ) {
+        return $template;
+    }
+    $tmpl = get_stylesheet_directory() . '/shoptype/coseller-share.php';
+    if ( ! file_exists( $tmpl ) ) {
+    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/coseller-share.php';
     }
     return $tmpl;
 } );
