@@ -13,7 +13,7 @@ class ShoptypeUI{
 		this.st_Wraper = document.createElement("div");
 		let st_loader = '<div class="st-loader-mask" id="st-loader-mask" style="display:none;"><img src="https://user-images.githubusercontent.com/4776769/172153004-febffb83-f0ed-46da-8d79-4be74aa70baf.gif" alt="" style="max-width: 20%;"></div>';
 
-		fetch("/cosell/new").
+		fetch("/cosell/new"+window.location.pathname+window.location.search).
 		then(response=>response.text()).
 		then(responseHtml=>{
 			this.st_Wraper.innerHTML = responseHtml+
