@@ -177,6 +177,10 @@
   background-color: #fff;
 }
 
+.st-cart-product {
+    position: relative;
+}
+
 .st-cart-products {
   display: -webkit-box;
   display: -webkit-flex;
