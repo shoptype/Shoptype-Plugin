@@ -12,14 +12,6 @@ global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
 
-$path = dirname(plugin_dir_url( __FILE__ ));
-wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
-wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
-wp_enqueue_style( 'authnetCss', $path.'/css/authnet.css' );
-wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
-wp_enqueue_script('st-payment-handlers',$path."/js/shoptype-payment.js");
-wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
-wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
 get_header(null);
 

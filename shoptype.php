@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name:  Shoptype
-Plugin URI:    
+Plugin URI:	
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:      1.4.6
-Author:       shoptype 
+Version:	  1.4.6
+Author:	 	  shoptype 
 Author URI:   https://www.shoptype.com
-License:      GPL2
+License:	  GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  https://www.shoptype.com
 Domain Path:  /languages
@@ -89,7 +89,7 @@ function shoptype_login_modal(){
 	
 //Add Product Route
 add_action('init', function(){
-    add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[1]', 'top' );
+	add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[1]', 'top' );
 	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
 	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
@@ -102,138 +102,150 @@ add_action('init', function(){
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'stproduct';
-    return $query_vars;
+	$query_vars[] = 'stproduct';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'brand';
-    return $query_vars;
+	$query_vars[] = 'brand';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'cart';
-    return $query_vars;
+	$query_vars[] = 'cart';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'checkout';
-    return $query_vars;
+	$query_vars[] = 'checkout';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'stwizard';
-    return $query_vars;
+	$query_vars[] = 'stwizard';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'shop';
-    return $query_vars;
+	$query_vars[] = 'shop';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'collection';
-    return $query_vars;
+	$query_vars[] = 'collection';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'sttag';
-    return $query_vars;
+	$query_vars[] = 'sttag';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'success_chkout';
-    return $query_vars;
+	$query_vars[] = 'success_chkout';
+	return $query_vars;
 } );
 add_filter( 'query_vars', function( $query_vars ) {
-    $query_vars[] = 'cosell_link';
-    return $query_vars;
+	$query_vars[] = 'cosell_link';
+	return $query_vars;
 } );
 
 
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'stproduct' ) == false || get_query_var( 'stproduct' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/page-product.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-product.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'stproduct' ) == false || get_query_var( 'stproduct' ) == '' ) {
+		return $template;
+	}
+	$tmpl = get_stylesheet_directory() . '/shoptype/page-product.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-product.php';
+	}
+	return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'brand' ) == false || get_query_var( 'brand' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/page-brand.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-brand.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'brand' ) == false || get_query_var( 'brand' ) == '' ) {
+		return $template;
+	}
+	$tmpl = get_stylesheet_directory() . '/shoptype/page-brand.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-brand.php';
+	}
+	return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'cart' ) == false || get_query_var( 'cart' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/cart.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/cart.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'cart' ) == false || get_query_var( 'cart' ) == '' ) {
+		return $template;
+	}
+	$path = plugin_dir_url( __FILE__ );
+	wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
+	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
+	$tmpl = get_stylesheet_directory() . '/shoptype/cart.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = $path . '/templates/cart.php';
+	}
+	return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'checkout' ) == false || get_query_var( 'checkout' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/checkout.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'checkout' ) == false || get_query_var( 'checkout' ) == '' ) {
+		return $template;
+	}
+	$path = plugin_dir_url( __FILE__ );
+
+	wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
+	wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
+	wp_enqueue_style( 'authnetCss', $path.'/css/authnet.css' );
+	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
+	wp_enqueue_script('st-payment-handlers',$path."/js/shoptype-payment.js");
+	wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
+	wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
+	$tmpl = get_stylesheet_directory() . '/shoptype/checkout.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = $path  . '/templates/checkout.php';
+	}
+	return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'stwizard' ) == false || get_query_var( 'stwizard' ) == '' ) {
-        return $template;
-    }
-    return plugin_dir_path( __FILE__ ) . '/templates/myshop-wizard.php';
+	if ( get_query_var( 'stwizard' ) == false || get_query_var( 'stwizard' ) == '' ) {
+		return $template;
+	}
+	return plugin_dir_path( __FILE__ ) . '/templates/myshop-wizard.php';
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'shop' ) == false || get_query_var( 'shop' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/page-myshop.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'shop' ) == false || get_query_var( 'shop' ) == '' ) {
+		return $template;
+	}
+	$tmpl = get_stylesheet_directory() . '/shoptype/page-myshop.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
+	}
+	return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'collection' ) == false || get_query_var( 'collection' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/page-collection.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-collection.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'collection' ) == false || get_query_var( 'collection' ) == '' ) {
+		return $template;
+	}
+	$tmpl = get_stylesheet_directory() . '/shoptype/page-collection.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-collection.php';
+	}
+	return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'sttag' ) == false || get_query_var( 'sttag' ) == '' ) {
-        return $template;
-    }
-    return plugin_dir_path( __FILE__ ) . '/templates/page-tags.php';
+	if ( get_query_var( 'sttag' ) == false || get_query_var( 'sttag' ) == '' ) {
+		return $template;
+	}
+	return plugin_dir_path( __FILE__ ) . '/templates/page-tags.php';
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'success_chkout' ) == false || get_query_var( 'success_chkout' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/checkout-success.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'success_chkout' ) == false || get_query_var( 'success_chkout' ) == '' ) {
+		return $template;
+	}
+	$tmpl = get_stylesheet_directory() . '/shoptype/checkout-success.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
+	}
+	return $tmpl;
 } );
 add_action( 'template_include', function( $template ) {
-    if ( get_query_var( 'cosell_link' ) == false || get_query_var( 'cosell_link' ) == '' ) {
-        return $template;
-    }
-    $tmpl = get_stylesheet_directory() . '/shoptype/coseller-share.php';
-    if ( ! file_exists( $tmpl ) ) {
-    	$tmpl = plugin_dir_path( __FILE__ ) . '/templates/coseller-share.php';
-    }
-    return $tmpl;
+	if ( get_query_var( 'cosell_link' ) == false || get_query_var( 'cosell_link' ) == '' ) {
+		return $template;
+	}
+	$tmpl = get_stylesheet_directory() . '/shoptype/coseller-share.php';
+	if ( ! file_exists( $tmpl ) ) {
+		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/coseller-share.php';
+	}
+	return $tmpl;
 } );
 
 //Shoptype login handler
@@ -386,8 +398,8 @@ function shoptype_login(){
 //Redirect users to home after logout
 add_action('wp_logout','ST_redirect_after_logout');
 function ST_redirect_after_logout(){
-         wp_redirect( '/' );
-         exit();
+		 wp_redirect( '/' );
+		 exit();
 }
 
 add_action('init', 'shoptype_login');
@@ -401,26 +413,26 @@ function ST_logout() {
 	setcookie( "stToken", '', time() - ( 15 * 60 ) );
 	echo "Logout user";
 	wp_safe_redirect( home_url() );
-    exit();
+	exit();
 }
 
 
 /*Adding shoptype products to search results*/
 function search_filter($query) {
-    if ( is_search() ) {
+	if ( is_search() ) {
 		$post = new stdClass();
 		$post->ID = 113;
 		$wp_post = new WP_Post( $post );
-        array_push( $query->posts, $wp_post );
-    }
+		array_push( $query->posts, $wp_post );
+	}
 }
-add_action('posts_search','search_filter');    
+add_action('posts_search','search_filter');	
 
 function have_posts_override(){
-    if ( is_search() ) {
+	if ( is_search() ) {
 		global $stPlatformId;
-        global $wp_query;
-        global $stBackendUrl;
+		global $wp_query;
+		global $stBackendUrl;
 		$q = $wp_query->query_vars;
 		$searchTxt="";
 		foreach ((array)$q['search_terms'] as $term) {
@@ -454,11 +466,11 @@ function have_posts_override(){
 				array_unshift($wp_query->posts, $wp_post); 
 			}
 		}
-    }
+	}
 }
 //add condition to not override admin pagination
 if (! is_admin() ) {
-    add_action( 'found_posts', 'have_posts_override' );
+	add_action( 'found_posts', 'have_posts_override' );
 
 } 
 
@@ -623,17 +635,17 @@ class PageTemplater {
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 //Create hook for creating page with shoptype shortcode
 function add_shop_page() {
-    // Create Page object
-    $shop_page = array(
-      'post_title'    => wp_strip_all_tags('Marketplace'),
-      'post_content'  => '[awake_products per_row="6"]',
-      'post_status'   => 'publish',
-      'post_author'   => 1,
-      'post_type'     => 'page',
-    );
+	// Create Page object
+	$shop_page = array(
+	  'post_title'	=> wp_strip_all_tags('Marketplace'),
+	  'post_content'  => '[awake_products per_row="6"]',
+	  'post_status'   => 'publish',
+	  'post_author'   => 1,
+	  'post_type'	 => 'page',
+	);
 
-    // Insert the Page into the database
-    wp_insert_post( $shop_page );
+	// Insert the Page into the database
+	wp_insert_post( $shop_page );
 }
 
 register_activation_hook(__FILE__, 'add_shop_page');
@@ -661,12 +673,12 @@ function ecs_add_post_state( $post_states, $post ) {
 add_filter('template_include','custom_search_template', 10, 3);
 
 function custom_search_template($template){
-    global $wp_query;
-    if (!$wp_query->is_search)
-        return $template;
-    
+	global $wp_query;
+	if (!$wp_query->is_search)
+		return $template;
+	
 	$search_template = untrailingslashit( plugin_dir_path( __FILE__ ) . '/templates/search.php');
-    return $search_template;
+	return $search_template;
 
 } 
 
@@ -678,27 +690,27 @@ define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 add_action('admin_menu', 'register_cosell_user', 20 );
  
 function register_cosell_user() {
-    add_submenu_page(
-        'shoptype_settings',
-        'Manage Cosell Users',
-        'Manage Cosell Users',
-        'manage_options',
-        'my-admin-slug',
-        'manage_cosell_users' );
+	add_submenu_page(
+		'shoptype_settings',
+		'Manage Cosell Users',
+		'Manage Cosell Users',
+		'manage_options',
+		'my-admin-slug',
+		'manage_cosell_users' );
 }
 
 
 function manage_cosell_users() {
-    global $stRefcode;
+	global $stRefcode;
 	include (ST__PLUGIN_DIR.'shortcodes/coselluserlist.php');
-    echo '<div class="wrap">';
-        echo '<h2>Manage Cosell Users</h2><div style="margin-top:50px;margin-bottom:50px">';
+	echo '<div class="wrap">';
+		echo '<h2>Manage Cosell Users</h2><div style="margin-top:50px;margin-bottom:50px">';
 		if($stRefcode=='')
 		{
 			 $stRefcode=0;
 		}
 		coselluserlists($stRefcode);
-    echo '</div></div>';
+	echo '</div></div>';
 } 
 
 //add coseller role
@@ -709,7 +721,7 @@ function coseller_new_role() {
 		'coseller',
 		'Coseller',
 		array(
-			'read'         => true,
+			'read'		 => true,
 			'delete_posts' => false
 		)
 	);

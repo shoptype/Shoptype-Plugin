@@ -11,8 +11,6 @@ global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
-wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
-wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
 $cartId = get_query_var( 'cart' );
 
 if(empty($cartId)){
