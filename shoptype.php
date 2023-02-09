@@ -172,7 +172,7 @@ add_action( 'template_include', function( $template ) {
 	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
 	$tmpl = get_stylesheet_directory() . '/shoptype/cart.php';
 	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = $path . '/templates/cart.php';
+		$tmpl = plugin_dir_url( __FILE__ ).'/templates/cart.php';
 	}
 	return $tmpl;
 } );
@@ -191,7 +191,7 @@ add_action( 'template_include', function( $template ) {
 	wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 	$tmpl = get_stylesheet_directory() . '/shoptype/checkout.php';
 	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = $path  . '/templates/checkout.php';
+		$tmpl = plugin_dir_url( __FILE__ ) .'/templates/checkout.php';
 	}
 	return $tmpl;
 } );

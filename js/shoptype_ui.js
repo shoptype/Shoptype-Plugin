@@ -644,7 +644,7 @@ class STCheckout{
 			},
 			"is_shipping_billing": true
 		};
-		checkoutBody.billing_address = checkoutBody.shipping_address
+		checkoutBody.billing_address = checkoutBody.shipping_address;
 
 		st_platform.updateAddress(this.#checkoutId,checkoutBody)
 			.then(checkoutJson => {
