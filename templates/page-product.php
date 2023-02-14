@@ -69,7 +69,6 @@ get_header();
 .single-product-image-main
 {
 	max-height: 300px;
-
 }
 .single-product-image-list
 {
@@ -82,11 +81,79 @@ get_header();
 {
 	border:1px solid var(--primary-color);
 }
+.single-product-image{
+	width:calc(50% - 20px);
+	display:flex;
+	flex: 1 1 calc(50% - 20px);
+	aspect-ratio: 1/1;
+	flex-direction: column;
+	margin-right: 20px;
+}
 .single-product-image-container
 {
-	min-height: 320px;
+	width:100%;
+	display:flex;
+	aspect-ratio: 1/1;
 	clear: both;
+	width:100%;
 }
+img.xzoom {
+  max-height: 100%;
+  width:100%;
+  height:100%
+  margin: auto;
+  object-fit: contain;
+}
+	.outer-container {
+		max-width: 100% !important;
+		margin: 0px 20px !important;
+	}
+	.option-container{
+		margin:0px 10px;
+		display:flex;
+		flex-direction: column;
+		flex:1 1 100%;
+		min-width:calc(33% - 20px);
+	}
+	form.single-option{
+		display:flex;
+	}
+	select.product-option-select {
+		width: 100%;
+		font-size: 18px;
+		height: 32px;
+	}
+	.options-container .single-option .custom-select {
+		width: 100%;
+	}
+	.main-product-price {
+		margin-top: 0px;
+		margin-bottom: 21px;
+		font-size: 32px;
+		font-weight: 500;
+		font-family: sans-serif;
+	}
+	h1.main-product-title {
+		font-size: 30px;
+		margin: 0px 0px 20px;
+		line-height: 30px;
+	}
+
+	@media screen and (max-width: 775px) {
+		.details-box {
+			flex-direction:column;
+		}
+		.single-product-image{
+			width: 100%;
+			flex: 1 1 100%;
+			margin-right: 0px;
+		}
+		.product-info{
+			flex: 1 1 100%;
+			margin: 0px 0px 0px 0px;
+		}
+	}
+
 </style>
 <div id="primary" class="content-area bb-grid-cell">
 	<main id="main" class="site-main">
@@ -105,6 +172,7 @@ get_header();
 										<div class="xzoom-thumbs single-product-image-list">
 										
 											<?php
+											echo "<a href='{$st_product->primaryImageSrc->imageSrc}'><img src='{$st_product->primaryImageSrc->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
 											foreach ($st_product->secondaryImageSrc as $img) {
 												echo "<a href='{$img->imageSrc}'><img src='{$img->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
 											}
@@ -114,16 +182,15 @@ get_header();
 									<!-- ends product slider -->
 									<!-- product details -->
 									<div class="product-info">
-										<h1 class="am-product-title"><?php echo $st_product->title ?></h1>
+										<h1 class="main-product-title"><?php echo $st_product->title ?></h1>
 										<h5 class="am-product-vendor"><a href="<?php echo str_replace("{{brandId}}", $st_product->catalogId, $brandUrl); ?>"><?php echo $st_product->vendorName ?></a></h5>
-										<h4 class="am-product-price"><span class="currency-symbol"><?php echo $prodCurrency ?></span><span id="productprice"><?php echo number_format($st_product->variants[0]->discountedPrice, 2) ?></span></h4>
+										<h4 class="main-product-price"><span class="currency-symbol"><?php echo $prodCurrency ?></span><span id="productprice"><?php echo number_format($st_product->variants[0]->discountedPrice, 2) ?></span></h4>
 										<div class="options-container">
-											<div class="single-option">
 												<form method="post" class="single-option" id="varientform">
 													<?php if (count($st_product->options) > 0) {
 														foreach ($st_product->options as $optionName) {
 															if ($optionName->name != 'title') { ?>
-																<div>
+																<div class="option-container">
 																	<div class="product-option-text">
 																		<h4> <?php echo "$optionName->name "; ?></h4>
 																	</div>
@@ -142,42 +209,74 @@ get_header();
 														}
 													} ?>
 												</form>
+										</div>
+										<div class="add-box">
+											<div>Quantity : </div>
+											<div>
+												<div class="btn-minus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)<1?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)-1">-</div>
+												<input class="product-quantity am-add-cart-quantity" type="number" id="quantity" name="quantity" value="1" max=""/>
+												<div class="btn-plus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)>(document.getElementById('quantity').max)?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)+1">+</div>
 											</div>
 										</div>
-												<div class="addToCart-container">
-													<div class="add-box">
-														<div>
-															<div class="btn-minus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)<1?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)-1">-</div>
-															<input class="product-quantity am-add-cart-quantity" type="number" id="quantity" name="quantity" value="1" max=""/>
-															<div class="btn-plus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)>(document.getElementById('quantity').max)?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)+1">+</div>
-														</div>
-													</div>
-													<div class="addButton-container">
-														<button class="btn btn-standard am-product-add-cart-btn" role="button" onclick="shoptype_UI.addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" variantName='<?php echo json_encode($st_product->variants[0]->variantNameValue) ?>' productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</button>
-													</div>
-												</div>
+										<div class="addToCart-container">
+											<div class="addButton-container">
+												<button id="add-to-cart-btn" class="btn btn-standard am-product-add-cart-btn" role="button" onclick="shoptype_UI.addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" variantName='<?php echo json_encode($st_product->variants[0]->variantNameValue) ?>' productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</button>
+												<a id="goto-cart-btn" class="btn btn-standard am-product-add-cart-btn" href="/cart" style="display:none">
+													Goto Cart
+												</a>
+											</div>
+										</div>
 
-												<?php 
-                                                    if(is_user_logged_in())
-                                                    {
-                                                    $user = wp_get_current_user();
-                                                    $user = get_userdata( $user->ID  );
-                                                    $iscoseller=in_array( 'coseller', (array) $user->roles); 
-                                                    }
-                                                    else
-                                                    {
-                                                        $iscoseller=false;
-                                                    }
-                                                if(get_option('manage_coseller')== 1 || $iscoseller || current_user_can( 'manage_options' )) 
-                                                    {?>
-                                                <button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="shoptype_UI.showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
+										<?php 
+											if(is_user_logged_in())
+											{
+												$user = wp_get_current_user();
+												$user = get_userdata( $user->ID  );
+												$iscoseller=in_array( 'coseller', (array) $user->roles); 
+											}
+											else
+											{
+												$iscoseller=false;
+											}
+											if(get_option('manage_coseller')== 1 || $iscoseller || current_user_can( 'manage_options' )) 
+										{?>
+										<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="shoptype_UI.showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
 
 												<?php } ?>
 												<!-- <div class="product-spec">
 											<h4>specs</h4>
 											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae commodi dolorem voluptate quisquam, quasi illo iste mollitia ex maiores facilis reprehenderit ipsa quod veritatis. Animi, eaque ipsa! Nihil, mollitia nisi?</p>
 										</div> -->
-										
+										<div class="custom-tabs">
+											<ul class="tabs product-details-tabs">
+												<li class="product-details-tab active" rel="description">Description</li>
+												<!-- <li class="product-details-tab" rel="shipping">Shipping</li>
+												<li class="product-details-tab" rel="additional_information">Additional Information</li>
+												<li class="product-details-tab" rel="reviews">Reviews</li> -->
+											</ul>
+											<div class="tab_container product-details-content">
+												<h3 class="d_active tab_drawer_heading product-details-tab" rel="description">Description</h3>
+												<div id="description" class="tab_content am-product-description">
+													<p><?php echo nl2br($st_product->description) ?></p>
+												</div>
+												<!-- #tab1 -->
+												<!-- <h3 class="tab_drawer_heading product-details-tab" rel="shipping">Shipping</h3>
+												<div id="shipping" class="tab_content am-product-description">
+													<p>Nunc dui velit, scelerisque eu placerat volutpat, dapibus eu nisi. Vivamus eleifend vestibulum odio non vulputate.</p>
+												</div> -->
+												<!-- #tab2 -->
+												<!-- <h3 class="tab_drawer_heading product-details-tab" rel="additional_information">Additional Information</h3>
+												<div id="additional_information" class="tab_content am-product-description">
+													<p>Nulla eleifend felis vitae velit tristique imperdiet. Etiam nec imperdiet elit. Pellentesque sem lorem, scelerisque sed facilisis sed, vestibulum sit amet eros.</p>
+												</div> -->
+												<!-- #tab3 -->
+												<!-- <h3 class="tab_drawer_heading product-details-tab" rel="reviews">Reviews</h3>
+												<div id="reviews" class="tab_content am-product-description">
+													<p>Integer ultrices lacus sit amet lorem viverra consequat. Vivamus lacinia interdum sapien non faucibus. Maecenas bibendum, lectus at ultrices viverra, elit magna egestas magna, a adipiscing mauris justo nec eros.</p>
+												</div> -->
+												<!-- #tab4 -->
+											</div>
+										</div>
 										
 									</div>
 									<!-- ends product details -->
@@ -189,36 +288,7 @@ get_header();
 					<!-- product description section -->
 					<div class="row">
 						<div class="col-md-12">
-							<div class="custom-tabs">
-								<ul class="tabs product-details-tabs">
-									<li class="product-details-tab active" rel="description">Description</li>
-									<!-- <li class="product-details-tab" rel="shipping">Shipping</li>
-									<li class="product-details-tab" rel="additional_information">Additional Information</li>
-									<li class="product-details-tab" rel="reviews">Reviews</li> -->
-								</ul>
-								<div class="tab_container product-details-content">
-									<h3 class="d_active tab_drawer_heading product-details-tab" rel="description">Description</h3>
-									<div id="description" class="tab_content am-product-description">
-										<p><?php echo $st_product->description ?></p>
-									</div>
-									<!-- #tab1 -->
-									<!-- <h3 class="tab_drawer_heading product-details-tab" rel="shipping">Shipping</h3>
-									<div id="shipping" class="tab_content am-product-description">
-										<p>Nunc dui velit, scelerisque eu placerat volutpat, dapibus eu nisi. Vivamus eleifend vestibulum odio non vulputate.</p>
-									</div> -->
-									<!-- #tab2 -->
-									<!-- <h3 class="tab_drawer_heading product-details-tab" rel="additional_information">Additional Information</h3>
-									<div id="additional_information" class="tab_content am-product-description">
-										<p>Nulla eleifend felis vitae velit tristique imperdiet. Etiam nec imperdiet elit. Pellentesque sem lorem, scelerisque sed facilisis sed, vestibulum sit amet eros.</p>
-									</div> -->
-									<!-- #tab3 -->
-									<!-- <h3 class="tab_drawer_heading product-details-tab" rel="reviews">Reviews</h3>
-									<div id="reviews" class="tab_content am-product-description">
-										<p>Integer ultrices lacus sit amet lorem viverra consequat. Vivamus lacinia interdum sapien non faucibus. Maecenas bibendum, lectus at ultrices viverra, elit magna egestas magna, a adipiscing mauris justo nec eros.</p>
-									</div> -->
-									<!-- #tab4 -->
-								</div>
-							</div>
+
 						</div>
 					</div>
 					<!-- ends product description section -->
@@ -227,16 +297,20 @@ get_header();
 					<div>
 						<h2>Related Products</h2>
 					</div>
-					<div count="4" imagesize="250x0" vendorId="<?php echo $st_product->catalogId ?>" removetemplate class="products-container grid-two-by-two">
-						<div class="product-container single-product " style="display: none">
-							<a href="" class="am-product-link">
+					<div count="8" imageSize="200x0" class="products-container" vendorId="<?php echo $st_product->catalogId ?>"  sortBy="createdAt" orderBy="desc" id="t-product-search-results" >
+						<div class="product-container single-product" style="display: none;" id="st-product-select-template">
+							<a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
 								<div class="product-image">
-									<img class="am-product-image" src="product-image.png" alt="">
-									<div class="market-product-price am-product-price">$ 00.00</div>
+									<div class="am-product-img-div">
+										<div class="sold-out" style="display:none;">Sold Out</div>
+										<div class="on-sale" style="display:none;">Sale</div>
+										<img class="am-product-image" src="" loading="lazy" alt="">
+									</div>
 								</div>
-								<div class="product-content">
-									<p class="am-product-vendor">Brand Name</p>
-									<h4 class="am-product-title">Product name</h4>
+								<div class="product-info">
+									<p class="am-product-title product-title">Product Title</p>
+									<p class="am-product-vendor brand-title">Brand Title</p>
+									<div class="market-product-price am-product-price">$ 00.00</div>
 								</div>
 							</a>
 						</div>
@@ -346,6 +420,7 @@ get_header();
 			variantSoldOut(addtocart,addtocartbtn);
 			addtocartbtn.setAttribute("variantid", "soldout");
 		}
+		updateCartStatus();
 	}
 
 	function variantSoldOut(container, button){
@@ -357,7 +432,27 @@ get_header();
 			jQuery("<p id='soldOut' style='color:red;font-weight:600;text-align: center;margin-bottom:20px;font-size:18px'> Sold Out</p>").insertAfter(".addToCart-container");
 		}
 	}
-
+	function updateCartStatus(){
+		var addToCartBtn = document.getElementById("add-to-cart-btn");
+		var goToCartBtn = document.getElementById("goto-cart-btn");
+		var variantId = addToCartBtn.getAttribute("variantid");
+		var variantName = addToCartBtn.getAttribute("variantname");
+		var incart = false;
+		st_platform.getCart().then(x=>{
+			x.cart_lines.forEach(y=>{
+				if(y.product_id==product.products[0].id && y.product_variant_id==variantId && JSON.stringify(y.variant_name_value)==variantName){
+					incart=true;
+				}
+			})
+			if(incart){
+				addToCartBtn.style.display="none";
+				goToCartBtn.style.display="";
+			}else{
+				addToCartBtn.style.display="";
+				goToCartBtn.style.display="none";
+			}
+		});
+	}
 	function variantAvailable(container, button){
 		container.style.opacity='';
 		document.getElementById("quantity").disabled = false;
@@ -368,8 +463,14 @@ get_header();
 	}
 
 	function isVariantSame(variant1, variant2){
-		return Object.keys(variant1).every(key=>variant2.hasOwnProperty(key)&&variant2[key]===variant1[key]);
+		if(variant1 && variant2){
+			return Object.keys(variant1).every(key=>variant2.hasOwnProperty(key)&&variant2[key]===variant1[key]);
+		}
+		return false;
 	}
+	document.addEventListener("cartQuantityChanged", (e)=>{
+		updateCartStatus();
+	});
 	window.onload = varientChang;
 </script>
 
