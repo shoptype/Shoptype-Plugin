@@ -287,7 +287,7 @@
 }
 
 .st-cart-products {
-  margin-right: 5px;
+  margin: 10px 5px 20px 0px;
   -webkit-box-flex: 0;
   -webkit-flex: 0 auto;
   -ms-flex: 0 auto;
@@ -644,8 +644,8 @@
 
 .st-cart-product-remove {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0px;
+  right: 0px;
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -804,7 +804,6 @@ input.st-cart-product-qty::-webkit-inner-spin-button, input.st-cart-product-qty:
 
   .st-cart-products {
     margin-right: 0px;
-    margin-bottom: 20px;
   }
 
   .st-chkout-main {

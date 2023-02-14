@@ -220,7 +220,14 @@ function updateProduct(product){
 	}
 	productNode.querySelector(".am-product-title").innerHTML = product.title;
 	productNode.querySelector(".am-product-vendor").innerHTML = product.vendorName;
-	productNode.querySelector(".am-product-price").innerHTML = getPriceStr(product.variants[0].discountedPriceAsMoney);
+	productNode.querySelector(".am-product-price").innerHTML = getProductPrice(product);
+	if(product["soldOut"]){
+		var soldLable = productNode.querySelector(".sold-out");
+		if(soldLable){soldLable.style.display="block"}
+	}else if(product["sale"]){
+		var saleLable = productNode.querySelector(".on-sale");
+		if(saleLable){saleLable.style.display="block"}
+	}
 	productNode.querySelector(".am-product-description").innerHTML = product.description?product.description.replace(/(?:\r\n|\r|\n)/g, '<br>'):"not available";
 	let tags = productNode.querySelector(".am-product-tags");
 	if(tags){tags.innerHTML = product.tags.join(',');}
@@ -339,7 +346,14 @@ function createProduct(productTemplate, product){
 	newProduct.querySelector(".am-product-vendor").innerHTML = product.vendorName;
 	let productPrice = newProduct.querySelector(".am-product-price");
 	if(productPrice){
-		productPrice.innerHTML = getPriceStr(product.variants[0].discountedPriceAsMoney);
+		productPrice.innerHTML = getProductPrice(product);
+		if(product["soldOut"]){
+			var soldLable = newProduct.querySelector(".sold-out");
+			if(soldLable){soldLable.style.display="block"}
+		}else if(product["sale"]){
+			var saleLable = newProduct.querySelector(".on-sale");
+			if(saleLable){saleLable.style.display="block"}
+		}
 	}
 	let addToCartBtn = newProduct.querySelector(".am-product-add-cart-btn");
 	if(addToCartBtn){
@@ -371,9 +385,40 @@ function onVariantSelectChanged(){
 
 }
 
+function getProductPrice(product){
+	if(!product.hasOwnProperty('variants')){
+		return "";
+	}
+	var sale = false;
+	var soldOut = true;
+	var productMax = product.variants[0].discountedPriceAsMoney;
+	var productMin = product.variants[0].discountedPriceAsMoney;
+	for (var i = 0; i < product.variants.length; i++) {
+		var variant = product.variants[i];
+		if(variant.priceAsMoney && variant.discountedPriceAsMoney.amount<variant.priceAsMoney.amount){
+			sale=true;
+		}
+		if(variant.quantity>0){
+			soldOut=false;
+		}
+		if (variant.discountedPriceAsMoney.amount>productMax.amount) {
+			productMax = variant.discountedPriceAsMoney;
+		}else if(variant.discountedPriceAsMoney.amount<productMin.amount){
+			productMin = variant.discountedPriceAsMoney
+		}
+	}
+	var priceStr = getPriceStr(productMin);
+	product["sale"] = sale;
+	product["soldOut"] = soldOut;
+	if(productMax.amount>productMin.amount){
+		priceStr += " - " + getPriceStr(productMax);
+	}
+	return priceStr;
+}
+
 function getPriceStr(money,decimal=2){
 	let curr = am_Currency[money.currency]?am_Currency[money.currency]:money.currency;
-	return curr + " " + Number(money.amount).toFixed(decimal);
+	return curr + Number(money.amount).toFixed(decimal);
 }
 
 function getCommissionStr(product,decimal=2){

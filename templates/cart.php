@@ -13,7 +13,7 @@ global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 $cartId = get_query_var( 'cart' );
 
-if(empty($cartId)){
+if(empty($cartId)||$cartId=="main"){
   $cartstr = stripslashes($_COOKIE["carts"]);
   $cartsParsed = json_decode($cartstr);
   $cartId = $cartsParsed->shoptypeCart;

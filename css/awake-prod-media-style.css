@@ -157,15 +157,17 @@
   .market-product.product-container {
     margin: 0 !important;
   }
-
+  .single-product, .single-brand {
+    flex: 1 1 calc(33% - 7px);
+    max-width: calc(33% - 7px);
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 575px) {
   .products-slider .slick-list, .brands-slider .slick-list{ padding:0 20% 0 0 !important; }
   .single-product, .single-brand{
-    flex: 1 1 100%;
-    /* margin: 0 10px; */
-    max-width: 100%;
+    flex: 1 1 1 1 calc(50% - 11px);;
+    max-width: calc(50% - 11px);;
     height: 100%;
   }
   .product-image, .brand-image{
@@ -191,5 +193,12 @@
   .grid-two-by-two .single-product, .grid-two-by-two .single-brand{
     flex: 1 1 calc(50% - 5px);
     max-width: calc(50% - 5px);
+  }
+  .coseller-info-section .coseller-profile{
+    flex-direction: column;
+  }
+  .coseller-info-section .coseller-profile .intro-box {
+    width: 100%;
+    margin-left: 0px;
   }
 }

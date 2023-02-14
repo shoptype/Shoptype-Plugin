@@ -2,7 +2,6 @@
 .products-container,
 .brands-container {
   width: 100%;
-  max-width: 1240px;
   margin: auto;
   display: flex;
   flex-wrap: wrap;
@@ -10,14 +9,13 @@
 }
 .single-product,
 .single-brand {
-  border: 1px solid var(--tertiary-color-2);
   box-sizing: border-box;
-  flex: 1 1 calc(25% - 12px);
-  max-width: calc(25% - 12px);
+  flex: 1 1 calc(25% - 8px);
+  max-width: calc(25% - 8px);
   background-color: white;
-  margin: 6px;
+  margin: 3px;
   border-radius: 3px;
-  min-width: 250px;
+  min-width: 150px;
 }
 .product-image {
   position: relative;
@@ -28,12 +26,11 @@
 }
 .product-image,
 .brand-image {
-  height: 280px;
   display: flex;
   justify-items: center;
   justify-content: center;
   align-items: center;
-  background-color: var(--primary-bg);
+  background-color: #eee;
   flex-direction: column;
   overflow: hidden;
 }
@@ -48,6 +45,7 @@
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   object-fit: contain;
+  aspect-ratio: 1/1;
 }
 .product-content,
 .brand-content {
@@ -78,21 +76,12 @@
   height: 48px;
 }
 .market-product-price {
-  position: absolute;
-  top: 10px;
-  right: 0;
-  background: var(--secondary-color);
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
-  border-radius: 2px 0px 0px 2px;
-  padding: 3px 6px;
+  position: relative;
+  padding: 0px;
   color: var(--secondary-color-comp);
-  font-size: 13px;
+  font-size: 16px;
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
-  width: 85px;
-  text-align: center;
-  border-top-left-radius: 6px;
-  border-bottom-left-radius: 6px;
 }
 
 .grid-listing-block img {
@@ -123,7 +112,6 @@ PDP PAGE
 }
 .product-section {
   background: var(--primary-bg);
-  border: 1px solid var(--tertiary-color-2);
   box-sizing: border-box;
   border-radius: 5px;
 }
@@ -154,24 +142,24 @@ img.xzoom {
   width: 400px;
 }
 .product-info {
-  padding: 20px 20px 0 20px;
-  flex: 1 1 100%;
+  flex: 1 1 50%;
+  margin: 0px 0px 0px 10px;
+  padding: 0px;
 }
 .am-product-display-container{
-  max-width: 1240px;
   margin: auto;
 }
 .product-info .am-product-title {
   margin-top: 0px;
-  margin-bottom: 12px;
+  margin-bottom: 0px;
   font-size: 24px;
   line-height: 29px;
   font-weight: 500;
 }
 .product-info .product-title {
   font-size: 18px;
-  line-height: 22px;
-  height: 42px;
+  line-height: 24px;
+  max- height: 48px;
   overflow: hidden;
 }
 .product-info .am-product-vendor {
@@ -188,7 +176,7 @@ img.xzoom {
 .product-info .am-product-price {
   margin-top: 0px;
   margin-bottom: 21px;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 500;
 }
 .product-info .am-product-price .currency-symbol {
@@ -198,24 +186,22 @@ img.xzoom {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 30px;
+  margin: 0px -10px 20px;
 }
 .options-container .single-option .product-option-text {
-  width: 150px;
+  flex: 1 1 100%;
 }
 .options-container .single-option .product-option-text h4 {
   margin: 0;
   text-transform: uppercase;
   font-size: 16px;
   font-weight: 500;
+  font-family: sans-serif;
   color: #000000;
 }
 .options-container .single-option .custom-select {
-  width: calc(100% - 150px);
+  width: 100%;
 }
-/* .options-container .single-option .custom-select .form-group {
-  margin-bottom: 0px;
-} */
 .addToCart-container {
   display: flex;
   justify-content: flex-start;
@@ -223,8 +209,9 @@ img.xzoom {
   margin-bottom: 30px;
 }
 .add-box {
-  width: 150px;
-  margin: 0px 10px 0px 0px;
+  display:flex;
+  margin: 0px 10px 20px 0px;
+  align-items: center;
 }
 .addButton-container {
   width: 100%;
@@ -271,8 +258,8 @@ img.xzoom {
   color: #c9a051;
 }
 div.add-box > div {
-  width: 100%;
   display: inline-flex;
+  margin: 0px 10px 0px 0px;
 }
 div.add-box > div > input {
   margin: 0;
@@ -289,7 +276,7 @@ div.add-box > div > input {
 
 .custom-tabs {
   margin-top: 30px;
-  margin-bottom: 80px;
+  margin-bottom: 30px;
   overflow: auto;
 }
 ul.tabs {

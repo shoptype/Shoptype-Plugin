@@ -26,17 +26,21 @@ function renderAwakeProducts($atts = []){
 
 
     <div count="<?php echo $perRow; ?>" <?php echo "$my_shop $offset $sortBy $orderBy $collection"; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
-        <div class="product-container single-product" style="display: none;">
-            <div class="product-image">
-                <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
-                    <img class="am-product-image" src="https://us.awake.market/wp-content/uploads/2021/12/Display-Pic.jpg" loading="lazy" alt="">
-                </a>
-                <div class="market-product-price am-product-price">$ 00.00</div>
-            </div>
-            <div class="product-info">
-                <p class="am-product-title product-title">Product Title</p>
-                <p class="am-product-vendor brand-title">Brand Title</p>
-            </div>
+        <div class="product-container single-product" style="display: none;" id="st-product-select-template">
+            <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
+                <div class="product-image">
+                    <div class="am-product-img-div">
+                        <div class="sold-out" style="display:none;">Sold Out</div>
+                        <div class="on-sale" style="display:none;">Sale</div>
+                        <img class="am-product-image" src="" loading="lazy" alt="">
+                    </div>
+                </div>
+                <div class="product-info">
+                    <p class="am-product-title product-title">Product Title</p>
+                    <p class="am-product-vendor brand-title">Brand Title</p>
+                    <div class="market-product-price am-product-price">$ 00.00</div>
+                </div>
+            </a>
         </div>
     </div>
     <?php return ob_get_clean();
