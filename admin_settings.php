@@ -333,7 +333,7 @@ function shoptypeSettings() {
     global $loginUrl;
     $loginUrl = get_option('loginUrl');
     global $marketUrl;
-    $marketUrl = get_option('$marketUrl');
+    $marketUrl = get_option('marketUrl');
     global $stFilterJson;
     $stFilterJson = get_option('stFilter');
     global $stDefaultCurrency;
