@@ -1,60 +1,45 @@
 === Shoptype ===
-Contributors: shoptype,astroajay
-Tags: shoptype, wordpress, network, cosell, awake market, 
+Contributors: shoptype
+Tags: shoptype, wordpress, network, cosell, Awake Market
 Requires at least: 5.5
 Tested up to: 5.8
 Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
- 
 
-Plugin to integrate shoptype features with the networking features of buddypress on wordpress sites for Awake Market Networks  
- 
+Plugin to integrate Shoptype features with the networking features of BuddyPress on WordPress sites for Awake Market Networks.
+
 == Description ==
- 
-Plugin to integrate shoptype features with the networking features of buddypress on wordpress sites for Awake Market Networks . 
- 
+
+The Shoptype plugin allows you to integrate Shoptype features with the networking features of BuddyPress on WordPress sites for Awake Market Networks.
+
 == Installation ==
- 
-1. Upload the plugin folder to your /wp-content/plugins/ folder.
-1. Go to the **Plugins** page and activate the plugin.
- 
+
+Upload the plugin folder to your /wp-content/plugins/ folder.
+Go to the Plugins page and activate the plugin.
+== Usage ==
+
+Install and activate the plugin.
+Go to the Shoptype Settings tab in your WordPress dashboard.
+Enter your Shoptype network's Platform ID, API key, referral tracker code, currency symbol, product URL, brand URL, site name, and site URL.
+Save the changes.
+
+Once you navigate to the "Manage Cosell User" tab inside the Shoptype settings, you will see a list of users. You can invite a user to become a coseller by clicking the "Invite" button next to their name.
 == Frequently Asked Questions ==
- 
+
 = How do I use this plugin? =
- 
-Once the plugin is installed 
-there are still a number of User specific variables to be set from your shoptype account network profile. 
-The following code will need to be added into the functions.php file of your theme directly or via the code snippets plugin 
 
-    function shoptypeSettings() {
-        global $stPlatformId;
-        $stPlatformId = 'YOUR SHOPTYPE NETWORK'S PLATFORM ID';
-		global $stApiKey;
-        $stApiKey = 'THE API KEY GENERATED FOR YOUR SHOPTYPE NETWORK';
-		global $stRefcode;
-        $stRefcode = 'YOUR SHOPTYPE REFERRAL TRACKER CODE';
-		global $stCurrency;
-		$stCurrency["THREE CHARACTER CURRENCY (EG USD)"] = "THE CURRENCY SYMBOL";
-		global $productUrl;
-		$productUrl = "/product?id={{productId}}";
-		global $brandUrl;
-		$brandUrl = "/view-brand?id={{brandId}}";
-		global $siteName;
-		$siteName = "YOUR SITE NAME";
-		global $siteUrl;
-		$siteUrl = "YOUR SITE URL";
-    }
-    add_action( 'after_setup_theme', 'shoptypeSettings' );
+To use the Shoptype plugin, install and activate it. Then, navigate to the Shoptype Settings tab in your WordPress dashboard and enter your Shoptype network's Platform ID, API key, referral tracker code, currency symbol, product URL, brand URL, site name, and site URL.
 
+= How do I uninstall the plugin? =
 
-= How to uninstall the plugin? =
- 
-Simply deactivate and delete the plugin. 
- 
+To uninstall the Shoptype plugin, simply deactivate it and delete it from the Plugins page in your WordPress dashboard.
+
 == Screenshots ==
-1. NA 
- 
+
+NA
 == Changelog ==
+
 = 1.0 =
-* Plugin released. 
+
+Initial release.
