@@ -163,6 +163,7 @@ class Shoptype_Settings {
         register_setting("shoptype_settings", "cartCountMatch");
         register_setting("shoptype_settings", "loginUrl");
         register_setting("shoptype_settings", "marketUrl");
+        register_setting("shoptype_settings", "myAccountUrl");
         register_setting("shoptype_settings", "stDefaultCurrency");
         register_setting("shoptype_settings", "stFilter");
         register_setting("shoptype_settings", "ServerName");
@@ -178,14 +179,13 @@ class Shoptype_Settings {
         add_settings_field("cartCountMatch", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );
         add_settings_field("loginUrl", "ST Login Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"loginUrl","name"=>"ST Login Page URL") );
         add_settings_field("marketUrl", "ST Market Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"marketUrl","name"=>"ST Market Page URL") );
+        add_settings_field("myAccountUrl", "ST My Account Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"myAccountUrl","name"=>"ST My Account Page URL") );
         add_settings_field("stDefaultCurrency", "ST Default Currency: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stDefaultCurrency","name"=>"ST Default Currency") );
         add_settings_field("stFilter", "Product Filter JSON: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stFilter","name"=>"Product Filter JSON") );
-                           
         add_settings_section( 'buddypress_groups_products', 'Buddypress group settings', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("productsInGroup", "Display products in Buddypress groups", array( $this, 'sandbox_checkbox_element_callback' ), "shoptype_settings", "buddypress_groups_products", array("id"=>"productsInGroup","name"=>"productsInGroup"));               
         add_settings_section( 'channel_champion', 'Channel Champion', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("myshopUrl", "My Shop URL: ", array( $this, 'field_callback' ), "shoptype_settings", "channel_champion", array("id"=>"myshopURL","name"=>"My Shop URL:") );   
-        
         add_settings_section( 'manage_coseller_setting', 'Coseller manage setting', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("manage_coseller", "Allow all user to cosell product", array( $this, 'manage_cosell_checkbox' ), "shoptype_settings", "manage_coseller_setting", array("id"=>"manage_coseller","name"=>"manage_coseller"));
       
@@ -334,6 +334,8 @@ function shoptypeSettings() {
     $loginUrl = get_option('loginUrl');
     global $marketUrl;
     $marketUrl = get_option('marketUrl');
+    global $myAccountUrl;
+    $myAccountUrl = get_option('myAccountUrl');
     global $stFilterJson;
     $stFilterJson = get_option('stFilter');
     global $stDefaultCurrency;

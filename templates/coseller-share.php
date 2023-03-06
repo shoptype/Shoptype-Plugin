@@ -1,5 +1,5 @@
 <?php
-/* Template Name:Shoptype Products Home */
+/* Template Name:Cosell Widget */
   global $wp;
 
   $cosell_link = get_query_var('cosell_link');

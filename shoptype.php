@@ -269,8 +269,8 @@ function awakenthemarket(){
 	global $stPlatformId; 
 	global $cartCountMatch;
 	global $productUrl;
-	global $loginUrl;?>
-
+	global $loginUrl;
+	global $myAccountUrl;?>
 <script>
 	let st_platform = undefined;
 	let st_settings ={
@@ -278,7 +278,8 @@ function awakenthemarket(){
 		'platformId':'<?php echo $stPlatformId ?>',
 		'cartCount':'<?php echo $cartCountMatch ?>',
 		'productUrl':'<?php echo $productUrl ?>',
-		'loginUrl':'<?php echo $loginUrl ?>'
+		'loginUrl':'<?php echo $loginUrl ?>',
+		'myAccountUrl':'<?php echo $myAccountUrl ?>',
 	}
 
 	if(typeof STUtils !== 'undefined'){
@@ -299,6 +300,7 @@ function awakenthemarket(){
 	
 	function loadShoptypeJs(){
 		createCartMenu();
+		updateLoginMenu();
 		shoptype_UI.setProductUrl(st_settings.productUrl);
 		shoptype_UI.setLoginUrl(st_settings.loginUrl);
 		shoptype_UI.setPlatform(st_settings.platformId);
@@ -324,6 +326,17 @@ function awakenthemarket(){
 		   cartMenus.forEach((x)=>{
 			  x.innerHTML="<img src='<?php echo plugin_dir_url(__FILE__) . 'images/shopping-cart.png' ?>'><span>0</span>"; 
 		   });
+		}
+	}
+	
+	function updateLoginMenu(){
+		if(shoptype_UI.user){
+			var loginMenu =  document.getElementsByClassName("st-login-menu");
+			for (var i = 0; i < loginMenu.length; i++) {
+				loginMenu[i].querySelector("a").href=st_settings.myAccountUrl;
+				loginMenu[i].querySelector("a").title="My Account";
+				loginMenu[i].querySelector("a").innerHTML="My Account";
+			}
 		}
 	}
 </script>
