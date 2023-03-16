@@ -66,6 +66,7 @@ get_header();
 		productsLoading = true;
 		document.querySelector(".st-button-div button").disabled = true;
 		options['text'] = document.getElementById('st-search-box').value;
+		options['imgSize'] = "200x0";
 		options['offset'] = myshop_offset;
 		fetchProducts(options, productsContainer, productTemplate);
 		myshop_offset+=10;

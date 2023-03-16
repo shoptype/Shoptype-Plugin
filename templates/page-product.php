@@ -295,7 +295,7 @@ img.xzoom {
 				</div>
 				<div>
 					<div>
-						<h2>Related Products</h2>
+						<h3 style="margin: 30px 0px 10px;font-family:sans-serif">Related Products</h3>
 					</div>
 					<div count="8" imageSize="200x0" class="products-container" vendorId="<?php echo $st_product->catalogId ?>"  sortBy="createdAt" orderBy="desc" id="t-product-search-results" >
 						<div class="product-container single-product" style="display: none;" id="st-product-select-template">
@@ -316,7 +316,7 @@ img.xzoom {
 						</div>
 					</div>
 					<div class="st-market-link">
-						<a href="<?php global $marketUrl; echo $marketUrl; ?>"><h3>View All Products</h3></a>
+						<a href="<?php global $marketUrl; echo $marketUrl; ?>"  class="st-market-link">View All Products</a>
 					</div>
 				</div>
 			</div>

@@ -88,7 +88,7 @@ get_header(null);
     </div>
   
     <div class="st-market-link">
-      <a href="<?php global $marketUrl; echo $marketUrl; ?>"><h3>View All Products</h3></a>
+      <a href="<?php global $marketUrl; echo $marketUrl; ?>"  class="st-market-link">View All Products</a>
     </div>
   </div>
 
