@@ -131,7 +131,16 @@ if ( ! is_wp_error( $result ) ) {
 		</div>
 		<?php endforeach; ?>
 	</div>
+	<button onclick="stLogout()">
+		Logout
+	</button>
 </div>
-
+<script>
+	function stLogout(){
+		STUtils.setCookie("stToken","",-1);
+		window.location.href = "<?php echo wp_logout_url("/");?>";
+	}
+	
+</script>
 <?php
 get_footer();
