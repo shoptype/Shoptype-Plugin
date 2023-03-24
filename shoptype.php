@@ -180,7 +180,7 @@ add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'checkout' ) == false || get_query_var( 'checkout' ) == '' ) {
 		return $template;
 	}
-	$path = plugin_dir_path( __FILE__ );
+	$path = plugin_dir_url( __FILE__ );
 
 	wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
 	wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
