@@ -36,8 +36,6 @@ try {
 catch(Exception $e) {
   echo "Cart not found";
 }
-wp_enqueue_style( 'new-market', $path . '/css/st-cart.css' );
-wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
 get_header(null);
 ?>
   <div class="st-cart">

@@ -172,7 +172,7 @@ add_action( 'template_include', function( $template ) {
 	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
 	$tmpl = get_stylesheet_directory() . '/shoptype/cart.php';
 	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_url( __FILE__ ).'/templates/cart.php';
+		$tmpl = plugin_dir_path( __FILE__ ).'/templates/cart.php';
 	}
 	return $tmpl;
 } );
@@ -180,7 +180,7 @@ add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'checkout' ) == false || get_query_var( 'checkout' ) == '' ) {
 		return $template;
 	}
-	$path = plugin_dir_url( __FILE__ );
+	$path = plugin_dir_path( __FILE__ );
 
 	wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
 	wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
@@ -191,7 +191,7 @@ add_action( 'template_include', function( $template ) {
 	wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 	$tmpl = get_stylesheet_directory() . '/shoptype/checkout.php';
 	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_url( __FILE__ ) .'/templates/checkout.php';
+		$tmpl = plugin_dir_path( __FILE__ ) .'/templates/checkout.php';
 	}
 	return $tmpl;
 } );
@@ -232,6 +232,8 @@ add_action( 'template_include', function( $template ) {
 		return $template;
 	}
 	$tmpl = get_stylesheet_directory() . '/shoptype/checkout-success.php';
+	wp_enqueue_style( 'new-market', plugin_dir_url( __FILE__ ) . '/css/st-cart.css' );
+	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
 	if ( ! file_exists( $tmpl ) ) {
 		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
 	}
