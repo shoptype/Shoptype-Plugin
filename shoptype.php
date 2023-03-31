@@ -254,16 +254,60 @@ add_action( 'template_include', function( $template ) {
 function login_load_js_script() {
 	wp_enqueue_script( 'js-file', plugin_dir_url(__FILE__) . 'js/st-login-handler.min.js');
 }
-
 add_action('wp_enqueue_scripts', 'login_load_js_script');
 
 //Enqueue Product and brand page css
-
 function theme_scripts() {
 	wp_enqueue_style( 'awake-prod-style', plugin_dir_url(__FILE__) . 'css/awake-prod-style.css' );
 	wp_enqueue_style( 'awake-prod-media-style', plugin_dir_url(__FILE__) . 'css/awake-prod-media-style.css' );
 }
 add_action( 'wp_enqueue_scripts', 'theme_scripts' );
+
+//Add Custom Var to Groups
+add_action( 'bp_groups_admin_meta_boxes', 'bpgcp_add_admin_metabox' );
+function bpgcp_add_admin_metabox() {	
+	add_meta_box( 
+		'bp_channel_products', // Meta box ID 
+		'Channel Products', // Meta box title
+		'bpgcp_render_admin_metabox', // Meta box callback function
+		get_current_screen()->id, // Screen on which the metabox is displayed. In our case, the value is toplevel_page_bp-groups
+		'side', // Where the meta box is displayed
+		'core' // Meta box priority
+	);
+}
+function bpgcp_render_admin_metabox() {
+	$group_id = intval( $_GET['gid'] );
+	$channel_products = groups_get_groupmeta( $group_id, 'channel_products' );
+	?>
+
+	<div class="bp-groups-settings-section" id="bp-groups-settings-section-content-protection">
+		<fieldset>
+			<legend>Products Collection ID</legend>
+			<label>
+				<input type="text" name="channel_products" value='<?php echo $channel_products  ?>' >
+			</label>
+		</fieldset>
+	</div>
+
+	<?php
+}
+
+add_action( 'groups_group_details_edited', 'bpgcp_save_metabox_fields' );
+add_action( 'bp_group_admin_edit_after', 'bpgcp_save_metabox_fields' );
+function bpgcp_save_metabox_fields( $group_id ) {
+	$channel_products = $_POST['channel_products'];
+	groups_update_groupmeta( $group_id, 'channel_products', $channel_products );
+}
+
+//Set width and height for cover images
+function your_theme_xprofile_cover_image( $settings = array() ) {
+    $settings['width']  = 2000;
+    $settings['height'] = 600;
+ 
+    return $settings;
+}
+add_filter( 'bp_before_groups_cover_image_settings_parse_args', 'your_theme_xprofile_cover_image', 11, 1 );
+
 
 //Initialise the market
 function awakenthemarket(){
@@ -566,6 +610,7 @@ class PageTemplater {
 			'templates/page-products-home.php' => 'Products Home Page',
 			'templates/cart.php' => 'Shoptype Cart Page',
 			'templates/my-account.php' => 'Shoptype MyAccount Page',
+			'templates/my-shop-template.php' => 'my-shop-templet',
 		);
 			
 	} 
@@ -755,3 +800,4 @@ add_action('admin_init', 'coseller_new_role');
  require_once(ST__PLUGIN_DIR.'/my_st_dashboard.php');
  require_once(ST__PLUGIN_DIR.'/shortcodes/collections.php');
  require_once(ST__PLUGIN_DIR.'/shortcodes/coseller-shop.php');
+
