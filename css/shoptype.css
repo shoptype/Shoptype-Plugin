@@ -1604,13 +1604,12 @@
 }
 
 .st-product-search-title {
-  padding: 14px;
+  padding: 7px 10px;
   background: var(--button-color);
-  color: #FFF;
   margin: 0px 0px 0px -10px;
   border-radius: 10px;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: 40px;
+  min-height: 40px;
   color: var(--button-text-color);
 }
 
