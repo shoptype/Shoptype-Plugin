@@ -5,6 +5,7 @@
  *
  * @package shoptype
  */
+
 global $stApiKey;
 global $stPlatformId;
 global $stRefcode;
@@ -16,18 +17,17 @@ global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'cartCss', $path.'/css/st-myaccount.css' );
 
-get_header(null);
-
 $st_token = $_COOKIE["stToken"];
-
+get_header(null);
 $args = array(
-	'body'				=> '{}',
-	'headers'		 => array(
-		"Content-Type"=> "application/json",
+	'headers'	=> array(
 		"Authorization"=> $st_token,
-		"X-Shoptype-PlatformId" => $stPlatformId,
+		"X-Shoptype-PlatformId" => $stPlatformId
 	)
 );
+
+require_once( 'wp-load.php' );
+
 $result = wp_remote_get( "{$stBackendUrl}/me", $args );
 
 if ( ! is_wp_error( $result ) ) {
@@ -43,7 +43,6 @@ $result = wp_remote_get( "{$stBackendUrl}/cosellers/{$st_profile->_id}/purchase-
 if ( ! is_wp_error( $result ) ) {
 	$body = wp_remote_retrieve_body( $result );
 	$st_orders = json_decode($body);
-
 }
 
 $result = wp_remote_get( "{$stBackendUrl}/coseller-dashboard?viewType=cosellerView&currency={$stDefaultCurrency}", $args );
@@ -53,7 +52,7 @@ if ( ! is_wp_error( $result ) ) {
 	$st_kpis = json_decode($body);
 }
 ?>
-<div class="container">
+<div class="container" style="max-width:calc(100% - 40px); width:1240px; margin:auto">
 	<div class="st-account-details">
 		<div class="st-coseller">
 			<div><img src="<?php echo $st_profile->profilePicture ?>" loading="lazy" id="st-user-img" alt="" class="st-order-profile-img"></div>
@@ -87,7 +86,7 @@ if ( ! is_wp_error( $result ) ) {
 			</div>
 		</div>
 	</div>
-	<div class="st-orders">
+	<div class="st-orders" style="min-height:200px">
 		<?php foreach($st_orders->data as $key=>$order): ?>
 		<div class="st-order">
 			<div class="st-order-header">
@@ -140,7 +139,6 @@ if ( ! is_wp_error( $result ) ) {
 		STUtils.setCookie("stToken","",-1);
 		window.location.href = "<?php echo wp_logout_url("/");?>";
 	}
-	
 </script>
 <?php
 get_footer();
