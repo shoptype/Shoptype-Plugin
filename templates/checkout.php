@@ -12,6 +12,14 @@ global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
 
+$path = dirname(plugin_dir_url( __FILE__ ));
+wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
+wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
+wp_enqueue_style( 'authnetCss', $path.'/css/authnet.css' );
+wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
+wp_enqueue_script('st-payment-handlers',$path."/js/shoptype-payment.js");
+wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
+wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
 get_header(null);
 
@@ -105,7 +113,7 @@ if(isset($st_checkout)){
 ?>
 	<script>var modalCheckout=false;</script>
 	<div class="st-chkout-top">
-		<h1 class="st-chkout-title">Checkout</h1>
+		<h1 class="st-chkout-title">Checkouts</h1>
 		<div class="st-chkout-coupon" style="display:none;">
 			<div class="st-chkout-coupon-title">Have a coupon?</div>
 			<div class="st-chkout-coupon-code">Click here to enter your code</div>
@@ -118,11 +126,11 @@ if(isset($st_checkout)){
 			<div class="st-chkout-billing-fld st-chkout-billing-fullname">
 				<div class="st-chkout-billing-fname">
 					<div class="st-chkout-billing-fld-name">First Name *</div>
-					<input type="text" name="fname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->firstname;} ?>" onchange="updateAddress()" required>
+					<input type="text" name="fname" class="st-chkout-billing-fld-val" placeholder='First Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->firstname;} ?>" onchange="updateAddress()" required>
 				</div>
 				<div class="st-chkout-billing-fname">
 					<div class="st-chkout-billing-fld-name">Last Name *</div>
-					<input type="text" name="lname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
+					<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
 				</div>
 			</div>
 			<div class="st-chkout-billing-fld" style="display: none;">
@@ -130,39 +138,60 @@ if(isset($st_checkout)){
 				<input type="text" name="lastName" class="st-chkout-billing-fld-val">
 			</div>
 			<div class="st-chkout-billing-fld">
+<div class="st-chkout-billing-flds">
+	
+				
 				<div class="st-chkout-billing-fld-name">Street Address *</div>
-				<input type="text" name="address" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->street1;} ?>"	required onchange="updateAddress()">
-				<input type="text" name="address2" class="st-chkout-billing-fld-val" onchange="updateAddress()">
+				<input type="text" name="address" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 1 *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->street1;} ?>"	required onchange="updateAddress()">
+</div>
+<div class="st-chkout-billing-flds">
+				<input type="text" name="address2" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 2' onchange="updateAddress()">
+
+				</div>
+	
 			</div>
 			<div class="st-chkout-billing-fld">
+<div class="st-chkout-billing-flds">
+	
 				<div class="st-chkout-billing-fld-name">Town / City *</div>
-				<input type="text" name="city" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->city;} ?>"	required onchange="updateAddress()">
+				<input type="text" name="city" class="st-chkout-billing-fld-val" placeholder='Town / City *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->city;} ?>"	required onchange="updateAddress()">
+</div><div class="st-chkout-billing-flds">
+<div class="st-chkout-billing-fld-name">ZIP Code/PIN Code *</div>
+				<input type="text" name="pincode" class="st-chkout-billing-fld-val" placeholder='ZIP Code/PIN Code *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->postalCode;} ?>"	required onchange="updateAddress()">
+			</div>	
 			</div>
 			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">State *</div>
-				<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->state;} ?>"	required onchange="updateAddress()">
-					 <option value="">Select state</option>
-				</select>
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Country *</div>
-				<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
+<div class="st-chkout-billing-flds">				
+<div class="st-chkout-billing-fld-name">Country *</div>
+				
+					<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
 					 <option value="">Select Country</option>
 				</select>
-			</div>			
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">ZIP Code/PIN Code *</div>
-				<input type="text" name="pincode" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->postalCode;} ?>"	required onchange="updateAddress()">
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Phone</div>
-				<input type="text" name="phone" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->phone;} ?>"	onchange="updateAddress()">
-			</div>
-			<div class="st-chkout-billing-fld">
+</div>
+
+<div class="st-chkout-billing-flds">
+				
+<div class="st-chkout-billing-fld-name">State *</div>
+				<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" placeholder='State *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->state;} ?>"	required onchange="updateAddress()">
+					 <option value="">Select state</option>
+				</select>
+	
+				</div >
+			</div >
+						<div class="st-chkout-billing-fld">
+					
+							<div class="st-chkout-billing-flds"><div class="st-chkout-billing-fld-name">Phone</div>
+				<input type="text" name="phone" class="st-chkout-billing-fld-val" placeholder='Phone *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->phone;} ?>"	onchange="updateAddress()"></div>
+<div class="st-chkout-billing-flds">
 				<div class="st-chkout-billing-fld-name">Email Address *</div>
-				<input type="text" name="email" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->email;} ?>"	required onchange="updateAddress()">
+
+				<input type="text" name="email" class="st-chkout-billing-fld-val" placeholder='Email Address *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->email;} ?>"	required onchange="updateAddress()">
+
+				</div>
+
 			</div>
-		</form>
+
+					</form>
 		<div>
 			<input type="checkbox" id="billingDifferent" name="billingDifferent" value="true" onchange="billingSelectChanged()" <?php if(isset($st_checkout->billing_address)&&(!$st_checkout->is_shipping_billing)){echo "checked";} ?>>
   			<label for="vehicle1"> Billing address is different</label>
@@ -172,11 +201,11 @@ if(isset($st_checkout)){
 			<div class="st-chkout-billing-fld st-chkout-billing-fullname">
 				<div class="st-chkout-billing-fname">
 					<div class="st-chkout-billing-fld-name">First Name *</div>
-					<input type="text" name="fname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->firstname;} ?>" onchange="updateAddress()" required>
+					<input type="text" name="fname" class="st-chkout-billing-fld-val" placeholder='First Name *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->firstname;} ?>" onchange="updateAddress()" required>
 				</div>
 				<div class="st-chkout-billing-fname">
 					<div class="st-chkout-billing-fld-name">Last Name *</div>
-					<input type="text" name="lname" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->lastname;} ?>" onchange="updateAddress()" required>
+					<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->lastname;} ?>" onchange="updateAddress()" required>
 				</div>
 			</div>
 			<div class="st-chkout-billing-fld" style="display: none;">
@@ -185,36 +214,36 @@ if(isset($st_checkout)){
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Street Address *</div>
-				<input type="text" name="address" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->street1;} ?>"	required onchange="updateAddress()">
-				<input type="text" name="address2" class="st-chkout-billing-fld-val" onchange="updateAddress()">
+				<input type="text" name="address" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 1 *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->street1;} ?>"	required onchange="updateAddress()">
+				<input type="text" name="address2" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 2 *' onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Town / City *</div>
-				<input type="text" name="city" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->city;} ?>"	required onchange="updateAddress()">
+				<input type="text" name="city" class="st-chkout-billing-fld-val" placeholder='Town / City *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->city;} ?>"	required onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">State *</div>
-				<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->state;} ?>"	required onchange="updateAddress()">
+				<select name="state" class="st-chkout-billing-fld-val"  placeholder='State *' id="st-chkout-state" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->state;} ?>"	required onchange="updateAddress()">
 					 <option value="">Select state</option>
 				</select>
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Country *</div>
-				<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->country;} ?>"	required onchange="updateAddress()">
+				<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->country;} ?>"	required onchange="updateAddress()">
 					 <option value="">Select Country</option>
 				</select>
 			</div>			
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">ZIP Code/PIN Code *</div>
-				<input type="text" name="pincode" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->postalCode;} ?>"	required onchange="updateAddress()">
+				<input type="text" name="pincode" class="st-chkout-billing-fld-val"placeholder='ZIP Code/PIN Code *'  value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->postalCode;} ?>"	required onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Phone</div>
-				<input type="text" name="phone" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->phone;} ?>"	onchange="updateAddress()">
+				<input type="text" name="phone" class="st-chkout-billing-fld-val" placeholder='Phone *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->phone;} ?>"	onchange="updateAddress()">
 			</div>
 			<div class="st-chkout-billing-fld">
 				<div class="st-chkout-billing-fld-name">Email Address *</div>
-				<input type="text" name="email" class="st-chkout-billing-fld-val" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->email;} ?>"	required onchange="updateAddress()">
+				<input type="text" name="email" class="st-chkout-billing-fld-val" placeholder='Email Address *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->email;} ?>"	required onchange="updateAddress()">
 			</div>
 		</form>
 		</div>

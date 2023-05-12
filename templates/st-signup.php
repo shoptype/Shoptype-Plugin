@@ -1,6 +1,6 @@
 <?php
 /*
- * Template name: Shoptype Login
+ * Template name: Shoptype Signup
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  *
  * @package shoptype
@@ -10,7 +10,7 @@ get_header();
 the_content();
 wp_enqueue_script( 'js-file', ST__PLUGIN_URL . 'js/st-login-handler.min.js?1');
 ?>
-
+	
     <div id="primary" class="content-area bb-grid-cell">
         <main id="main" class="site-main">
         	<div id="login-form" class="login-form"></div>
@@ -32,6 +32,7 @@ wp_enqueue_script( 'js-file', ST__PLUGIN_URL . 'js/st-login-handler.min.js?1');
 				url: "<?php global $siteUrl; echo $siteUrl; ?>",
 				rid: refCode,
 				tid: refTid,
+				formType: "signup"
 				},
 				(appRes) => {
 					switch (appRes.app.event) {

@@ -474,8 +474,6 @@ img.xzoom {
 	window.onload = varientChang;
 </script>
 
-
-<script type="text/javascript" src="<?php echo untrailingslashit( plugin_dir_url( __FILE__ ) ) ;?>/js/imageslider.js"></script>
 <script>
 	jQuery(".xzoom, .xzoom-gallery").xzoom({
 		tint: '#333',

@@ -1,14 +1,14 @@
 <?php
 /*
- * Template name: Search Templet
+ * Template name: Search Template
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  * @package shoptype
  */
 
 global $stCurrency;
 
-$searchTearm = $_GET['s'];
-$massage='';
+$searchTerm = $_GET['s'];
+$massage = '';
 
 ?>
 <style>
@@ -63,17 +63,16 @@ $massage='';
     <?php
     get_header();
 
-    if (isset($searchTearm)) { ?>
-        <h2>Search Result for <?php echo $searchTearm;  ?></h2>
+    if (isset($searchTerm)) { ?>
+        <h2>Search Result for <?php echo $searchTerm; ?></h2>
         <?php
-
 
         global $stPlatformId;
         global $wp_query;
         global $stBackendUrl;
         $q = $wp_query->query_vars;
-        $searchTearms = preg_replace('/\s+/', '%20', $searchTearm);
-        $url = "{$stBackendUrl}/platforms/$stPlatformId/products?count=30&text=$searchTearms";
+        $searchTerms = preg_replace('/\s+/', '%20', $searchTerm);
+        $url = "{$stBackendUrl}/platforms/$stPlatformId/products?count=30&text=$searchTerms";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -87,32 +86,32 @@ $massage='';
             <div class="products-container">
 
                 <?php
-                foreach ((array) $st_products->products as $products) { ?>
+                foreach ((array)$st_products->products as $products) { ?>
                     <div class="single-product">
                         <a href="/products/<?php echo $products->id ?>">
-                        <div class="product-image"><img src="<?php echo $products->primaryImageSrc->imageSrc ?>" /></div>
+                            <div class="product-image"><img src="<?php echo $products->primaryImageSrc->imageSrc ?>" /></div>
 
-                        <div class="product-title">
-                            <h3><?php echo $products->title  ?>
-                                <h3>
-                        </div>
-                        <div class="product-price">
-                            <h4><span class="currency-symbol"><?php echo $stCurrency[$products->variants[0]->discountedPriceAsMoney->currency]; ?></span><?php echo ($products->variants[0]->discountedPrice)  ?></h4>
-                        </div>
+                            <div class="product-title">
+                                <h3><?php echo $products->title  ?>
+                                    <h3>
+                            </div>
+                            <div class="product-price">
+                                <h4><span class="currency-symbol"><?php echo $stCurrency[$products->variants[0]->discountedPriceAsMoney->currency]; ?></span><?php echo ($products->variants[0]->discountedPrice)  ?></h4>
+                            </div>
 
-                        <div class="product-description"><?php echo $products->description ?> </div>
+                            <div class="product-description"><?php echo $products->description ?> </div>
                         </a>
                     </div>
 
 
-                <?php } 
+                <?php }
+            }
+         else {
+            $massage = 'No result found';
         }
-        else
-        {
-            $massage='No result found';
-        }
-                ?>
-                <?php
+    }
+        ?>
+<?php
  global $query_string;
 
                 $query_args = explode("&", $searchTearm);
@@ -127,43 +126,36 @@ $massage='';
                 global $wp_query;
 $total_results = $wp_query->found_posts;
                 
-
-              ?>
-
-                <?php
-                /* loping for each post */
-                if ($search->have_posts()) {$massage=''; ?>
-                    <?php while ($search->have_posts()) {
-                       $search-> the_post(); ?>
-                        <div class="single-product">
-<?php// echo $total_results;?>
-                            <a href="<?php echo get_permalink(); ?>">
-                            <div class="product-image"><?php the_post_thumbnail('medium') ?></div>
-
-                            <div class="product-title">
-                                <h3><?php the_title();  ?><h3>
-                            </div>
-                            <div class="product-description"><?php echo substr(get_the_excerpt(), 0, 200); ?> </div>
-                            </a>
-                        </div>
-
-                    <?php } ?>
-
-
-                    <?php echo paginate_links(); ?>
-
-            <?php }
-            ?>
-            </div>
-
-
-        <?php
-
 ?>
-<?php }
-echo '<h2>'. $massage.'</h2>';
-        
-        ?>
-</div>
+
 <?php
+/* looping for each post */
+if ($search->have_posts()) {
+    $massage='';
+?>
+    <div class="products-container">
+        <?php while ($search->have_posts()) {
+           $search->the_post();
+        ?>
+            <div class="single-product">
+                <a href="<?php echo get_permalink(); ?>">
+                    <div class="product-image"><?php the_post_thumbnail('medium') ?></div>
+                    <div class="product-title">
+                        <h3><?php the_title(); ?></h3>
+                    </div>
+                    <div class="product-description"><?php echo substr(get_the_excerpt(), 0, 200); ?></div>
+                </a>
+            </div>
+        <?php } ?>
+
+        <?php echo paginate_links(); ?>
+
+    </div>
+<?php
+} else {
+    $massage='No result found';
+}
+echo '<h2>'. $massage.'</h2>';
+
 get_footer();
+?>

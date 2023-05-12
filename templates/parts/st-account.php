@@ -1,10 +1,4 @@
 <?php
-/*
- * Template name: Shoptype My Account
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package shoptype
- */
 global $stApiKey;
 global $stPlatformId;
 global $stRefcode;
@@ -15,8 +9,6 @@ global $stBackendUrl;
 
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'cartCss', $path.'/css/st-myaccount.css' );
-
-get_header(null);
 
 $st_token = $_COOKIE["stToken"];
 
@@ -140,7 +132,4 @@ if ( ! is_wp_error( $result ) ) {
 		STUtils.setCookie("stToken","",-1);
 		window.location.href = "<?php echo wp_logout_url("/");?>";
 	}
-	
 </script>
-<?php
-get_footer();

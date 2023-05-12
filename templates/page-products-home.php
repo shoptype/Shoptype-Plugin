@@ -156,6 +156,9 @@ select#sort-by {
 }
 
 </style>
+<?php the_content(); ?>
+<div class="products-main-container">
+
 <div class="all-products">
 	<div class="st-myshop-search">
 		<input class="st-myshop-search-box" id="st-search-box" name="Search" >
@@ -242,5 +245,5 @@ select#sort-by {
 		</div>
 	</div>
 </div>
-
+</div>
 <?php  get_footer(); ?>

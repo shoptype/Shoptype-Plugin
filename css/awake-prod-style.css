@@ -1009,8 +1009,8 @@ body.menu-active nav#slide-menu {
 }
 
 .coseller-info-section {
-  margin-top: 67px;
-  margin-bottom: 70px;
+  margin: 60px auto;
+  max-width: 1240px;
 }
 .coseller-info-section .coseller-profile {
   display: flex;

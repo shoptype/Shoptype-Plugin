@@ -23,7 +23,7 @@ function getUserProducts( $data ) {
 		if(count($get_desired)) {
 			return getProductsByUser($get_desired[0]->user_id, $get_desired[0]->user_login, $get_desired[0]->display_name, $get_desired[0]->user_nicename, $store_url, $data);
 		}else{
-			return  $wpdb->last_query;
+			return  null;
 		}
 	}
 }
@@ -31,10 +31,19 @@ function getUserProducts( $data ) {
 function getProductsByUser($user_id, $user_login, $display_name, $user_nicename, $store_url, $data){
 	global $stPlatformId;
 	global $stBackendUrl;
+	
+	if(!can_have_myshop($user_id)){
+		return null;
+	}
+
 	$count=isset($data['count'])?$data['count']:10;
 	$offset=isset($data['offset'])?$data['offset']:0;
 	$values = xprofile_get_field_data( 'st_products' , $user_id );
 	$shop_theme = xprofile_get_field_data( 'st_shop_theme' , $user_id );
+	$shop_facebook = xprofile_get_field_data( 'st_shop_facebook' , $user_id );
+	$shop_twitter = xprofile_get_field_data( 'st_shop_twitter' , $user_id );
+	$shop_instagram = xprofile_get_field_data( 'st_shop_instagram' , $user_id );
+	$shop_youtube = xprofile_get_field_data( 'st_shop_youtube' , $user_id );
 	$valuesJson = str_replace(' ', ',', $values);
 	$valuesParsed = json_decode($valuesJson, true);
 	if(empty($values)){
@@ -56,7 +65,8 @@ function getProductsByUser($user_id, $user_login, $display_name, $user_nicename,
 			$product->tid=$valuesParsed[$product->id];
 		}
 	}
-	$groupSlug = strtolower($user_login."_coseller");
+	$groupSlug = sanitize_title($user_login)."_coseller";
+	$products->group_slug = $groupSlug;
 	$group_id = BP_Groups_Group::group_exists( $groupSlug );
 	if(isset($group_id)){
 		$group = groups_get_group($group_id);
@@ -71,6 +81,10 @@ function getProductsByUser($user_id, $user_login, $display_name, $user_nicename,
 	$products->user_nicename = $user_nicename;
 	$products->user_login = $user_login;
 	$products->shop_url = $store_url;
+	$products->facebook = $shop_facebook;
+	$products->twitter = $shop_twitter;
+	$products->instagram = $shop_instagram;
+	$products->youtube = $shop_youtube;
 	$products->theme = isset($shop_theme)?$shop_theme:"theme-01";
 	return $products;
 }
@@ -93,6 +107,21 @@ add_action( 'rest_api_init', function () {
     'callback' => 'setUserFace',
   ) );
 } );
+
+function user_has_role($user_id, $role_name)
+{
+    $user_meta = get_userdata($user_id);
+    $user_roles = $user_meta->roles;
+    return in_array($role_name, $user_roles);
+}
+
+function can_have_myshop($user_id){
+	if(user_has_role($user_id, "myshop_owner") || user_has_role($user_id, "administrator")){
+		return true;
+	}else{
+		return false;
+	}
+}
 
 function getUserByFace( $data ) {
 	$userFaceImage = $data['imageBS64'];
@@ -197,8 +226,6 @@ function checkUrlFree( $data ) {
  * Add custom sub-tab on groups page.
  */
 function buddyboss_my_shop_tab() {
-	wp_enqueue_script( 'my-script-handle', 'url-to/my-script.js', array( 'bp-api-request' ) );
-	$path = dirname(plugin_dir_url( __FILE__ ));
 	wp_enqueue_style( 'my-shop-css', plugin_dir_url( __FILE__ ) . '/css/st-my-shop.css' );
 	// Avoid fatal errors when plugin is not available.
 	if ( ! function_exists( 'bp_core_new_nav_item' ) ||
@@ -211,7 +238,7 @@ function buddyboss_my_shop_tab() {
 
 	  bp_core_new_nav_item(
 		array(
-		  'name'                => esc_html__( 'My Shop', 'default' ),
+		  'name'                => esc_html__( 'My Shop', 'shoptype' ),
 		  'slug'                => 'my-shop',
 		  'screen_function'     => 'my_shop_screen',
 		  'position'            => 100,
@@ -223,21 +250,42 @@ function buddyboss_my_shop_tab() {
 
 add_action( 'bp_setup_nav', 'buddyboss_my_shop_tab' );
 
+
+
+function custom_redirects() {
+	global $wp;
+	$curr_url = home_url( $wp->request );
+
+	if(str_contains($curr_url,"/groups/")){
+		if(str_starts_with(substr($curr_url,strrpos($curr_url,'_')),"_coseller")){
+			$shop_name = substr($curr_url,strrpos($curr_url,'/'),strrpos($curr_url,'_')-strrpos($curr_url,'/'));
+			wp_redirect( "/shop/$shop_name", 301 );
+			exit();
+		}
+	}
+}
+add_action( 'template_redirect', 'custom_redirects' );
+
 /**
  * Set template for new tab.
  */
 function my_shop_screen() {
 	// Add title and content here - last is to call the members plugin.php template.
-	add_action( 'bp_template_title', 'my_shop_tab_title' );
-	add_action( 'bp_template_content', 'my_shop_tab_content' );
-	bp_core_load_template( 'buddypress/members/single/plugins' );
+	if( bp_displayed_user_id() !== get_current_user_id()){
+		$displayUser = get_userdata(bp_displayed_user_id());
+		wp_redirect( "/shop/".$displayUser->user_login, 302 );
+	}else{
+		add_action( 'bp_template_title', 'my_shop_tab_title' );
+		add_action( 'bp_template_content', 'my_shop_tab_content' );
+		bp_core_load_template( 'buddypress/members/single/plugins' );
+	}
 }
 
 /**
  * Set title for My Shop.
  */
 function my_shop_tab_title() {
-	echo esc_html__( 'My Shop', 'default' );
+	echo esc_html__( 'My Shop', 'shoptype' );
 }
 
 /**

@@ -18,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 //include required files
 
 /* Initialisation of the shopype JS and adding the cart+profile buttons to the header */
+define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
 
 function shoptype_header(){
 	global $stApiKey;
@@ -33,63 +36,36 @@ function shoptype_header(){
 	$siteUrl = get_site_url();
 	$siteName = get_bloginfo('name');
 
-	wp_enqueue_script( 'shoptype_js', plugin_dir_url(__FILE__) . 'js/shoptype.js');
-	wp_enqueue_script( 'shoptype_ui_js', plugin_dir_url(__FILE__) . 'js/shoptype_ui.js');
-	wp_enqueue_script( 'awakeMarket_js', plugin_dir_url(__FILE__) . 'js/AwakeMarket.js');
-	wp_enqueue_style( 'shoptype_css', plugin_dir_url(__FILE__) . 'css/shoptype.css');
-	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>";
-};
-add_action('wp_head', 'shoptype_header');
-
-//ST login modal script
-function shoptype_login_modal(){
-	echo '<script type="text/javascript">
-		const openModal = () => {
-			stLoginHandler.openSTLoginModal(
-				{
-				name: "<?php global $siteName; echo $siteName; ?>",
-				url: "<?php global $siteUrl; echo $siteUrl; ?>",
-				rid: "<?php global $stRefcode; echo $stRefcode; ?>",
-				},
-				(appRes) => {
-					switch (appRes.app.event) {
-						case "form rendered":
-						  break;
-						case "modal opened":
-						  break;
-						case "modal closed":
-						  break;
-						case "modal closed by user":
-						  break;
-						case "login success":
-						  stLoginHandler.closeSTLoginModal();
-						  window.location.search += "&token="+appRes.user.token;
-						  break;
-						case "login failed":
-						  break;
-						case "sign-up success":
-						  stLoginHandler.closeSTLoginModal();
-						  window.location.search += "&token="+appRes.user.token;
-						  break;
-						case "sign-up failed":
-							break;
-					  }
-				}
-			);
-		};
-	</script>
+	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js?2');
+	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js?4');
+	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js?2');
+	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css?2');
+	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>"; 
+	?>
 	<div class="st-cosell-btn">
-	  <a href="#" class="div-block w-inline-block" onclick="shoptype_UI.showCosell(null)"><img src="'.plugin_dir_url(__FILE__).'images/cosell.png" style="width:42px;" loading="lazy" alt=""></a>
+	  <a href="#" class="div-block w-inline-block" onclick="shoptype_UI.showCosell(null)"><img src="<?php echo ST__PLUGIN_URL."images/cosell.png"; ?>" style="width:42px;" loading="lazy" alt=""></a>
 	  <div class="st-cosell-details">
 		<div class="st-cosell-txt">Share &amp; Earn</div>
 	  </div>
-	</div>';
-	}
-	add_action('wp_head', 'shoptype_login_modal');
-	
+	</div>
+	<?php
+};
+add_action('wp_head', 'shoptype_header');
+
+// Using 'bp-api-request' as a dependency.
+function example_enqueue_script() {
+  wp_enqueue_script( 'my-script-handle', 'url-to/my-script.js', array( 'bp-api-request' ) );
+}
+add_action( 'bp_enqueue_scripts', 'example_enqueue_script' );
+
 //Add Product Route
 add_action('init', function(){
 	add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[1]', 'top' );
+	add_rewrite_rule( 'shop/(.+)/products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[2]', 'top' );
+	add_rewrite_rule( 'shop/(.+)/cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[2]', 'top' );
+	add_rewrite_rule( 'shop/(.+)/checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[2]', 'top' );
+	add_rewrite_rule( 'shop/(.+)/checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[2]', 'top' );
+	add_rewrite_rule( 'shop/(.+)/cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[2]&shop_name=$matches[1]', 'top' );	
 	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
 	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
@@ -99,6 +75,7 @@ add_action('init', function(){
 	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
 	add_rewrite_rule( 'checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
 	add_rewrite_rule( 'cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[1]', 'top' );
+
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
@@ -141,125 +118,175 @@ add_filter( 'query_vars', function( $query_vars ) {
 	$query_vars[] = 'cosell_link';
 	return $query_vars;
 } );
+add_filter( 'query_vars', function( $query_vars ) {
+	$query_vars[] = 'shop_name';
+	return $query_vars;
+} );
+/**
+ * Works much like <a href="http://codex.wordpress.org/Function_Reference/locate_template" target="_blank">locate_template</a>, except it takes a string instead of an array of templates, we only need to load one.
+ * @param string $template_name
+ * @param boolean $load
+ * @uses locate_template()
+ * @return string
+ */
+function st_locate_template( $template_name, $load=false, $the_args = array() ) {
+	//First we check if there are overriding tempates in the child or parent theme
+	$located = locate_template(array('shoptype/'.$template_name));
+	if( !$located ){
+		// finally get the plugin from Shoptype if no others exist
+		$located = apply_filters('em_locate_template_default', $located, $template_name, $load, $the_args);
+		if ( !$located && file_exists(ST__PLUGIN_DIR.'templates/'.$template_name) ) {
+			$located = ST__PLUGIN_DIR.'templates/'.$template_name;
+		}
+	}
+	$located = apply_filters('st_locate_template', $located, $template_name, $load, $the_args);
+	if( $located && $load ){
+		$the_args = apply_filters('st_locate_template_args_'.$template_name, $the_args, $located);
+		if( is_array($the_args) ) extract($the_args);
+		include($located);
+	}
+	return $located;
+}
 
+function st_locate_file($filename){
+	$fileUrl = get_template_directory_uri().'/shoptype/'.$filename;
+	$located = locate_template(array('shoptype/'.$filename));
+	if( !$located ){
+		$fileUrl = ST__PLUGIN_URL.$filename;
+	}
+	return $fileUrl;
+}
 
+function my_headers() {
+    header("Access-Control-Allow-Origin: *");
+}
+add_action( 'send_headers', 'my_headers' );
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'stproduct' ) == false || get_query_var( 'stproduct' ) == '' ) {
 		return $template;
 	}
-	$tmpl = get_stylesheet_directory() . '/shoptype/page-product.php';
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-product.php';
-	}
-	return $tmpl;
+
+	wp_enqueue_style( 'image-slider', ST__PLUGIN_URL . 'templates/js/imageslider.js' );
+	return st_locate_template('page-product.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'brand' ) == false || get_query_var( 'brand' ) == '' ) {
 		return $template;
 	}
-	$tmpl = get_stylesheet_directory() . '/shoptype/page-brand.php';
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-brand.php';
-	}
-	return $tmpl;
+	return st_locate_template('page-brand.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'cart' ) == false || get_query_var( 'cart' ) == '' ) {
 		return $template;
 	}
-	$path = plugin_dir_url( __FILE__ );
-	wp_enqueue_style( 'new-market', plugin_dir_url( __FILE__ ) . '/css/st-cart.css' );
+	wp_enqueue_style( 'new-market', ST__PLUGIN_URL . '/css/st-cart.css' );
 	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
-	$tmpl = get_stylesheet_directory() . '/shoptype/cart.php';
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ).'/templates/cart.php';
-	}
-	return $tmpl;
+	return st_locate_template('cart.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'checkout' ) == false || get_query_var( 'checkout' ) == '' ) {
 		return $template;
 	}
-	$path = plugin_dir_url( __FILE__ );
-
-	wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
-	wp_enqueue_style( 'stripeCss', $path.'/css/stripe.css' );
-	wp_enqueue_style( 'authnetCss', $path.'/css/authnet.css' );
+	wp_enqueue_style( 'cartCss', ST__PLUGIN_URL.'/css/st-cart.css' );
+	wp_enqueue_style( 'stripeCss', ST__PLUGIN_URL.'/css/stripe.css' );
+	wp_enqueue_style( 'authnetCss', ST__PLUGIN_URL.'/css/authnet.css' );
 	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
-	wp_enqueue_script('st-payment-handlers',$path."/js/shoptype-payment.js");
+	wp_enqueue_script('st-payment-handlers',ST__PLUGIN_URL."/js/shoptype-payment.js");
 	wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
 	wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
-	$tmpl = get_stylesheet_directory() . '/shoptype/checkout.php';
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ) .'/templates/checkout.php';
-	}
-	return $tmpl;
+	return st_locate_template('checkout.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'stwizard' ) == false || get_query_var( 'stwizard' ) == '' ) {
 		return $template;
 	}
-	return plugin_dir_path( __FILE__ ) . '/templates/myshop-wizard.php';
+	return st_locate_template('myshop-wizard.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'shop' ) == false || get_query_var( 'shop' ) == '' ) {
 		return $template;
 	}
-	$tmpl = get_stylesheet_directory() . '/shoptype/page-myshop.php';
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-myshop.php';
+	$user_id = getUserIdByUrl(get_query_var( 'shop' ));
+	if(!can_have_myshop($user_id)){
+		return st_locate_template("myshop_enable.php");
 	}
-	return $tmpl;
+	$field_id = xprofile_get_field_id_from_name( 'st_shop_url');
+	$shop_theme = xprofile_get_field_data( 'st_shop_theme' , $user_id );
+	
+	if( !$shop_theme ){
+		$shop_theme="page-myshop.php";
+	}else{
+		$shop_theme = "$shop_theme.php";
+	}
+
+	return st_locate_template($shop_theme);
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'collection' ) == false || get_query_var( 'collection' ) == '' ) {
 		return $template;
 	}
-	$tmpl = get_stylesheet_directory() . '/shoptype/page-collection.php';
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/page-collection.php';
-	}
-	return $tmpl;
+	return st_locate_template('page-collection.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'sttag' ) == false || get_query_var( 'sttag' ) == '' ) {
 		return $template;
 	}
-	return plugin_dir_path( __FILE__ ) . '/templates/page-tags.php';
+	return st_locate_template('page-tags.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'success_chkout' ) == false || get_query_var( 'success_chkout' ) == '' ) {
 		return $template;
 	}
-	$tmpl = get_stylesheet_directory() . '/shoptype/checkout-success.php';
-	wp_enqueue_style( 'new-market', plugin_dir_url( __FILE__ ) . '/css/st-cart.css' );
+	wp_enqueue_style( 'new-market', ST__PLUGIN_URL . '/css/st-cart.css' );
 	wp_enqueue_script('triggerUserEvent','https://cdn.jsdelivr.net/gh/shoptype/Shoptype-JS@main/stOccur.js');
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/checkout-success.php';
-	}
-	return $tmpl;
+
+	return st_locate_template('checkout-success.php');
 } );
+
 add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'cosell_link' ) == false || get_query_var( 'cosell_link' ) == '' ) {
 		return $template;
 	}
-	$tmpl = get_stylesheet_directory() . '/shoptype/coseller-share.php';
-	if ( ! file_exists( $tmpl ) ) {
-		$tmpl = plugin_dir_path( __FILE__ ) . '/templates/coseller-share.php';
-	}
-	return $tmpl;
+	
+	return st_locate_template('coseller-share.php');
 } );
 
-//Shoptype login handler
-function login_load_js_script() {
-	wp_enqueue_script( 'js-file', plugin_dir_url(__FILE__) . 'js/st-login-handler.min.js');
+function getUserIdByUrl( $store_url ) {
+	$the_user = get_user_by('login', $store_url);
+	if(isset($the_user->id)){
+		return $the_user->id;
+	}else{
+		$field_id = xprofile_get_field_id_from_name( 'st_shop_url');
+		global $wpdb;
+		$bp_table = $wpdb->prefix . 'bp_xprofile_data'; 
+
+		$query = $wpdb->prepare(
+			"SELECT user_id,user_login,user_nicename,user_email,display_name " .
+			"FROM $bp_table B, $wpdb->users U " .
+			"WHERE B.user_id = U.ID " .
+			"AND B.field_id = %d " .
+			"AND B.value = %s"
+		   , $field_id
+		   , $store_url
+		);
+		$get_desired = $wpdb->get_results($query);
+		
+		return  $get_desired[0]->user_id;
+	}
 }
-add_action('wp_enqueue_scripts', 'login_load_js_script');
 
 //Enqueue Product and brand page css
 function theme_scripts() {
-	wp_enqueue_style( 'awake-prod-style', plugin_dir_url(__FILE__) . 'css/awake-prod-style.css' );
-	wp_enqueue_style( 'awake-prod-media-style', plugin_dir_url(__FILE__) . 'css/awake-prod-media-style.css' );
+	wp_enqueue_style( 'awake-prod-style', ST__PLUGIN_URL . 'css/awake-prod-style.css?1' );
+	wp_enqueue_style( 'awake-prod-media-style', ST__PLUGIN_URL . 'css/awake-prod-media-style.css' );
 }
 add_action( 'wp_enqueue_scripts', 'theme_scripts' );
 
@@ -370,7 +397,7 @@ function awakenthemarket(){
 		var cartMenus = document.querySelectorAll(".st-cart-menu a");
 		if(cartMenus.length>0){
 		   cartMenus.forEach((x)=>{
-			  x.innerHTML="<img src='<?php echo plugin_dir_url(__FILE__) . 'images/shopping-cart.png' ?>'><span>0</span>"; 
+			  x.innerHTML="<img src='<?php echo ST__PLUGIN_URL . 'images/shopping-cart.png' ?>'><span>0</span>"; 
 		   });
 		}
 	}
@@ -476,16 +503,17 @@ function ST_logout() {
 }
 
 
-/*Adding shoptype products to search results*/
 function search_filter($query) {
 	if ( is_search() ) {
-		$post = new stdClass();
-		$post->ID = 113;
-		$wp_post = new WP_Post( $post );
-		array_push( $query->posts, $wp_post );
+		if ( is_array( $query->posts ) ) {
+			$post = new stdClass();
+			$post->ID = 113;
+			$wp_post = new WP_Post( $post );
+			array_push( $query->posts, $wp_post );
+		}
 	}
 }
-add_action('posts_search','search_filter');	
+add_action('posts_search','search_filter');
 
 function have_posts_override(){
 	if ( is_search() ) {
@@ -506,23 +534,24 @@ function have_posts_override(){
 
 		if( !empty( $result ) ) {
 			$st_products = json_decode($result);
-			for (end($st_products->products); key($st_products->products)!==null; prev($st_products->products)){
-				$stProduct = current($st_products->products);
-				$post = new stdClass();
-				$post->ID = $stProduct->id;
-				$post->post_author = 1;
-				$post->post_date = current_time( 'mysql' );
-				$post->post_date_gmt = current_time( 'mysql', 1 );
-				$post->post_title = $stProduct->title;
-				$post->post_content = $stProduct->description;
-				$post->post_status = 'publish';
-				$post->comment_status = 'closed';
-				$post->ping_status = 'closed';
-				$post->post_name = "products/{$stProduct->id}"; // append random number to avoid clash
-				$post->post_type = 'post';
-				$post->filter = 'raw';
-				$wp_post = new WP_Post( $post );
-				array_unshift($wp_query->posts, $wp_post); 
+			if (is_array($st_products->products)) {
+				foreach ($st_products->products as $stProduct) {
+					$post = new stdClass();
+					$post->ID = $stProduct->id;
+					$post->post_author = 1;
+					$post->post_date = current_time( 'mysql' );
+					$post->post_date_gmt = current_time( 'mysql', 1 );
+					$post->post_title = $stProduct->title;
+					$post->post_content = $stProduct->description;
+					$post->post_status = 'publish';
+					$post->comment_status = 'closed';
+					$post->ping_status = 'closed';
+					$post->post_name = "products/{$stProduct->id}"; // append random number to avoid clash
+					$post->post_type = 'post';
+					$post->filter = 'raw';
+					$wp_post = new WP_Post( $post );
+					array_unshift($wp_query->posts, $wp_post); 
+				}
 			}
 		}
 	}
@@ -530,8 +559,31 @@ function have_posts_override(){
 //add condition to not override admin pagination
 if (! is_admin() ) {
 	add_action( 'found_posts', 'have_posts_override' );
+}
 
-} 
+/**
+ * Register a custom Form
+**/
+function edit_post_form() {
+	$post_id = 0;
+	if ( get_query_var('post_id') ) {
+	    $post_id = get_query_var('post_id');
+	}
+	$settings = array(
+		'post_type'             => 'post',
+		'post_author'           =>  bp_loggedin_user_id(),
+		'post_status'           => 'draft',
+		'current_user_can_post' =>  is_user_logged_in(),
+		'show_categories'       => true,
+		'allow_upload'          => true,
+		'post_id'				=> $post_id
+	);
+
+	$form = bp_new_simple_blog_post_form( 'edit_form', $settings );
+	//create a Form Instance and register it
+}
+
+add_action( 'bp_init', 'edit_post_form', 4 );//register a form
 
 /*Add page templates*/
 
@@ -604,6 +656,7 @@ class PageTemplater {
 		// Add your templates to this array.
 		$this->templates = array(
 			'templates/st-login.php' => 'Shoptype Login Page',
+			'templates/st-signup.php' => 'Shoptype Signup Page',
 			'templates/page-allbrands.php' => 'All Brands Page',
 			'templates/page-allcosellers.php' => 'All Cosellers Page',
 			'templates/page-coseller.php' => 'Coseller Details Page',
@@ -614,6 +667,12 @@ class PageTemplater {
 		);
 			
 	} 
+	
+	public function custom_content_activity( $content_templates ) {
+		return var_dump($content_templates);
+	}
+	
+	//add_filter(	'bp_get_activity_content_body', array( $this, 'custom_content_activity' ) );
 
 	/**
 	 * Adds our template to the page dropdown for v4.7+
@@ -742,10 +801,6 @@ function custom_search_template($template){
 
 } 
 
-define( 'ST__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'ST__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-
-
 //Add snipet to manage cosell user
 add_action('admin_menu', 'register_cosell_user', 20 );
  
@@ -776,10 +831,19 @@ function manage_cosell_users() {
 //add coseller role
 function coseller_new_role() {  
  
-	//add the new user role
+	//add the new user roles
 	add_role(
 		'coseller',
 		'Coseller',
+		array(
+			'read'		 => true,
+			'delete_posts' => false
+		)
+	);
+
+	add_role(
+		'myshop_owner',
+		'Myshop Owner',
 		array(
 			'read'		 => true,
 			'delete_posts' => false

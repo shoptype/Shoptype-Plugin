@@ -171,8 +171,7 @@
 .st-product-search-box {
 	width: calc(100% - 40px);
     line-height: 40px;
-    font-size: 14px;
-    font-weight: 100;
+    font-size: 24px;
     max-width: calc(100% - 40px);
     padding: 0px 10px;
     height: 40px;
@@ -1020,7 +1019,7 @@ li.product:hover{
 }
 
 .st-myshop-search-box {
-    width: calc(100% - 40px);
+    width: calc(100% - 30px);
 }
 
 @media screen and (max-width: 767px) {

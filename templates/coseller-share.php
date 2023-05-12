@@ -1,9 +1,11 @@
 <?php
 /* Template Name:Cosell Widget */
   global $wp;
-
   $cosell_link = get_query_var('cosell_link');
+  $shop_name = get_query_var('shop_name');
 
+  if(isset($shop_name)){
+  }
   if(!isset($_COOKIE["stToken"])) {
     $user_token = "";
   }else{
@@ -17,7 +19,7 @@
           "Authorization" =>$user_token
         ));
       $current_url = home_url( $wp->request );
-      $response = wp_remote_get("{$stBackendUrl}/track/network?referrer={$current_url}",$args);
+      $response = wp_remote_get("{$stBackendUrl}/track/network?referrer=https://althealth.me/",$args);
       $result = wp_remote_retrieve_body( $response );
 
       if( !empty( $result ) ) {
@@ -33,8 +35,7 @@
   }
 
 if(!empty($tracker)){
-  
-  if (!function_exists('http_build_url'))
+ if (!function_exists('http_build_url'))
 {
     define('HTTP_URL_REPLACE', 1);              // Replace every part of the first URL when there's one of the second URL
     define('HTTP_URL_JOIN_PATH', 2);            // Join relative paths
@@ -139,9 +140,7 @@ if(!empty($tracker)){
         ;
     }
 }
-  
-  
-  
+ 
   $url_parts = parse_url("https://".$_SERVER['HTTP_HOST']."/".$cosell_link);
   if (isset($url_parts['query'])) { 
       parse_str($url_parts['query'], $params);
@@ -191,7 +190,7 @@ if(!empty($tracker)){
         <div class="st-cosell-sharelink-div">
           <div class="st-cosell-sharelink-url">
             <div class="st-cosell-link-copy-btn" onclick="shoptype_UI.stCopyCosellUrl('st-cosell-url-input')">🔗 Copy to Clipboard</div>
-            <input type="text" id="st-cosell-url-input" class="st-cosell-sharelink-url-txt" value="<?php echo "$current_url"?>"></input>
+            <input type="text" id="st-cosell-url-input" class="st-cosell-sharelink-url-txt" value="<?php echo "$current_url"?>" />
           </div>
         </div>
         <div id="st-cosell-sharewidget" class="st-cosell-sharelink-div">
