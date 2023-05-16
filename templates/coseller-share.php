@@ -19,7 +19,7 @@
           "Authorization" =>$user_token
         ));
       $current_url = home_url( $wp->request );
-      $response = wp_remote_get("{$stBackendUrl}/track/network?referrer=https://althealth.me/",$args);
+      $response = wp_remote_get("{$stBackendUrl}/track/network?referrer=".get_option('siteurl'),$args);
       $result = wp_remote_retrieve_body( $response );
 
       if( !empty( $result ) ) {

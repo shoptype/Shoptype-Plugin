@@ -353,6 +353,7 @@ function awakenthemarket(){
 		'productUrl':'<?php echo $productUrl ?>',
 		'loginUrl':'<?php echo $loginUrl ?>',
 		'myAccountUrl':'<?php echo $myAccountUrl ?>',
+		'siteUrl' : '<?php echo get_option('siteurl'); ?>'
 	}
 
 	if(typeof STUtils !== 'undefined'){
@@ -852,6 +853,7 @@ function coseller_new_role() {
  
 }
 add_action('admin_init', 'coseller_new_role');
+
 //define hooks for ajax
 
  require_once(ST__PLUGIN_DIR.'/shortcodes/products.php');
