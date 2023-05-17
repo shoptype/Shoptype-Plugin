@@ -136,6 +136,8 @@ function addProducts(productsContainer){
 	let sortBy = productsContainer.getAttribute('sortBy');
 	let orderBy = productsContainer.getAttribute('orderBy');
 	let collectionId = productsContainer.getAttribute('collection_id');
+	let inStock = productsContainer.getAttribute('instock');
+
 	offset = offsetAtt??offset;
 	
 	let options = {
@@ -149,14 +151,15 @@ function addProducts(productsContainer){
 		tags: tags??undefined,
 		orderBy: orderBy??undefined,
 		sortBy: sortBy??undefined,
-		vendorId:vendorId??undefined
+		vendorId:vendorId??undefined,
+		inStock:inStock??undefined
 	};
 
 	if(shopUrl){
 		var url = shopUrl+"?"+STUtils.toQueryString(options);
 		fetchMyStoreProducts(url, productsContainer, productTemplate);
 	}else if(collectionId){
-		fetchCollectionProducts(collectionId, productsContainer, productTemplate);
+		fetchCollectionProducts(collectionId, productsContainer, productTemplate, inStock);
 	}else{
 		fetchProducts(options, productsContainer, productTemplate);
 	}
@@ -285,14 +288,18 @@ function fetchProducts(options, productsContainer, productTemplate){
 	})
 }
 
-function fetchCollectionProducts(collectionId, productsContainer, productTemplate){
+function fetchCollectionProducts(collectionId, productsContainer, productTemplate,inStock){
 	st_platform.collection(collectionId).then(collectionJson=>{
 		for (var i = 0; i < collectionJson.product_details.length; i++) {
 			let product = collectionJson.product_details[i];
 			product.vendorName="";
 			let newProduct = createProduct(productTemplate, product);
-			newProduct.style.display = "";
-			productsContainer.appendChild(newProduct);
+			if(inStock && product["soldOut"]){
+				continue;
+			}else{
+				newProduct.style.display = "";
+				productsContainer.appendChild(newProduct);
+			}
 		}
 		var amProductsLoaded = new CustomEvent("amProductsLoaded", {'container': productsContainer});
 		document.dispatchEvent(amProductsLoaded);

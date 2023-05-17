@@ -22,10 +22,10 @@ function renderAwakeProducts($atts = []){
     if(isset($atts['offset']) && !empty($atts['offset'])) $offset = "offset=".$atts['offset'];
     if(isset($atts['orderBy']) && !empty($atts['orderBy'])) $orderBy = "orderBy=".$atts['orderBy'];
     if(isset($atts['sortBy']) && !empty($atts['sortBy'])) $sortBy = "sortBy=".$atts['sortBy'];
-    if(isset($atts['collection']) && !empty($atts['collection'])) $collection = "collection_id=".$atts['collection'];?>
+    if(isset($atts['collection']) && !empty($atts['collection'])) $collection = "collection_id=".$atts['collection'];
+    if(isset($atts['instock']) && !empty($atts['instock'])) $inStock = "inStock=".$atts['instock'];?>
 
-
-    <div count="<?php echo $perRow; ?>" <?php echo "$my_shop $offset $sortBy $orderBy $collection"; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
+    <div count="<?php echo $perRow; ?>" <?php echo "$my_shop $offset $sortBy $orderBy $collection $inStock"; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
         <div class="product-container single-product" style="display: none;" id="st-product-select-template">
             <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
                 <div class="product-image">
