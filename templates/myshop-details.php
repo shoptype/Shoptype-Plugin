@@ -1,6 +1,6 @@
 <?php
 /*
- * Template name: Shoptype MyShop Dashboard
+ * Template name: Shoptype MyShop Details
  * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
  *
  * @package shoptype
@@ -14,9 +14,9 @@ global $brandUrl;
 global $stBackendUrl;
 
 $path = dirname(plugin_dir_url( __FILE__ ));
+wp_enqueue_script( 'my-script-handle', 'url-to/my-script.js', array( 'bp-api-request' ) );
 wp_enqueue_style( 'cartCss', $path.'/css/st-myaccount.css' );
-$store_user_id = get_query_var( 'myshop_name' );
-get_header(null);
+$store_user_id = $_GET["user_id"];
 
 
 $products_field_id = xprofile_get_field_id_from_name( 'st_products');
@@ -385,5 +385,3 @@ foreach($get_desired as $key=>$dataRow){
 		}
 	});
 </script>
-<?php
-get_footer();

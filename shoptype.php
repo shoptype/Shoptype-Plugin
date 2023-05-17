@@ -36,10 +36,10 @@ function shoptype_header(){
 	$siteUrl = get_site_url();
 	$siteName = get_bloginfo('name');
 
-	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js?2');
-	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js?4');
-	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js?2');
-	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css?2');
+	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js');
+	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js');
+	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js');
+	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css');
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>"; 
 	?>
 	<div class="st-cosell-btn">
@@ -829,6 +829,42 @@ function manage_cosell_users() {
 	echo '</div></div>';
 } 
 
+//Add snipet to manage cosell user
+add_action('admin_menu', 'add_myshop_dashboard', 20 );
+ 
+function add_myshop_dashboard() {
+	add_submenu_page(
+		'shoptype_settings',
+		'My Shop Dashboard',
+		'My Shop Dashboard',
+		'manage_options',
+		'my-shop-slug',
+		'show_myshop_dashboard' );
+}
+
+
+function show_myshop_dashboard() {
+	global $stRefcode;
+	include (ST__PLUGIN_DIR.'templates/myshop-dashboard.php');
+} 
+add_action('admin_menu', 'add_myshop_details', 20 );
+ 
+function add_myshop_details() {
+	add_submenu_page(
+		null,
+		'My Shop Details',
+		'My Shop Details',
+		'manage_options',
+		'my-shop-details',
+		'show_myshop_details' );
+}
+
+
+function show_myshop_details() {
+	global $stRefcode;
+	include (ST__PLUGIN_DIR.'templates/myshop-details.php');
+} 
+
 //add coseller role
 function coseller_new_role() {  
  
@@ -837,17 +873,36 @@ function coseller_new_role() {
 		'coseller',
 		'Coseller',
 		array(
-			'read'		 => true,
-			'delete_posts' => false
+			'read'			=> true,
+			'delete_posts'	=> false
 		)
 	);
 
 	add_role(
+		'channel_champion',
+		'Channel Champion',
+		array(
+			'read'					=> true,
+			'edit_posts'			=> true,
+			'edit_published_posts'	=> true,
+			'upload_files'			=> true,
+			'publish_posts'			=> true,
+			'delete_published_posts'=> true,
+			'delete_posts'			=> true
+		)
+	);
+	
+	add_role(
 		'myshop_owner',
 		'Myshop Owner',
 		array(
-			'read'		 => true,
-			'delete_posts' => false
+			'read'					=> true,
+			'edit_posts'			=> true,
+			'edit_published_posts'	=> true,
+			'upload_files'			=> true,
+			'publish_posts'			=> true,
+			'delete_published_posts'=> true,
+			'delete_posts'			=> true
 		)
 	);
  

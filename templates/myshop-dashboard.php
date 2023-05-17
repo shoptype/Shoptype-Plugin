@@ -16,8 +16,6 @@ global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'cartCss', $path.'/css/st-myaccount.css' );
 
-get_header(null);
-
 	$products_field_id = xprofile_get_field_id_from_name( 'st_products');
 	$theme_field_id = xprofile_get_field_id_from_name( 'st_shop_theme');
 	$url_field_id = xprofile_get_field_id_from_name( 'st_shop_url');
@@ -107,8 +105,7 @@ get_header(null);
 </div>
 <script>
 	function openShopInfo(shopUrl){
-		window.location.href = "/shop-info/"+shopUrl;
+		window.location.href = "/wp-admin/admin.php?page=my-shop-details&user_id="+shopUrl;
 	}
 </script>
 <?php
-get_footer();
