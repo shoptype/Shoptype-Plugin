@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:	
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:	  1.4.7
+Version:	  2.0.1
 Author:	 	  shoptype 
 Author URI:   https://www.shoptype.com
 License:	  GPL2
@@ -669,12 +669,6 @@ class PageTemplater {
 			
 	} 
 	
-	public function custom_content_activity( $content_templates ) {
-		return var_dump($content_templates);
-	}
-	
-	//add_filter(	'bp_get_activity_content_body', array( $this, 'custom_content_activity' ) );
-
 	/**
 	 * Adds our template to the page dropdown for v4.7+
 	 *
