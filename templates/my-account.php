@@ -21,13 +21,11 @@ get_header(null);
 $st_token = $_COOKIE["stToken"];
 
 $args = array(
-	'body'				=> '{}',
 	'headers'		 => array(
-		"Content-Type"=> "application/json",
-		"Authorization"=> $st_token,
-		"X-Shoptype-PlatformId" => $stPlatformId,
+		"Authorization"=> $st_token
 	)
 );
+
 $result = wp_remote_get( "{$stBackendUrl}/me", $args );
 
 if ( ! is_wp_error( $result ) ) {
@@ -52,7 +50,11 @@ if ( ! is_wp_error( $result ) ) {
 	$body = wp_remote_retrieve_body( $result );
 	$st_kpis = json_decode($body);
 }
+
 ?>
+<style>
+.container { max-width: 1240px; margin: auto; padding: 40px 0px;}
+</style>
 <div class="container">
 	<div class="st-account-details">
 		<div class="st-coseller">
