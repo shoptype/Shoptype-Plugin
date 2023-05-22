@@ -14,7 +14,7 @@ $path = dirname(plugin_dir_url( __FILE__ ));
 $user_id = get_current_user_id();
 $currentUser = get_userdata($user_id);
 $groupSlug = strtolower($currentUser->user_login."_coseller");
-//$cosellerGp = bp_get_group_by('slug', $groupSlug);
+
 $group_id = BP_Groups_Group::group_exists( $groupSlug );
 $shop_products = xprofile_get_field_data( 'st_products' , $currentUser->id );
 $shop_theme = xprofile_get_field_data( 'st_shop_theme' , $currentUser->id );
@@ -36,8 +36,8 @@ if(!isset($group_id)){
 
 if(isset($group_id)){
 	$group = groups_get_group($group_id);
-	$group_cover = (empty(bp_get_group_cover_url($group))) ? '<?php echo $path; ?>/images/shop-banner.jpg' : bp_get_group_cover_url($group);
-	$group_img =(empty(bp_get_group_avatar_url($group))) ? '<?php echo $path; ?>/images/shop-profile.jpg' : bp_get_group_avatar_url($group);
+	$group_cover = (empty(bp_get_group_cover_url($group))) ? st_locate_file("images/shop-banner.jpg") : bp_get_group_cover_url($group);
+	$group_img =(empty(bp_get_group_avatar_url($group))) ? st_locate_file("images/shop-profile.jpg") : bp_get_group_avatar_url($group);
 }
 $profileImage = get_avatar_url($user_id);
 if(isset($shop_url)){
@@ -310,12 +310,12 @@ Min. image size: 1300px x 225px
 		<div>
 			<div class="text-block-3">Share your store on social media</div>
 			<div class="st-myshop-social">
-				<a id="fb_link" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $encodedShopUrl ?>" class="st-myshop-social-link"><img src="<?php echo $theme_url ?>/img/fb_icon.png" loading="lazy" alt="" class="image"></a>
-				<a id="wa_link" href="whatsapp://send?text=<?php echo "$sharetxt $encodedShopUrl" ?>" class="st-myshop-social-link"><img src="<?php echo $theme_url ?>/img/whatsapp_icon.png" loading="lazy" alt="" class="image"></a>
-				<a id="tw_link" href="http://twitter.com/share?text=<?php echo "{$sharetxt}&url={$encodedShopUrl}" ?>" class="st-myshop-social-link"><img src="<?php echo $theme_url ?>/img/twitter_icon.png" loading="lazy" alt="" class="image"></a>
-				<a id="pi_link" href="https://pinterest.com/pin/create/link/?url=<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $theme_url ?>/img/insta_icon.png" loading="lazy" alt="" class="image"></a>
-				<a id="tgram_link" href="https://telegram.me/share/url?url=<?php echo "{$encodedShopUrl}&TEXT={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $theme_url ?>/img/telegram_icon.png" loading="lazy" alt="" class="image"></a>
-				<a id="ln_link" href="https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=<?php echo "{$encodedShopUrl}&title={$group->name}&summary={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo $theme_url ?>/img/linkedIn_icon.png" loading="lazy" alt="" class="image"></a>
+				<a id="fb_link" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $encodedShopUrl ?>" class="st-myshop-social-link"><img src="<?php echo st_locate_file("images/fb_icon.png"); ?>" loading="lazy" alt="" class="image"></a>
+				<a id="wa_link" href="whatsapp://send?text=<?php echo "$sharetxt $encodedShopUrl" ?>" class="st-myshop-social-link"><img src="<?php echo st_locate_file("images/whatsapp_icon.png"); ?>" loading="lazy" alt="" class="image"></a>
+				<a id="tw_link" href="http://twitter.com/share?text=<?php echo "{$sharetxt}&url={$encodedShopUrl}" ?>" class="st-myshop-social-link"><img src="<?php echo st_locate_file("images/twitter_icon.png"); ?>" loading="lazy" alt="" class="image"></a>
+				<a id="pi_link" href="https://pinterest.com/pin/create/link/?url=<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo st_locate_file("images/insta_icon.png"); ?>" loading="lazy" alt="" class="image"></a>
+				<a id="tgram_link" href="https://telegram.me/share/url?url=<?php echo "{$encodedShopUrl}&TEXT={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo st_locate_file("images/telegram_icon.png"); ?>" loading="lazy" alt="" class="image"></a>
+				<a id="ln_link" href="https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=<?php echo "{$encodedShopUrl}&title={$group->name}&summary={$sharetxt}" ?>" class="st-myshop-social-link"><img src="<?php echo st_locate_file("images/linkedIn_icon.png"); ?>" loading="lazy" alt="" class="image"></a>
 			</div>
 		</div>
 		<a href="<?php echo $encodedShopUrl ?>" class="st-myshop-button" id="goto_shop_btn">Go to Store</a>
