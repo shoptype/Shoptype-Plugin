@@ -211,20 +211,20 @@ if(stripos($value->title,$searckey) === false)
 </div>
 </div>
 <script>
-	function changeSocial(){
-		document.querySelector("a.elementor-social-icon-facebook").href="<?php echo $st_user_products->facebook; ?>";
-		document.querySelector("a.elementor-social-icon-twitter").href="<?php echo $st_user_products->twitter; ?>";
-		document.querySelector("a.elementor-social-icon-youtube").href="<?php echo $st_user_products->youtube; ?>";
-		document.querySelector("a.elementor-social-icon-instagram").href="<?php echo $st_user_products->instagram; ?>";	
-		document.querySelector("a.elementor-social-icon-linkedin").style.display="none";	
-	}
-	
-	window.addEventListener("DOMContentLoaded", (event) => {
-		changeSocial();
-	});
+  function changeSocial(){
+    document.querySelector("a.elementor-social-icon-facebook").href="<?php echo $st_user_products->facebook; ?>";
+    document.querySelector("a.elementor-social-icon-twitter").href="<?php echo $st_user_products->twitter; ?>";
+    document.querySelector("a.elementor-social-icon-youtube").href="<?php echo $st_user_products->youtube; ?>";
+    document.querySelector("a.elementor-social-icon-instagram").href="<?php echo $st_user_products->instagram; ?>"; 
+    document.querySelector("a.elementor-social-icon-linkedin").style.display="none";  
+  }
+  
+  window.addEventListener("DOMContentLoaded", (event) => {
+    changeSocial();
+  });
 </script>
 <style>
- img.store-banner{height:348px;position:unset}
+ img.store-banner{height:348px;border-radius:8px;position:unset}
 .st-store-banner-wrap{margin:0;padding:0;width:100%;position:unset}
 div#banner-wrap{position:unset}
 div#content{margin-top:7%!important;float:none;width:100%;margin:0;padding:0;min-width:100%;position:unset}
@@ -259,14 +259,13 @@ div#main{overflow:visible}
 .store-filters.table{display:flex;justify-content:space-between;align-items:center;align-content:center;margin-bottom:40px}
 p.st-result-count{font-family:Popine,sans-serif;font-style:normal;font-weight:400;font-size:16px;line-height:160%;display:flex;align-items:center;text-align:center;color:#1e1e1e;margin:0!important;padding:0;float:none}
 ul.products.columns-4{display:flex;flex-wrap:wrap;justify-content:space-between;padding-inline-start:0px;}
-.loop-product-image{width:100%;background:#fff;border-radius:8px}
 .st-product-outer{padding:10px;max-width:300px;border-radius:8px}
 li.product.type-product{margin-bottom:80px;background:0 0;display:flex}
 a.product-details{padding-top:12px;background:transparent #cd5c5c;background-color:transparent}
 h2.st-loop-product__title{margin-top:12px!important;font-style:normal;font-weight:400;font-size:18px;line-height:120%;display:flex;align-items:center;color:#1e1e1e;font-family:Popine,sans-serif}
 bdi{margin-top:15px;font-style:normal;font-weight:500;font-size:16px;line-height:130%;display:flex;align-items:center;color:#075ade;font-family:Popine,sans-serif}
-.loop-product-image{align-content:center;display:flex;width:305px;height:219px;background:#fff;border-radius:8px;justify-content:center;align-items:center;max-height:219px!important}
-img.attachment-st-product-archive.size-st-product-archive.wp-post-image{align-items:center;width:auto!important;height:176px;margin:auto;text-align:center;display:flex;align-content:center}
+.loop-product-image{width:100%;align-content:center;display:flex;height:219px;background:#fff;border-radius:8px;justify-content:center;align-items:center;max-height:219px!important}
+img.attachment-st-product-archive.size-st-product-archive.wp-post-image{object-fit:contain;height:176px;}
 .shop-main-area .st-loop-product__title,ul.products li.product h3{height:auto}
 .powerdbytext{font-style:normal;font-weight:500;font-size:16px;line-height:160%;display:flex;align-items:center;color:#1e1e1e;opacity:.3;font-family:Popine,sans-serif}
 .owner-content{margin-bottom:-15px}
