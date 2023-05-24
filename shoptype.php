@@ -283,6 +283,38 @@ function getUserIdByUrl( $store_url ) {
 	}
 }
 
+//Ensure that user is logged in
+function st_ensure_user_loggedin(){
+	global $stBackendUrl;
+
+	if(!is_user_logged_in()){
+		redirect_to_login($temp);
+	}
+
+	$st_token = $_COOKIE["stToken"];
+	$args = array(
+		'headers'=> array(
+			"Authorization"=> $st_token
+		)
+	);
+	$result = wp_remote_get( "{$stBackendUrl}/me", $args );
+	if ( ! is_wp_error( $result ) ) {
+		$body = wp_remote_retrieve_body( $result );
+		$st_profile = json_decode($body);
+		return $st_profile;
+	}else{
+		redirect_to_login($temp);
+	}
+}
+
+function redirect_to_login($temp){
+	global $wp;
+	global $loginUrl;
+	$current_url = home_url( $wp->request );
+	wp_redirect( "{$loginUrl}?redirectUrl=" . urlencode($current_url) . "&$temp", 302 );
+	exit();
+}
+
 //Enqueue Product and brand page css
 function theme_scripts() {
 	wp_enqueue_style( 'awake-prod-style', ST__PLUGIN_URL . 'css/awake-prod-style.css?1' );

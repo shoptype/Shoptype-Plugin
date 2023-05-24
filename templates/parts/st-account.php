@@ -11,21 +11,10 @@ wp_enqueue_style( 'cartCss', st_locate_file('css/st-myaccount.css') );
 
 $st_token = $_COOKIE["stToken"];
 
-$args = array(
-	'headers'		 => array(
-		"Authorization"=> $st_token
-	)
-);
-$result = wp_remote_get( "{$stBackendUrl}/me", $args );
-
-if ( ! is_wp_error( $result ) ) {
-	$body = wp_remote_retrieve_body( $result );
-	$st_profile = json_decode($body);
-	if(!isset($st_profile->profilePicture) || $st_profile->profilePicture==null){
-		$st_profile->profilePicture = st_locate_file('images/profile.jpg');
-	}
+$st_profile = st_ensure_user_loggedin();
+if(!isset($st_profile->profilePicture) || $st_profile->profilePicture==null){
+	$st_profile->profilePicture = st_locate_file('images/profile.jpg');
 }
-
 $result = wp_remote_get( "{$stBackendUrl}/cosellers/{$st_profile->_id}/purchase-orders", $args );
 
 if ( ! is_wp_error( $result ) ) {
