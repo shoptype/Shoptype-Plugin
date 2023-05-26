@@ -111,6 +111,15 @@ if ( ! is_wp_error( $result ) ) {
 		</div>
 		<?php endforeach; ?>
 	</div>
+	<div class="st-redirect">
+      <div class="st-redirect-txt">To withdraw earnings across all market networks, please visit:</div>
+      <div class="st-redirect-btn-div">
+        <a href="https://app.shoptype.com/" class="st-redirect-btn w-inline-block" target="_blank"><img src="<?php echo st_locate_file("images/Shoptype-Logo-White-1.png") ?>" loading="lazy" alt="" class="st-redirect-btn-image">
+          <div class="st-redirect-btn-title">Visit Shoptype</div>
+        </a>
+        <div class="st-redirect-btn-txt">(Redirects to Shoptype. Opens in new tab)</div>
+      </div>
+    </div>
 	<button onclick="stLogout()">
 		Logout
 	</button>
