@@ -54,7 +54,6 @@ class Shoptype_Settings {
                     'Authorization'=> $token,
                     'Content-Type'=> 'application/json'
                 )
-                
             );
                 
             $response = wp_remote_post( '{$stBackendUrl}/authenticate', $args );
@@ -183,23 +182,16 @@ class Shoptype_Settings {
         add_settings_field("myAccountUrl", "ST My Account Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"myAccountUrl","name"=>"ST My Account Page URL") );
         add_settings_field("stDefaultCurrency", "ST Default Currency: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stDefaultCurrency","name"=>"ST Default Currency") );
         add_settings_field("stFilter", "Product Filter JSON: ", array( $this, 'field_textarea_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stFilter","name"=>"Product Filter JSON") );
-        add_settings_section( 'buddypress_groups_products', 'Buddypress group settings', array( $this, 'section_callback' ), 'shoptype_settings' );
-        add_settings_field("productsInGroup", "Display products in Buddypress groups", array( $this, 'sandbox_checkbox_element_callback' ), "shoptype_settings", "buddypress_groups_products", array("id"=>"productsInGroup","name"=>"productsInGroup"));               
-        add_settings_section( 'channel_champion', 'Channel Champion', array( $this, 'section_callback' ), 'shoptype_settings' );
-        add_settings_field("myshopUrl", "My Shop URL: ", array( $this, 'field_callback' ), "shoptype_settings", "channel_champion", array("id"=>"myshopURL","name"=>"My Shop URL:") );   
+        add_settings_field("restrict_myshop", "Allow only users with myshop_owner role to have Myshop", array( $this, 'checkbox_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"restrict_myshop","name"=>"restrict_myshop"));
         add_settings_section( 'manage_coseller_setting', 'Coseller manage setting', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("manage_coseller", "Allow all user to cosell product", array( $this, 'checkbox_callback' ), "shoptype_settings", "manage_coseller_setting", array("id"=>"manage_coseller","name"=>"manage_coseller"));
-        add_settings_field("restrict_myshop", "Allow only users with myshop_owner role to have Myshop", array( $this, 'checkbox_callback' ), "shoptype_settings", "channel_champion", array("id"=>"restrict_myshop","name"=>"restrict_myshop"));
-      
-        
     }
     
     /* Create input fields*/
     public function field_callback ( $arguments ) {
         echo "<input name=\"{$arguments['id']}\" id=\"{$arguments['id']}\" type=\"text\" style=\"width:100%;\" value=\"" .get_option($arguments['id'])."\"/>";
     }
-    
-        
+
     /* Create textarea fields*/
     public function field_textarea_callback ( $arguments ) {
         echo "<textarea  name=\"{$arguments['id']}\" id=\"{$arguments['id']}\" style=\"width:100%;height:300px\" >".get_option($arguments['id'])."</textarea >";
@@ -210,126 +202,7 @@ class Shoptype_Settings {
         $field_value = get_option($arguments['id']) ? "checked" : "";
         echo "<input name=\"{$arguments['id']}\" id=\"{$arguments['id']}\" value=\"1\" type=\"checkbox\" $field_value />";
     }
-    
-    /* Create dropdown fields*/
-    function sandbox_checkbox_element_callback() {
-
-        $options = get_option( 'productsInGroup' );
-
-        $checked = ( isset($options['checkbox_example']) && $options['checkbox_example'] == 1) ? 1 : 0;
-
-        $html = '<input type="checkbox" id="checkbox_example" name="productsInGroup[checkbox_example]" value="1"' . checked( 1, $checked, false ) . '/>';    
-        $html .= '<label for="checkbox_example"> </label>';
-
-        echo $html;
-
-
-    }
-    
-    function manage_cosell_checkbox()
-    {
-        ?>
-        <input type="checkbox" name="manage_coseller" value="1" <?php checked(1, get_option('manage_coseller'), true); ?> />
-        <?php
-    }
 }
-
-
-
-
-
-$options = get_option( 'productsInGroup' );
-
-if ( ! empty( $options['checkbox_example'] ) ) {
-    
-     // Checkbox checked
-     /**
-     * Add custom sub-tab on groups page.
-     */
-    function buddypress_custom_group_tab() {
-
-        // Avoid fatal errors when plugin is not available.
-        if ( ! function_exists( 'bp_core_new_subnav_item' ) ||
-             ! function_exists( 'bp_is_single_item' ) ||
-             ! function_exists( 'bp_is_groups_component' ) ||
-             ! function_exists( 'bp_get_group_permalink' ) ) {
-
-            return;
-
-        }
-
-        // Check if we are on group page.
-        if ( bp_is_groups_component() && bp_is_single_item() ) {
-
-            global $bp;
-
-            // Get current group page link.
-            $group_link = bp_get_group_permalink( $bp->groups->current_group );
-
-            // Tab args.
-            $tab_args = array(
-                'name'                => esc_html__( 'Products', 'default' ),
-                'slug'                => 'products',
-                'screen_function'     => 'products_screen',
-                'position'            => 0,
-                'parent_url'          => $group_link,
-                'parent_slug'         => $bp->groups->current_group->slug,
-                'default_subnav_slug' => 'products',
-                'item_css_id'         => 'products-main',
-                'show_tab'            => 'anyone',
-                'visibility'          => 'public',
-                'user_has_access'     => 'anyone',
-            );
-
-            // Add sub-tab.
-            bp_core_new_subnav_item( $tab_args, 'groups' );
-        }
-    }
-
-    add_action( 'bp_setup_nav', 'buddypress_custom_group_tab' );
-
-    /**
-     * Set template for new tab.
-     */
-    function products_screen() {
-        // Add title and content here - last is to call the members plugin.php template.
-        add_action( 'bp_template_title', 'custom_group_tab_title' );
-        add_action( 'bp_template_content', 'custom_group_tab_content' );
-        bp_core_load_template( 'buddypress/members/single/plugins' );
-    }
-
-    /**
-     * Set title for custom tab.
-     */
-    function custom_group_tab_title() {
-        echo esc_html__( 'Products', 'default_content' );
-    }
-
-    /**
-     * Display content of custom tab.
-     */
-    function custom_group_tab_content() {
-        $currentGroup = bp_get_current_group_name();
-        $currentGroup = str_replace(" ", "%20", $currentGroup);
-        echo do_shortcode( '[awake_products for_listing="1" slider="0" tags="'.$currentGroup.'" imagesize="200x200" product_classes="groups-product single-product"]' );
-
-    }
-
-    /**
-     * Set default tab for group.
-     *
-     * @param  string $default_tab Slug of default tab.
-     * @return string
-     */
-    function buddyboss_groups_default_extension( $default_tab ) {
-        return 'products'; // Last part of the URL.
-    }
-
-    add_filter( 'bp_groups_default_extension', 'buddyboss_groups_default_extension', 10 );
-} else {
-     // Not checked
-}
-
 
 new Shoptype_Settings();
 
@@ -365,8 +238,6 @@ function shoptypeSettings() {
     $stCurrency["INR"] = "₹";
     global $productsInGroup;
     $productsInGroup = get_option('productsInGroup');
-    global $myshopUrl;
-    $myshopUrl = get_option('myshopURL');
     global $restrict_myshop;
     $restrict_myshop = get_option('restrict_myshop');
     flush_rewrite_rules();
