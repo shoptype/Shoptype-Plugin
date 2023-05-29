@@ -116,6 +116,10 @@ function user_has_role($user_id, $role_name)
 }
 
 function can_have_myshop($user_id){
+	global $restrict_myshop;
+	if(!$restrict_myshop){
+		return true;
+	}
 	if(user_has_role($user_id, "myshop_owner") || user_has_role($user_id, "administrator")){
 		return true;
 	}else{
