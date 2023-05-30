@@ -312,7 +312,7 @@ function redirect_to_login($temp){
 	global $loginUrl;
 	$current_url = home_url( $wp->request );
 	wp_redirect( "{$loginUrl}?redirectUrl=" . urlencode($current_url) . "&$temp", 302 );
-	exit();
+    exit();
 }
 
 //Enqueue Product and brand page css
@@ -366,6 +366,15 @@ function your_theme_xprofile_cover_image( $settings = array() ) {
     return $settings;
 }
 add_filter( 'bp_before_groups_cover_image_settings_parse_args', 'your_theme_xprofile_cover_image', 11, 1 );
+
+function bpex_hide_profile_menu_tabs() {
+	if( bp_is_active( 'xprofile' ) ) :
+		bp_core_remove_nav_item( 'settings' );
+		bp_core_remove_nav_item( 'activity' );
+		bp_core_remove_nav_item( 'groups' );
+	endif; 
+}
+add_action( 'bp_setup_nav', 'bpex_hide_profile_menu_tabs', 15 );
 
 
 //Initialise the market
@@ -535,19 +544,6 @@ function ST_logout() {
 	exit();
 }
 
-
-function search_filter($query) {
-	if ( is_search() ) {
-		if ( is_array( $query->posts ) ) {
-			$post = new stdClass();
-			$post->ID = 113;
-			$wp_post = new WP_Post( $post );
-			array_push( $query->posts, $wp_post );
-		}
-	}
-}
-add_action('posts_search','search_filter');
-
 function have_posts_override(){
 	if ( is_search() ) {
 		global $stPlatformId;
@@ -589,6 +585,7 @@ function have_posts_override(){
 		}
 	}
 }
+
 //add condition to not override admin pagination
 if (! is_admin() ) {
 	add_action( 'found_posts', 'have_posts_override' );
@@ -598,28 +595,30 @@ if (! is_admin() ) {
  * Register a custom Form
 **/
 function edit_post_form() {
-	$post_id = 0;
-	if ( get_query_var('post_id') ) {
-	    $post_id = get_query_var('post_id');
-	}
-	$settings = array(
-		'post_type'             => 'post',
-		'post_author'           =>  bp_loggedin_user_id(),
-		'post_status'           => 'draft',
-		'current_user_can_post' =>  is_user_logged_in(),
-		'show_categories'       => true,
-		'allow_upload'          => true,
-		'post_id'				=> $post_id
-	);
+	define('BP_DEFAULT_COMPONENT', 'profile' );
+	if(function_exists("bp_new_simple_blog_post_form")){
+		$post_id = 0;
+		if ( get_query_var('post_id') ) {
+			$post_id = get_query_var('post_id');
+		}
+		$settings = array(
+			'post_type'             => 'post',
+			'post_author'           =>  bp_loggedin_user_id(),
+			'post_status'           => 'draft',
+			'current_user_can_post' =>  is_user_logged_in(),
+			'show_categories'       => true,
+			'allow_upload'          => true,
+			'post_id'				=> $post_id
+		);
 
-	$form = bp_new_simple_blog_post_form( 'edit_form', $settings );
-	//create a Form Instance and register it
+		$form = bp_new_simple_blog_post_form( 'edit_form', $settings );
+		//create a Form Instance and register it	
+	}
 }
 
 add_action( 'bp_init', 'edit_post_form', 4 );//register a form
 
 /*Add page templates*/
-
 class PageTemplater {
 
 	/**
@@ -777,8 +776,10 @@ class PageTemplater {
 
 	}
 
-} 
+}
+
 add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
+
 //Create hook for creating page with shoptype shortcode
 function add_shop_page() {
 	// Create Page object
