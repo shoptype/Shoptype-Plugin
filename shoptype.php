@@ -39,7 +39,7 @@ function shoptype_header(){
 	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js');
 	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js');
 	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js');
-	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css');
+	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css?1111');
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>"; 
 	?>
 	<div class="st-cosell-btn">
@@ -545,7 +545,8 @@ function ST_logout() {
 }
 
 function have_posts_override(){
-	if ( is_search() ) {
+	global $addProductsInSearch;
+	if ( is_search() && $addProductsInSearch ) {
 		global $stPlatformId;
 		global $wp_query;
 		global $stBackendUrl;
@@ -821,8 +822,10 @@ add_filter('template_include','custom_search_template', 10, 3);
 
 function custom_search_template($template){
 	global $wp_query;
-	if (!$wp_query->is_search)
-		return $template;
+	global $addProductsInSearch;
+	if (!($wp_query->is_search && $addProductsInSearch )){
+		return $template;	
+	}
 	
 	$search_template = untrailingslashit( plugin_dir_path( __FILE__ ) . '/templates/search.php');
 	return $search_template;

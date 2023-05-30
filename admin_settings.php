@@ -170,6 +170,7 @@ class Shoptype_Settings {
         register_setting("shoptype_settings", "productsInGroup");
         register_setting("shoptype_settings", "manage_coseller");
         register_setting("shoptype_settings", "restrict_myshop");
+        register_setting("shoptype_settings", "addProductsInSearch");
         add_settings_section("shoptype_settings", "Network Settings: ", array($this, 'section_callback'), "shoptype_settings");
         add_settings_field( 'shoptype_api_key', 'ST API Key: ', array( $this, 'field_callback' ), 'shoptype_settings', 'shoptype_settings', array("id"=>"shoptype_api_key","name"=>"ST API Key") );
         add_settings_field("platformID", "ST Platform ID: ", array($this, 'field_callback'), "shoptype_settings", 'shoptype_settings', array("id"=>"platformID","name"=>"ST Platform ID"));
@@ -182,6 +183,7 @@ class Shoptype_Settings {
         add_settings_field("myAccountUrl", "ST My Account Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"myAccountUrl","name"=>"ST My Account Page URL") );
         add_settings_field("stDefaultCurrency", "ST Default Currency: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stDefaultCurrency","name"=>"ST Default Currency") );
         add_settings_field("stFilter", "Product Filter JSON: ", array( $this, 'field_textarea_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"stFilter","name"=>"Product Filter JSON") );
+        add_settings_field("addProductsInSearch", "Show products in site search", array( $this, 'checkbox_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"addProductsInSearch","name"=>"addProductsInSearch"));
         add_settings_field("restrict_myshop", "Allow only users with myshop_owner role to have Myshop", array( $this, 'checkbox_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"restrict_myshop","name"=>"restrict_myshop"));
         add_settings_section( 'manage_coseller_setting', 'Coseller manage setting', array( $this, 'section_callback' ), 'shoptype_settings' );
         add_settings_field("manage_coseller", "Allow all user to cosell product", array( $this, 'checkbox_callback' ), "shoptype_settings", "manage_coseller_setting", array("id"=>"manage_coseller","name"=>"manage_coseller"));
@@ -197,12 +199,13 @@ class Shoptype_Settings {
         echo "<textarea  name=\"{$arguments['id']}\" id=\"{$arguments['id']}\" style=\"width:100%;height:300px\" >".get_option($arguments['id'])."</textarea >";
     }
     
-    function checkbox_callback($arguments)
-    {
+    function checkbox_callback($arguments) {
         $field_value = get_option($arguments['id']) ? "checked" : "";
         echo "<input name=\"{$arguments['id']}\" id=\"{$arguments['id']}\" value=\"1\" type=\"checkbox\" $field_value />";
     }
 }
+
+
 
 new Shoptype_Settings();
 
@@ -240,6 +243,8 @@ function shoptypeSettings() {
     $productsInGroup = get_option('productsInGroup');
     global $restrict_myshop;
     $restrict_myshop = get_option('restrict_myshop');
+    global $addProductsInSearch;
+    $addProductsInSearch = get_option('addProductsInSearch');
     flush_rewrite_rules();
 }
 
