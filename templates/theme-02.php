@@ -58,7 +58,7 @@ if(!isset($user->ID))
   $user = get_user_by( 'email',$userName );
 }
 
-$cover=(empty($st_user_products->cover)) ? $path.'/images/shop-banner.jpg' : $st_user_products->cover ;
+$cover=(empty($st_user_products->cover)) ? st_locate_file('images/shop-banner.jpg') : $st_user_products->cover ;
 
 $user_name= $user->display_name;
 $shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user_products->shop_name;
@@ -103,7 +103,9 @@ $shop_bio = xprofile_get_field_data( 'st_shop_bio' , $user->id );
                 <div class="profile-buttons">
                   <a href="/members/<?php echo $st_user_products->user_nicename ?>" class="visit-profile">Visit Profile</a>
                   <div class="shop-rating"></div>
-                <a class="send-message" href="/members/me/messages/compose/?r=<?php echo $st_user_products->user_nicename ?>" data-next="" title="Send a private message to <?php echo $st_user_products->user_name ?>.">Ask a question</a>
+					<?php if ( bp_is_active( 'messages' ) ){ ?>
+                	<a class="send-message" href="/members/me/messages/compose/?r=<?php echo $st_user_products->user_nicename ?>" data-next="" title="Send a private message to <?php echo $st_user_products->user_name ?>.">Ask a question</a>
+					<?php } ?>
               </div>
               </div>
             </div>
@@ -240,7 +242,7 @@ div#banner-wrap {width: 100%;min-width: 100%;}
 .owner-info h3 {display: none;}
 .main-owner-container {max-width: 1240px;margin: auto;}
 .st-header-container #inner-element .store-info {margin: 10px 0px 20px !important; display:flex;flex-direction:column;justify-content:center;width: 100%;}
-h3.store-name {padding: 0px !important;font-family: "Popine", sans-serif;font-style: normal;font-weight: 700;font-size: 40px;line-height: 110%;display: flex;align-items: center;text-align: center;color: #1E1E1E;margin: 0px;}
+h3.store-name {padding: 0px !important;font-family: "Popine", sans-serif;font-style: normal;font-weight: 700;font-size: 36px;line-height: 110%;display: flex;align-items: center;text-align: center;color: #1E1E1E;margin: 0px;overflow-wrap: anywhere;}
  p.store-bio {margin-bottom: 0px !important;font-style: normal;font-weight: 400;font-size: 14px;line-height: 160%;display: flex;align-items: center;color: #1E1E1E;font-family: "Popine", sans-serif;padding-bottom: 0px !important;padding-top: 8px;}
 .owner-info {display: flex;justify-content: center;align-items: center;align-content: center;}
 .show-owner-widget.widget {margin-top: 1.px;display: flex;justify-content: center;align-items: center;}

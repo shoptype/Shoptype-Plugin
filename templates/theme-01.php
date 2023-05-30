@@ -101,7 +101,9 @@ $shop_bio = xprofile_get_field_data( 'st_shop_bio' , $user->id );
                   <a href="/members/<?php echo $st_user_products->user_nicename ?>" class="owner-name"><?php echo $st_user_products->user_name ?></a>
                   <div class="shop-rating"></div>
                 </div>
-                <a class="send-message" href="/members/me/messages/compose/?r=<?php echo $st_user_products->user_nicename ?>" data-next="" title="Send a private message to <?php echo $st_user_products->user_name ?>.">Ask me question</a>
+        <?php if ( bp_is_active( 'messages' ) ){ ?>
+                  <a class="send-message" href="/members/me/messages/compose/?r=<?php echo $st_user_products->user_nicename ?>" data-next="" title="Send a private message to <?php echo $st_user_products->user_name ?>.">Ask me question</a>
+        <?php } ?>
               </div>
             </div>
           </div>
