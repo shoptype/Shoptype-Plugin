@@ -10,6 +10,8 @@ global $stPlatformId;
 global $stFilterJson;
 global $stDefaultCurrency;
 
+
+$wizard_type = urldecode(get_query_var( 'stwizard' ));
 $path = dirname(plugin_dir_url( __FILE__ ));
 $user_id = get_current_user_id();
 $currentUser = get_userdata($user_id);
@@ -23,6 +25,18 @@ $shop_facebook = xprofile_get_field_data( 'myshop-facebook' , $currentUser->id )
 $shop_twitter = xprofile_get_field_data( 'myshop-twitter' , $currentUser->id );
 $shop_instagram = xprofile_get_field_data( 'myshop-instagram' , $currentUser->id );
 $shop_youtube = xprofile_get_field_data( 'myshop-youtube' , $currentUser->id );
+
+if(isset($shop_url)){
+	$encodedShopUrl = get_site_url()."/shop/".$shop_url;
+}else{
+	$encodedShopUrl = get_site_url()."/shop/".$currentUser->user_login;
+}
+
+if($wizard_type=="open" && !($shop_products=="" || $shop_products=="{}")){
+	header("Location: {$encodedShopUrl}");
+	exit;
+}
+
 if(!isset($group_id)){
 		$group_id = groups_create_group(array(
 			'creator_id'=>$user_id,
@@ -40,11 +54,8 @@ if(isset($group_id)){
 	$group_img =(empty(bp_get_group_avatar_url($group))) ? st_locate_file("images/shop-profile.jpg") : bp_get_group_avatar_url($group);
 }
 $profileImage = get_avatar_url($user_id);
-if(isset($shop_url)){
-	$encodedShopUrl = get_site_url()."/shop/".$shop_url;
-}else{
-	$encodedShopUrl = get_site_url()."/shop/".$currentUser->user_login;
-}
+
+
 get_header();
 
 $theme_url = get_template_directory_uri();
