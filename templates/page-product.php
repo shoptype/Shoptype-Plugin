@@ -27,15 +27,6 @@ try {
 		$prodCurrency = $stCurrency[$st_product->currency];
 		$vendorId = $st_product->catalogId;
 
-		try {
-			if(isset($st_brand)){
-				$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
-				$groupSlug = preg_replace('~[^-\w]+~', '', $groupSlug);
-				$groupSlug = strtolower($groupSlug);
-			}
-		} catch (Exception $ex) {
-		}
-
 		add_filter('pre_get_document_title', function () use ($st_product) {
 			return $st_product->title;
 		});
