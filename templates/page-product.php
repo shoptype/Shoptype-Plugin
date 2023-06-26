@@ -187,7 +187,7 @@ img.xzoom {
 																	</div>
 																	<div class="custom-select">
 																		<div class="form-group">
-																			<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="varientChang()">
+																			<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="variantChanged()">
 																				<?php foreach ($optionName->values as $optionValue) {
 																					echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
 																				}
@@ -370,7 +370,7 @@ img.xzoom {
 	var json = {};
 	var variantquntity;
 
-	function varientChang() {
+	function variantChanged() {
 		var variantSelected = false;
 		var varients = document.getElementsByClassName("product-option-select");
 		var addtocartbtn = document.querySelector(".am-product-add-cart-btn");
@@ -469,7 +469,7 @@ img.xzoom {
 	document.addEventListener("cartQuantityChanged", (e)=>{
 		updateCartStatus();
 	});
-	window.onload = varientChang;
+	window.onload = variantChanged;
 </script>
 
 <script>
