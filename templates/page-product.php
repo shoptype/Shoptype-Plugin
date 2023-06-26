@@ -37,7 +37,7 @@ try {
 			echo "<meta property='og:title' content='$st_product->title' />";
 			echo "<meta property='og:description' content='$st_product->description' />";
 			echo "<meta property='og:image' content='{$st_product->primaryImageSrc->imageSrc}' />";
-		}, 1);
+		}, 20);
 	}
 	// Get vendor details
 	if (!empty($vendorId)) {
@@ -288,7 +288,7 @@ img.xzoom {
 					<div>
 						<h3 style="margin: 30px 0px 10px;font-family:sans-serif">Related Products</h3>
 					</div>
-					<div count="8" imageSize="200x0" class="products-container" vendorId="<?php echo $st_product->catalogId ?>"  sortBy="createdAt" orderBy="desc" id="t-product-search-results" >
+					<div count="8" imageSize="600x0" class="products-container" vendorId="<?php echo $st_product->catalogId ?>"  sortBy="createdAt" orderBy="desc" id="t-product-search-results" >
 						<div class="product-container single-product" style="display: none;" id="st-product-select-template">
 							<a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
 								<div class="product-image">
