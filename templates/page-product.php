@@ -363,6 +363,10 @@ img.xzoom {
 	const product = <?php echo $resultProduct; ?>;
 
 	var variantsJson = product.products[0].variants;
+	var productImages = {};
+	for (var i = 0; i < product.products[0].secondaryImageSrc.length; i++) {
+		productImages[product.products[0].secondaryImageSrc[i].id] = product.products[0].secondaryImageSrc[i].imageSrc;
+	}
 	var json = {};
 	var variantquntity;
 
@@ -374,7 +378,6 @@ img.xzoom {
 		for (var i = 0; i < varients.length; i++) {
 			json[varients[i].getAttribute('id')] = varients[i].value;
 		}
-		$(".onadd-box > div > input").val(1);
 		for (var key in variantsJson) {
 			var obj1 = variantsJson[key]['variantNameValue'];
 			if (isVariantSame(obj1,json)||Object.keys(json)==0) {
@@ -389,6 +392,10 @@ img.xzoom {
 					variantSoldOut(addtocart,addtocartbtn);
 				}else{
 					variantAvailable(addtocart,addtocartbtn);
+				}
+				
+				if(variantsJson[key].imageIds && productImages[variantsJson[key].imageIds[0]]){
+				   document.querySelector(".single-product-image-container img").src = productImages[variantsJson[key].imageIds[0]];
 				}
 				
 				if (variantsJson[key].hasOwnProperty('primaryImageSrc')) {
