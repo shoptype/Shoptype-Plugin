@@ -39,18 +39,6 @@ try {
 			echo "<meta property='og:image' content='{$st_product->primaryImageSrc->imageSrc}' />";
 		}, 20);
 	}
-	// Get vendor details
-	if (!empty($vendorId)) {
-		$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$vendorId");
-  		$result = wp_remote_retrieve_body( $response );
- 
-		if (!empty($vendorChResponse)) {
-			$vendorDetails = json_decode($vendorChResponse);
-			$vendor = $vendorDetails[0];
-			$vendorName = $vendor->name;
-			$vendorUrl = str_replace("{{brandId}}", $vendorId, $brandUrl);
-		}
-	}
 } catch (Exception $e) {
 }
 wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
@@ -212,7 +200,7 @@ img.xzoom {
 										<div class="addToCart-container">
 											<div class="addButton-container">
 												<button id="add-to-cart-btn" class="btn btn-standard am-product-add-cart-btn" role="button" onclick="shoptype_UI.addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" variantName='<?php echo json_encode($st_product->variants[0]->variantNameValue) ?>' productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</button>
-												<a id="goto-cart-btn" class="btn btn-standard am-product-add-cart-btn" href="/cart" style="display:none">
+												<a id="goto-cart-btn" class="btn btn-standard am-product-add-cart-btn" href="/cart/main" style="display:none">
 													Goto Cart
 												</a>
 											</div>
@@ -385,8 +373,7 @@ img.xzoom {
 				var productprice = variantsJson[key]['discountedPrice'];
 				var productCommission = variantsJson[key].discountedPriceAsMoney.amount * product.products[0].productCommission.percentage / 100;
 				variantquntity=variantsJson[key]['quantity'];
-				document.getElementById("quantity").max =variantquntity;
-				jQuery("#quantity").prop('max',variantquntity);
+				document.getElementById("quantity").max = variantquntity;
 				if(variantquntity<=0)
 				{
 					variantSoldOut(addtocart,addtocartbtn);

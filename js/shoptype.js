@@ -244,6 +244,17 @@ class STPlatform {
     var callback = data=>{
       if(data.total_quantity){
         STUtils.sendEvent('cartQuantityChanged', {count: data.total_quantity} )
+        if (gtag) {
+          var gaCart = {
+            currency: data.sub_total.currency,
+            value: data.sub_total.amount,
+            items: []
+          };
+          for (var i = 0; i < data.cart_lines.length; i++) {
+            gaCart.items.push(this.toGAProduct(data.cart_lines[i]), i);
+          }
+          gtag("event", "add_to_cart", gaCart);
+        }
       }
     };
     return STUtils.request(this.endpoints.carts.addProduct(cartId, productId, variantId, variantName, quantity), callback);
@@ -253,6 +264,17 @@ class STPlatform {
     var callback = data=>{
       var quant = data.total_quantity??data.cart_lines.length;
       STUtils.sendEvent('cartQuantityChanged', {count: quant} )
+      if (gtag) {
+        var gaCart = {
+          currency: data.sub_total.currency,
+          value: data.sub_total.amount,
+          items: []
+        };
+        for (var i = 0; i < data.cart_lines.length; i++) {
+          gaCart.items.push(this.toGAProduct(data.cart_lines[i]), i);
+        }
+        gtag("event", "remove_from_cart", gaCart);
+      }
     };
     return STUtils.request(this.endpoints.carts.update(cartId, productId, variantId, variantName, quantity), callback);
   }
@@ -281,7 +303,23 @@ class STPlatform {
   }
 
   checkout(checkoutId){
-    return STUtils.request(this.endpoints.checkouts.checkout(checkoutId));
+    var callback = data=>{
+      if (gtag) {
+        for (const property in data.order_details_per_vendor) {
+          var cart = data.order_details_per_vendor[property];
+          var gaCart = {
+            currency: cart.sub_total.currency,
+            value: cart.sub_total.amount,
+            items: []
+          };
+          for (var i = 0; i < cart.cart_lines.length; i++) {
+            gaCart.items.push(this.toGAProduct(cart.cart_lines[i], i));
+          }
+          gtag("event", "begin_checkout", gaCart);
+          }
+      }
+    };
+    return STUtils.request(this.endpoints.checkouts.checkout(checkoutId), callback);
   }
 
   updateAddress(checkoutId, address){
@@ -293,7 +331,23 @@ class STPlatform {
   }
 
   checkoutPayment(checkoutId, vendorShippingKey){
-    return STUtils.request(this.endpoints.checkouts.payment(checkoutId));
+    var callback = data=>{
+      if (gtag) {
+        for (const property in data.order_details_per_vendor) {
+          var cart = data.order_details_per_vendor[property];
+          var gaCart = {
+            currency: cart.sub_total.currency,
+            value: cart.sub_total.amount,
+            items: []
+          };
+          for (var i = 0; i < cart.cart_lines.length; i++) {
+            gaCart.items.push(this.toGAProduct(cart.cart_lines[i]),i);
+          }
+          gtag("event", "add_payment_info", gaCart);
+          }
+      }
+    };
+    return STUtils.request(this.endpoints.checkouts.payment(checkoutId),callback);
   }
 
   toQueryString(obj) {
@@ -303,6 +357,20 @@ class STPlatform {
         str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
       }
     return str.join("&");
+  }
+
+  toGAProduct(product, item_index){
+    var gaProduct = {
+      item_id: product.product_id,
+      item_name: product.name,
+      index: item_index,
+      item_brand: product.vendor_name,
+      item_variant: product.variant_name_value,
+      price: product.price.amount,
+      quantity: product.quantity
+    }
+    console.info(gaProduct);
+    return gaProduct;
   }
 }
 

@@ -66,7 +66,7 @@ get_header();
 		productsLoading = true;
 		document.querySelector(".st-button-div button").disabled = true;
 		options['text'] = document.getElementById('st-search-box').value;
-		options['imgSize'] = "200x0";
+		options['imgSize'] = "600x0";
 		options['offset'] = myshop_offset;
 		fetchProducts(options, productsContainer, productTemplate);
 		myshop_offset+=10;
@@ -221,7 +221,7 @@ select#sort-by {
 			</div>
 		</div>
 		<div>
-			<div count="10" imageSize="200x0" loadmore class="products-container" sortBy="createdAt" orderBy="desc" id="st-product-search-results" >
+			<div count="10" imageSize="600x0" loadmore class="products-container" sortBy="createdAt" orderBy="desc" id="st-product-search-results" >
 				<div class="product-container single-product" style="display: none;" id="st-product-select-template">
 					<a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
 						<div class="product-image">

@@ -1,13 +1,13 @@
 <?php
 /* Template Name:Cosell Widget */
   global $wp;
+  global $stPlatformId;
   $cosell_link = get_query_var('cosell_link');
   $shop_name = get_query_var('shop_name');
 
-  if(isset($shop_name)){
-  }
   if(!isset($_COOKIE["stToken"])) {
     $user_token = "";
+    echo "<!--User not logged in to Shoptype-->";
   }else{
     $user_token = $_COOKIE["stToken"];
   }
@@ -19,7 +19,7 @@
           "Authorization" =>$user_token
         ));
       $current_url = home_url( $wp->request );
-      $response = wp_remote_get("{$stBackendUrl}/track/network?referrer=".get_option('siteurl'),$args);
+      $response = wp_remote_get("{$stBackendUrl}/track/network?platformId={$stPlatformId}&referrer=".get_option('siteurl'),$args);
       $result = wp_remote_retrieve_body( $response );
 
       if( !empty( $result ) ) {
@@ -33,10 +33,10 @@
       $tracker ="";
     }
   }
+echo "<!--Tracker $tracker -->";
 
 if(!empty($tracker)){
- if (!function_exists('http_build_url'))
-{
+  if (!function_exists('http_build_url')){
     define('HTTP_URL_REPLACE', 1);              // Replace every part of the first URL when there's one of the second URL
     define('HTTP_URL_JOIN_PATH', 2);            // Join relative paths
     define('HTTP_URL_JOIN_QUERY', 4);           // Join query strings
@@ -139,7 +139,7 @@ if(!empty($tracker)){
             .((isset($parse_url['fragment'])) ? '#' . $parse_url['fragment'] : '')
         ;
     }
-}
+  }
  
   $url_parts = parse_url("https://".$_SERVER['HTTP_HOST']."/".$cosell_link);
   if (isset($url_parts['query'])) { 

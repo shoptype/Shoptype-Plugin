@@ -353,7 +353,7 @@ function my_shop_tab_content() {
 				<div class="st-product-search-results" id="st-product-search-results" style="display: none;">
 					<div class="st-product-select" id="st-product-select-template" style="display: none;">
 						<div class="st-product-select-main">
-							<div class="st-product-img-div"><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="st-product-img-select"></div>
+							<div class="st-product-img-div"><img src="" alt="" class="st-product-img-select"></div>
 							<div class="st-product-details-block">
 								<div class="st-product-name">Product Name</div>
 								<div class="st-product-cost-select">$00.00</div>
@@ -527,6 +527,7 @@ function my_shop_tab_content() {
 	function addProductDetails(productNode, product, imgTag, priceTag){
 		let pricePrefix = shoptype_UI.currency[product.currency]??product.currency;
 		productNode.querySelector(imgTag).src = product.primaryImageSrc.imageSrc;
+		productNode.querySelector(imgTag).setAttribute("data-src", product.primaryImageSrc.imageSrc);
 		productNode.querySelector(".st-product-name").innerHTML = product.title;
 		productNode.querySelector(priceTag).innerHTML = pricePrefix + product.variants[0].discountedPriceAsMoney.amount.toFixed(2);
 		productNode.style.display="";

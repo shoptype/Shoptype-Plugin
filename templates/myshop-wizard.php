@@ -579,14 +579,6 @@ Min. image size: 1300px x 225px
 				formData.append( 'action', 'bp_avatar_upload' );
 				formData.append( 'file', blob, "user_profile_img.jpg" );
 				pushBpApi(`members/${profileUser}/avatar`, (d)=>{document.getElementById("profile-img").src = d[0].image}, "post", formData);
-				fetch('https://shopthatface-com.ibrave.host/wp-json/shoptype/v1/registerface', {
-					method: 'post',
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify({'imageBS64':canvas.toDataURL()})
-				}).then(async (response) => {
-					document.getElementById('profile-img').src = canvas.toDataURL();
-				}).catch((error) => {
-				});
 			});
 		}
 		img.src = URL.createObjectURL(fileSelect.files[0]);

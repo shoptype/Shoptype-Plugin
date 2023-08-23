@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:	
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:	  2.0.1
+Version:	  2.0.6
 Author:	 	  shoptype 
 Author URI:   https://www.shoptype.com
 License:	  GPL2
@@ -863,13 +863,15 @@ function manage_cosell_users() {
 add_action('admin_menu', 'add_myshop_dashboard', 20 );
  
 function add_myshop_dashboard() {
-	add_submenu_page(
-		'shoptype_settings',
-		'My Shop Dashboard',
-		'My Shop Dashboard',
-		'manage_options',
-		'my-shop-slug',
-		'show_myshop_dashboard' );
+	if ( class_exists( 'BuddyPress' ) ) {
+		add_submenu_page(
+			'shoptype_settings',
+			'My Shop Dashboard',
+			'My Shop Dashboard',
+			'manage_options',
+			'my-shop-slug',
+			'show_myshop_dashboard' );
+	}
 }
 
 
@@ -880,13 +882,15 @@ function show_myshop_dashboard() {
 add_action('admin_menu', 'add_myshop_details', 20 );
  
 function add_myshop_details() {
-	add_submenu_page(
-		null,
-		'My Shop Details',
-		'My Shop Details',
-		'manage_options',
-		'my-shop-details',
-		'show_myshop_details' );
+	if ( class_exists( 'BuddyPress' ) ) {
+		add_submenu_page(
+			null,
+			'My Shop Details',
+			'My Shop Details',
+			'manage_options',
+			'my-shop-details',
+			'show_myshop_details' );
+	}
 }
 
 

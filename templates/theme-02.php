@@ -18,10 +18,9 @@ try {
   $ch = curl_init();
   $urlparts = parse_url(home_url());
   $domain = $urlparts['host'];
-  curl_setopt($ch, CURLOPT_URL, "https://$domain/wp-json/shoptype/v1/shop/".$userName."?count=100");
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $result = curl_exec($ch);
-  curl_close($ch);
+
+	$response = wp_remote_get("https://$domain/wp-json/shoptype/v1/shop/".$userName."?count=100");
+	$result     = wp_remote_retrieve_body( $response );
 
   if( !empty( $result ) ) {
     $st_user_products = json_decode($result);
@@ -180,28 +179,28 @@ $shop_bio = xprofile_get_field_data( 'st_shop_bio' , $user->id );
 		</div>
 		<ul class="products columns-4">
 		  <?php foreach($st_user_products->products as $key=>$value): 
-		if(stripos($value->title,$searckey) === false)
-		 {
-			continue;  }
+				if($searckey && stripos($value->title,$searckey) === false){
+					continue;  
+				}
 			?>
 
-		<li class="product type-product">
-		<div class="st-product-outher">
-		<div class="st-product-inner">
-		<div class="loop-product-image">
-		 <a class="image-link" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
-		<img width="297" height="330" src="<?php echo $value->primaryImageSrc->imageSrc ?>" class="attachment-st-product-archive size-st-product-archive wp-post-image" sizes="(max-width: 297px) 100vw, 297px"> </a>
+			<li class="product type-product">
+			<div class="st-product-outher">
+			<div class="st-product-inner">
+			<div class="loop-product-image">
+			 <a class="image-link" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
+			<img width="297" height="330" src="<?php echo $value->primaryImageSrc->imageSrc ?>" class="attachment-st-product-archive size-st-product-archive wp-post-image" sizes="(max-width: 297px) 100vw, 297px"> </a>
 
-		</div>
+			</div>
 
-		<a class="product-details" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
-		<h2 class="st-loop-product__title"><?php echo $value->title ?></h2>
-		<h3 class="st-myshop-prod-vendor"><?php echo $value->vendorName ?></h3>
-		<span class="price"><span class="woocommerce-Price-amount amount"><bdi><span class="st-Price-currencySymbol"><?php echo "{$value->variants[0]->discountedPriceAsMoney->currency}" ?></span><?php echo "{$value->variants[0]->discountedPriceAsMoney->amount}" ?></bdi></span></span>
-		</a>
-		</div>
-		</div>
-		</li>
+			<a class="product-details" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
+			<h2 class="st-loop-product__title"><?php echo $value->title ?></h2>
+			<h3 class="st-myshop-prod-vendor"><?php echo $value->vendorName ?></h3>
+			<span class="price"><span class="woocommerce-Price-amount amount"><bdi><span class="st-Price-currencySymbol"><?php echo "{$value->variants[0]->discountedPriceAsMoney->currency}" ?></span><?php echo "{$value->variants[0]->discountedPriceAsMoney->amount}" ?></bdi></span></span>
+			</a>
+			</div>
+			</div>
+			</li>
 		<?php endforeach; ?>
 
 		</ul>
@@ -268,6 +267,7 @@ div#page {overflow: hidden;}
 #search-shops .search-container {display: flex;align-items: center;gap: 10px;width: 413px;height: 50px;background: #FFFFFF;}
 #search-shops button[type="submit"] {display: flex;justify-content: center;align-items: center;width: 50px;height: 50px;background-color: transparent;border: none;cursor: pointer;}
 #search-shops button[type="submit"] i {font-size: 20px;color: #1E1E1E;}
+#search-shops input[type=text]{line-height: 50px;font-size:16px;margin: 0px;}
 #search-shops input[type="text"]::placeholder {font-family: popin;font-size: 16px;color: #1E1E1E;opacity: 0.8;}
 form#search-shops {border: none;}
 div#main {overflow: visible;}

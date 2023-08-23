@@ -17,10 +17,8 @@ try {
   $ch = curl_init();
   $urlparts = parse_url(home_url());
   $domain = $urlparts['host'];
-  curl_setopt($ch, CURLOPT_URL, "https://$domain/wp-json/shoptype/v1/shop/".$userName."?count=100");
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $result = curl_exec($ch);
-  curl_close($ch);
+  $response = wp_remote_get("https://$domain/wp-json/shoptype/v1/shop/".$userName."?count=100");
+  $result     = wp_remote_retrieve_body( $response );
 
   if( !empty( $result ) ) {
     $st_user_products = json_decode($result);
@@ -181,7 +179,7 @@ Showing serch results for <?php echo $searckey ?></p></div>
 </div>
 <ul class="products columns-4">
   <?php foreach($st_user_products->products as $key=>$value): 
-if(stripos($value->title,$searckey) === false)
+if($searckey && stripos($value->title,$searckey) === false)
  {
   
   continue;  }
@@ -254,7 +252,7 @@ div#page{overflow:hidden}
 .shop-main{max-width:1288px;width:100%}
 #search-shops .search-container{display:flex;align-items:center;gap:10px;width:413px;height:50px;background:#fff}
 #search-shops button[type=submit]{display:flex;justify-content:center;align-items:center;width:50px;height:50px;background-color:transparent;border:none;cursor:pointer}
-#search-shops input[type=text]{border: none;line-height: 50px;font-size:16px;}
+#search-shops input[type=text]{border: none;line-height: 50px;font-size:16px;margin: 0px;width: 350px;}
 #search-shops input[type=text]::placeholder{font-size:16px;color:#1e1e1e;opacity:.5}
 form#search-shops{border:none}
 div#main{overflow:visible}

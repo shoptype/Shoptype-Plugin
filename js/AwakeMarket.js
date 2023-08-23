@@ -35,6 +35,7 @@ function populateProducts(){
 	let productLists = document.getElementsByClassName('products-container');
 	for (var i = 0; i < productLists.length; i++) {
 		offset = 0;
+		am_loading=false;
 		addProducts(productLists[i]);
 		if(productLists[i].getAttribute('loadmore')=='true'){
 			scrollContainer = productLists[i];

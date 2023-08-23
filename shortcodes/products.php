@@ -11,7 +11,7 @@ function renderAwakeProducts($atts = []){
 
     $perRow = $atts['per_row'];
     $vendorId = $tags = $loadmore = $my_shop = "";
-    $imgSize = "200x0";
+    $imgSize = "600x0";
 
     // Need to add other attributes here such as is_slider, slides_to_show
     if(isset($atts['vendor_id']) && !empty($atts['vendor_id'])) $vendorId = $atts['vendor_id'];
