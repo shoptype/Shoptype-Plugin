@@ -160,7 +160,7 @@ function addProducts(productsContainer){
 		var url = shopUrl+"?"+STUtils.toQueryString(options);
 		fetchMyStoreProducts(url, productsContainer, productTemplate);
 	}else if(collectionId){
-		fetchCollectionProducts(collectionId, productsContainer, productTemplate, inStock);
+		fetchCollectionProducts(collectionId, productsContainer, productTemplate, inStock,imageSize);
 	}else{
 		fetchProducts(options, productsContainer, productTemplate);
 	}
@@ -289,11 +289,12 @@ function fetchProducts(options, productsContainer, productTemplate){
 	})
 }
 
-function fetchCollectionProducts(collectionId, productsContainer, productTemplate,inStock){
+function fetchCollectionProducts(collectionId, productsContainer, productTemplate,inStock,imageSize){
 	st_platform.collection(collectionId).then(collectionJson=>{
 		for (var i = 0; i < collectionJson.product_details.length; i++) {
 			let product = collectionJson.product_details[i];
 			product.vendorName="";
+			product.primaryImageSrc.imageSrc=`https://images.shoptype.com/unsafe/${imageSize}/`+encodeURIComponent(product.primaryImageSrc.imageSrc);
 			let newProduct = createProduct(productTemplate, product);
 			if(inStock && product["soldOut"]){
 				continue;
