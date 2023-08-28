@@ -160,6 +160,7 @@ function addProducts(productsContainer){
 		var url = shopUrl+"?"+STUtils.toQueryString(options);
 		fetchMyStoreProducts(url, productsContainer, productTemplate);
 	}else if(collectionId){
+		imageSize = imageSize??"300x0";
 		fetchCollectionProducts(collectionId, productsContainer, productTemplate, inStock,imageSize);
 	}else{
 		fetchProducts(options, productsContainer, productTemplate);
