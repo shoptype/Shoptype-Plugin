@@ -31,13 +31,19 @@ try {
 			return $st_product->title;
 		});
 
-		add_action('wp_head', function () use ($st_product) {
-			$description = substr($st_product->description, 0, 160);
-			echo "<meta name='description' content='$description'>";
-			echo "<meta property='og:title' content='$st_product->title' />";
-			echo "<meta property='og:description' content='$st_product->description' />";
-			echo "<meta property='og:image' content='{$st_product->primaryImageSrc->imageSrc}' />";
-		}, 20);
+		add_filter( 'pre_get_document_title', function( $title ) use ($st_product){
+			$description = addslashes(substr(strip_tags($st_product->description), 0, 250));
+			echo "<title>$st_product->title</title>";
+			echo "<meta name='description' content=\"".substr($description, 0, 160)."\">";
+			echo "<meta property='og:title' content='$st_product->title' >";
+			echo "<meta property='og:description' content=\"".$description."\" >";
+			echo "<meta property='og:image' content='{$st_product->primaryImageSrc->imageSrc}' >";
+			echo '<meta property="og:type" content="product">';
+			echo "<meta property='twitter:title' content='$st_product->title' >";
+			echo "<meta property='twitter:card' content=\"".$description."\" >";
+			echo "<meta property='twitter:image' content='{$st_product->primaryImageSrc->imageSrc}' >";
+			return $st_product->title;
+		}, 20, 1 );
 	}
 } catch (Exception $e) {
 }
