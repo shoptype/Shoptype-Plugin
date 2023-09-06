@@ -43,7 +43,7 @@ function shoptype_header(){
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>"; 
 	?>
 	<div class="st-cosell-btn">
-	  <a href="#" class="div-block w-inline-block" onclick="shoptype_UI.showCosell(null)"><img src="<?php echo ST__PLUGIN_URL."images/cosell.png"; ?>" style="width:42px;" loading="lazy" alt=""></a>
+	  <a href="#" class="div-block w-inline-block" onclick="shoptype_UI.showCosell(null)"><img src="<?php echo st_locate_file("images/cosell.png"); ?>" style="width:42px;" loading="lazy" alt=""></a>
 	  <div class="st-cosell-details">
 		<div class="st-cosell-txt">Share &amp; Earn</div>
 	  </div>
