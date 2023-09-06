@@ -1,6 +1,7 @@
 <?php
 /* Template Name:Products Home */
 get_header();
+
 ?>
 <script>
 	let options={};
@@ -119,7 +120,7 @@ get_header();
 	margin: 0px;
 }
 .all-products{
-	max-width:1400px;
+	max-width:1240px;
 	margin:auto;
 }
 .filter-menu-div{
@@ -162,10 +163,10 @@ select#sort-by {
 <div class="all-products">
 	<div class="st-myshop-search">
 		<input class="st-myshop-search-box" id="st-search-box" name="Search" >
-		<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo $path ?>/images/search.svg" loading="lazy" alt="" class="st-product-search-img"></div>
+		<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo st_locate_file("images/search.svg") ?>" loading="lazy" alt="" class="st-product-search-img"></div>
 	</div>
 	<div class="filter-menu-div">
-		<div class="st-filter-btn" onclick="toggleFilter()"><div>Filter </div><img src="<?php echo $path ?>/images/Filter-Icon.png?1" loading="lazy" alt="" class="st-filter-img"></div>
+		<div class="st-filter-btn" onclick="toggleFilter()"><div>Filter </div><img src="<?php echo st_locate_file("images/Filter-Icon.png") ?>" loading="lazy" alt="" class="st-filter-img"></div>
 		<div class="st-sort-div">
 			<div>Sort By :</div>
 			<select id="sort-by" name="sortByFacets" class="" onchange="filterProducts()">
