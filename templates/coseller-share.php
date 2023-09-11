@@ -178,7 +178,7 @@ if(!empty($tracker)){
             <img src="https://user-images.githubusercontent.com/4776769/164174179-5103826f-d131-4677-b581-031727195c0e.png" loading="lazy" alt="">
           </a>
           <a id="st-pinterest-link" href="<?php echo "https://pinterest.com/pin/create/link/?url=$current_url" ?>" class="st-cosell-socialshare-link w-inline-block">
-            <img src="https://user-images.githubusercontent.com/4776769/164173344-e0f1fbe1-1ac0-4846-837b-97f47a556bf5.png" loading="lazy" alt="">
+            <img src="<?php echo st_locate_file("images/pinterest.png"); ?>" loading="lazy" alt="">
           </a>
           <a id="st-linkedin-link" href="<?php echo "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=$current_url" ?>" class="st-cosell-socialshare-link w-inline-block">
             <img src="https://user-images.githubusercontent.com/4776769/164173350-af72f6b5-7926-42c6-abb4-c77b6db9da58.png" loading="lazy" alt="">
