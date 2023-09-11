@@ -166,7 +166,7 @@ add_action( 'template_include', function( $template ) {
 		return $template;
 	}
 
-	wp_enqueue_style( 'image-slider', ST__PLUGIN_URL . 'templates/js/imageslider.js' );
+	wp_enqueue_script( 'image-slider', ST__PLUGIN_URL . 'templates/js/imageslider.js' );
 	return st_locate_template('page-product.php');
 } );
 
