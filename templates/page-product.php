@@ -51,94 +51,24 @@ wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/j
 get_header();
 ?>
 <style>
-.single-product-image-main
-{
-	max-height: 300px;
+.single-product-image-main{max-height:300px}
+.single-product-image-list{display:flex;gap:10px;margin-top:15px;margin-bottom:15px}
+.xactive{border:1px solid var(--primary-color)}
+.single-product-image{width:calc(50% - 20px);display:flex;flex:1 1 calc(50% - 20px);aspect-ratio:1/1;flex-direction:column;margin-right:20px}
+.single-product-image-container{display:flex;aspect-ratio:1/1;clear:both;width:100%}
+img.xzoom{max-height:100%;width:100%;height:100% margin: auto;object-fit:contain}
+.outer-container{max-width:100%!important;margin:0 20px!important}
+.option-container{margin:0 10px;display:flex;flex-direction:column;flex:1 1 100%;min-width:calc(33% - 20px)}
+form.single-option{display:flex}
+select.product-option-select{width:100%;font-size:18px;height:32px}
+.options-container .single-option .custom-select{width:100%}
+.main-product-price{margin-top:0;margin-bottom:21px;font-size:32px;font-weight:500;font-family:sans-serif}
+h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
+@media screen and (max-width:775px){
+	.details-box{flex-direction:column}
+	.single-product-image{width:100%;flex:1 1 100%;margin-right:0}
+	.product-info{flex:1 1 100%;margin:0}
 }
-.single-product-image-list
-{
-	display: flex;
-	gap:10px;
-	margin-top:15px;
-	margin-bottom: 15px;
-}	
-.xactive
-{
-	border:1px solid var(--primary-color);
-}
-.single-product-image{
-	width:calc(50% - 20px);
-	display:flex;
-	flex: 1 1 calc(50% - 20px);
-	aspect-ratio: 1/1;
-	flex-direction: column;
-	margin-right: 20px;
-}
-.single-product-image-container
-{
-	width:100%;
-	display:flex;
-	aspect-ratio: 1/1;
-	clear: both;
-	width:100%;
-}
-img.xzoom {
-  max-height: 100%;
-  width:100%;
-  height:100%
-  margin: auto;
-  object-fit: contain;
-}
-	.outer-container {
-		max-width: 100% !important;
-		margin: 0px 20px !important;
-	}
-	.option-container{
-		margin:0px 10px;
-		display:flex;
-		flex-direction: column;
-		flex:1 1 100%;
-		min-width:calc(33% - 20px);
-	}
-	form.single-option{
-		display:flex;
-	}
-	select.product-option-select {
-		width: 100%;
-		font-size: 18px;
-		height: 32px;
-	}
-	.options-container .single-option .custom-select {
-		width: 100%;
-	}
-	.main-product-price {
-		margin-top: 0px;
-		margin-bottom: 21px;
-		font-size: 32px;
-		font-weight: 500;
-		font-family: sans-serif;
-	}
-	h1.main-product-title {
-		font-size: 30px;
-		margin: 0px 0px 20px;
-		line-height: 30px;
-	}
-
-	@media screen and (max-width: 775px) {
-		.details-box {
-			flex-direction:column;
-		}
-		.single-product-image{
-			width: 100%;
-			flex: 1 1 100%;
-			margin-right: 0px;
-		}
-		.product-info{
-			flex: 1 1 100%;
-			margin: 0px 0px 0px 0px;
-		}
-	}
-
 </style>
 <div id="primary" class="content-area bb-grid-cell">
 	<main id="main" class="site-main">
@@ -158,8 +88,10 @@ img.xzoom {
 										
 											<?php
 											echo "<a href='{$st_product->primaryImageSrc->imageSrc}'><img src='{$st_product->primaryImageSrc->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
-											foreach ($st_product->secondaryImageSrc as $img) {
-												echo "<a href='{$img->imageSrc}'><img src='{$img->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
+											if(isset($st_product->secondaryImageSrc)){
+												foreach ($st_product->secondaryImageSrc as $img) {
+													echo "<a href='{$img->imageSrc}'><img src='{$img->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
+												}
 											}
 											?>
 										</div>
@@ -242,7 +174,7 @@ img.xzoom {
 											<div class="tab_container product-details-content">
 												<h3 class="d_active tab_drawer_heading product-details-tab" rel="description">Description</h3>
 												<div id="description" class="tab_content am-product-description">
-													<p><?php echo nl2br($st_product->description) ?></p>
+													<p><?php echo $st_product->description ?></p>
 												</div>
 												<!-- #tab1 -->
 												<!-- <h3 class="tab_drawer_heading product-details-tab" rel="shipping">Shipping</h3>
@@ -358,6 +290,7 @@ img.xzoom {
 
 	var variantsJson = product.products[0].variants;
 	var productImages = {};
+	productImages[product.products[0].primaryImageSrc.id] = product.products[0].primaryImageSrc.imageSrc;
 	for (var i = 0; i < product.products[0].secondaryImageSrc.length; i++) {
 		productImages[product.products[0].secondaryImageSrc[i].id] = product.products[0].secondaryImageSrc[i].imageSrc;
 	}
