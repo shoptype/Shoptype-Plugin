@@ -291,8 +291,10 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 	var variantsJson = product.products[0].variants;
 	var productImages = {};
 	productImages[product.products[0].primaryImageSrc.id] = product.products[0].primaryImageSrc.imageSrc;
-	for (var i = 0; i < product.products[0].secondaryImageSrc.length; i++) {
-		productImages[product.products[0].secondaryImageSrc[i].id] = product.products[0].secondaryImageSrc[i].imageSrc;
+	if(product.products[0].secondaryImageSrc){
+		for (var i = 0; i < product.products[0].secondaryImageSrc.length; i++) {
+			productImages[product.products[0].secondaryImageSrc[i].id] = product.products[0].secondaryImageSrc[i].imageSrc;
+		}
 	}
 	var json = {};
 	var variantquntity;
