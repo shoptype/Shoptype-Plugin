@@ -517,7 +517,7 @@ if(isset($st_checkout)){
 				break;
 			case "success":
 				STUtils.setCookie("carts","",0)
-				window.location.href = "/checkout-success/"+st_checkoutId;
+				window.location.href = `/${st_settings.baseUrl}checkout-success/${st_checkoutId}`;
 				break;
 			default:
 				document.querySelector(".st-chkout-btn").style.display="";

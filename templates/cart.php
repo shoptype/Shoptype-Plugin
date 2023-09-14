@@ -155,7 +155,7 @@ get_header(null);
             window.location.href = st_redirect_uri;           
           }
         }else{
-          window.location.href = "/checkout/" + checkoutJson.checkout_id; 
+          window.location.href = `/${st_settings.baseUrl}checkout/` + checkoutJson.checkout_id; 
         }
     })
   }

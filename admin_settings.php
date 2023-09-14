@@ -160,6 +160,7 @@ class Shoptype_Settings {
         register_setting("shoptype_settings", "networkId");
         register_setting("shoptype_settings", "refCode");
         register_setting("shoptype_settings", "cartCountMatch");
+        register_setting("shoptype_settings", "shoptypeUrlBase");
         register_setting("shoptype_settings", "loginUrl");
         register_setting("shoptype_settings", "marketUrl");
         register_setting("shoptype_settings", "myAccountUrl");
@@ -178,6 +179,7 @@ class Shoptype_Settings {
         add_settings_field("networkId", "ST Network ID: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"networkId","name"=>"ST Network ID") );
         add_settings_field("refCode", "ST Referral Code: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"refCode","name"=>"ST Referral Code") );
         add_settings_field("cartCountMatch", "ST Cart Count Match String: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"cartCountMatch","name"=>"ST Cart Count Match") );
+        add_settings_field("shoptypeUrlBase", "ST Base URL Path: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"shoptypeUrlBase","name"=>"ST Login Page URL") );
         add_settings_field("loginUrl", "ST Login Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"loginUrl","name"=>"ST Login Page URL") );
         add_settings_field("marketUrl", "ST Market Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"marketUrl","name"=>"ST Market Page URL") );
         add_settings_field("myAccountUrl", "ST My Account Page URL: ", array( $this, 'field_callback' ), "shoptype_settings", "shoptype_settings", array("id"=>"myAccountUrl","name"=>"ST My Account Page URL") );
@@ -205,8 +207,6 @@ class Shoptype_Settings {
     }
 }
 
-
-
 new Shoptype_Settings();
 
 function shoptypeSettings() {
@@ -222,6 +222,8 @@ function shoptypeSettings() {
     $stRefcode = get_option('refCode');
     global $cartCountMatch;
     $cartCountMatch = get_option('cartCountMatch');
+    global $shoptypeUrlBase;
+    $shoptypeUrlBase = get_option('shoptypeUrlBase');    
     global $loginUrl;
     $loginUrl = get_option('loginUrl');
     global $marketUrl;
@@ -233,9 +235,9 @@ function shoptypeSettings() {
     global $stDefaultCurrency;
     $stDefaultCurrency = get_option('stDefaultCurrency');
     global $productUrl;
-    $productUrl = "/products/{{productId}}/?tid={{tid}}";
+    $productUrl = "/{$shoptypeUrlBase}products/{{productId}}/?tid={{tid}}";
     global $brandUrl;
-    $brandUrl = "/brands/{{brandId}}";
+    $brandUrl = "/{$shoptypeUrlBase}brands/{{brandId}}";
     global $stCurrency;
     $stCurrency["USD"] = "$";
     $stCurrency["INR"] = "₹";

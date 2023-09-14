@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:	
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:	  2.0.7
+Version:	  2.0.8
 Author:	 	  shoptype 
 Author URI:   https://www.shoptype.com
 License:	  GPL2
@@ -37,9 +37,9 @@ function shoptype_header(){
 	$siteName = get_bloginfo('name');
 
 	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js');
-	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js');
-	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js');
-	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css?1111');
+	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js?1');
+	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js?1');
+	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css');
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>"; 
 	?>
 	<div class="st-cosell-btn">
@@ -60,21 +60,22 @@ add_action( 'bp_enqueue_scripts', 'example_enqueue_script' );
 
 //Add Product Route
 add_action('init', function(){
-	add_rewrite_rule( 'products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[1]', 'top' );
-	add_rewrite_rule( 'shop/(.+)/products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[2]', 'top' );
-	add_rewrite_rule( 'shop/(.+)/cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[2]', 'top' );
-	add_rewrite_rule( 'shop/(.+)/checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[2]', 'top' );
-	add_rewrite_rule( 'shop/(.+)/checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[2]', 'top' );
-	add_rewrite_rule( 'shop/(.+)/cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[2]&shop_name=$matches[1]', 'top' );	
-	add_rewrite_rule( 'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
-	add_rewrite_rule( 'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
-	add_rewrite_rule( 'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
-	add_rewrite_rule( 'shop-wizard/(.+)[/]?$', 'index.php?stwizard=$matches[1]', 'top' );
-	add_rewrite_rule( 'shop/(.+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
-	add_rewrite_rule( 'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
-	add_rewrite_rule( 'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
-	add_rewrite_rule( 'checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
-	add_rewrite_rule( 'cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[1]', 'top' );
+	global $shoptypeUrlBase;
+	add_rewrite_rule( $shoptypeUrlBase.'products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[2]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[2]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[2]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[2]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[2]&shop_name=$matches[1]', 'top' );	
+	add_rewrite_rule( $shoptypeUrlBase.'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop-wizard/(.+)[/]?$', 'index.php?stwizard=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)[/]?$', 'index.php?shop=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'collections/(.+)[/]?$', 'index.php?collection=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[1]', 'top' );
 
 });
 
@@ -382,6 +383,7 @@ function awakenthemarket(){
 	global $stApiKey;
 	global $stPlatformId; 
 	global $cartCountMatch;
+	global $shoptypeUrlBase;
 	global $productUrl;
 	global $loginUrl;
 	global $myAccountUrl;?>
@@ -394,7 +396,8 @@ function awakenthemarket(){
 		'productUrl':'<?php echo $productUrl ?>',
 		'loginUrl':'<?php echo $loginUrl ?>',
 		'myAccountUrl':'<?php echo $myAccountUrl ?>',
-		'siteUrl' : '<?php echo get_option('siteurl'); ?>'
+		'siteUrl' : '<?php echo get_option('siteurl'); ?>',
+		'baseUrl' : '<?php echo $shoptypeUrlBase; ?>'
 	}
 
 	if(typeof STUtils !== 'undefined'){
@@ -419,6 +422,7 @@ function awakenthemarket(){
 		shoptype_UI.setProductUrl(st_settings.productUrl);
 		shoptype_UI.setLoginUrl(st_settings.loginUrl);
 		shoptype_UI.setPlatform(st_settings.platformId);
+		shoptype_UI.setCosellWidget(st_settings.baseUrl);
 		document.addEventListener("cartQuantityChanged", (e)=>{
 			var cartCounts = document.querySelectorAll(st_settings.cartCount);
 			if(cartCounts.length>0){

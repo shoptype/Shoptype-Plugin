@@ -11,6 +11,7 @@ global $stRefcode;
 global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
+global $shoptypeUrlBase;
 try {
 	
 	$vendorId = 0;
@@ -138,7 +139,7 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 										<div class="addToCart-container">
 											<div class="addButton-container">
 												<button id="add-to-cart-btn" class="btn btn-standard am-product-add-cart-btn" role="button" onclick="shoptype_UI.addToCart(this,false)" variantid="<?php echo $st_product->variants[0]->id ?>" variantName='<?php echo json_encode($st_product->variants[0]->variantNameValue) ?>' productid="<?php echo $st_product->id ?>" vendorid="<?php echo $st_product->catalogId ?>" quantityselect=".am-add-cart-quantity">add to cart</button>
-												<a id="goto-cart-btn" class="btn btn-standard am-product-add-cart-btn" href="/cart/main" style="display:none">
+												<a id="goto-cart-btn" class="btn btn-standard am-product-add-cart-btn" href="/<?php echo $shoptypeUrlBase; ?>cart/main" style="display:none">
 													Goto Cart
 												</a>
 											</div>

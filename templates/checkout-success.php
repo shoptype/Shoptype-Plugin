@@ -10,6 +10,7 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
+global $shoptypeUrlBase;
 global $stBackendUrl;
 $path = dirname(plugin_dir_url( __FILE__ ));
 wp_enqueue_style( 'cartCss', $path.'/css/st-cart.css' );
@@ -53,7 +54,7 @@ get_header(null);
 ?>
 	<h2 class="st-success-heading" id="chk_heading">Processing you Checkout!</h2>
 	<div class="st-success-txt" id="chk_txt">We are just checking we have everything in order this will just take a couple of seconds</div>
-	<div class="st-success-txt" id="chk_failed" style="display:none">You can try to complete this order by clicking <a href="<?php echo "/checkout/{$st_checkout->id}"; ?>">here</a></div>
+	<div class="st-success-txt" id="chk_failed" style="display:none">You can try to complete this order by clicking <a href="<?php echo "/{$shoptypeUrlBase}checkout/{$st_checkout->id}"; ?>">here</a></div>
 		<script type="text/javascript">
 			var chkCount = 0;
 			var chkoutId = "<?php echo $st_checkout->id; ?>";

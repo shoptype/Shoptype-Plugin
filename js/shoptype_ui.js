@@ -11,9 +11,14 @@ class ShoptypeUI{
 	constructor(){
 		this.currentUrl = new URL(window.location);
 		this.st_Wraper = document.createElement("div");
+		
+		this.setupUser();
+	}
+
+	setCosellWidget(baseUrl){
 		let st_loader = '<div class="st-loader-mask" id="st-loader-mask" style="display:none;"><img src="https://user-images.githubusercontent.com/4776769/172153004-febffb83-f0ed-46da-8d79-4be74aa70baf.gif" alt="" style="max-width: 20%;"></div>';
 
-		fetch("/cosell/new/").
+		fetch(`/${baseUrl}cosell/new/`).
 		then(response=>response.text()).
 		then(responseHtml=>{
 			this.st_Wraper.innerHTML = responseHtml+
@@ -23,9 +28,8 @@ class ShoptypeUI{
 			body.insertBefore(this.st_Wraper, body.firstChild);
 			this.loader = document.getElementById("st-loader-mask");
 		});
-		
-		this.setupUser();
 	}
+
 
 	setProductUrl(productUrl){
 		this.#productUrl = productUrl;
