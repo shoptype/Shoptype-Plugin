@@ -144,8 +144,7 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 												</a>
 											</div>
 										</div>
-
-										<?php 
+											<?php 
 											if(is_user_logged_in())
 											{
 												$user = wp_get_current_user();
@@ -157,59 +156,29 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 												$iscoseller=false;
 											}
 											if(get_option('manage_coseller')== 1 || $iscoseller || current_user_can( 'manage_options' )) 
-										{?>
-										<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="shoptype_UI.showCosell('<?php echo $st_product->id ?>')">Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?></button>
-
-												<?php } ?>
-												<!-- <div class="product-spec">
-											<h4>specs</h4>
-											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae commodi dolorem voluptate quisquam, quasi illo iste mollitia ex maiores facilis reprehenderit ipsa quod veritatis. Animi, eaque ipsa! Nihil, mollitia nisi?</p>
-										</div> -->
+											{?>
+												<button type="button" class="btn btn-standard cosell-btn am-cosell-btn" onclick="shoptype_UI.showCosell('<?php echo $st_product->id ?>')">
+													Cosell and earn upto <?php echo "$prodCurrency" . number_format($commission, 2) ?>
+												</button>
+											<?php 
+											} ?>
 										<div class="custom-tabs">
 											<ul class="tabs product-details-tabs">
 												<li class="product-details-tab active" rel="description">Description</li>
-												<!-- <li class="product-details-tab" rel="shipping">Shipping</li>
-												<li class="product-details-tab" rel="additional_information">Additional Information</li>
-												<li class="product-details-tab" rel="reviews">Reviews</li> -->
 											</ul>
 											<div class="tab_container product-details-content">
 												<h3 class="d_active tab_drawer_heading product-details-tab" rel="description">Description</h3>
 												<div id="description" class="tab_content am-product-description">
 													<p><?php echo $st_product->description ?></p>
 												</div>
-												<!-- #tab1 -->
-												<!-- <h3 class="tab_drawer_heading product-details-tab" rel="shipping">Shipping</h3>
-												<div id="shipping" class="tab_content am-product-description">
-													<p>Nunc dui velit, scelerisque eu placerat volutpat, dapibus eu nisi. Vivamus eleifend vestibulum odio non vulputate.</p>
-												</div> -->
-												<!-- #tab2 -->
-												<!-- <h3 class="tab_drawer_heading product-details-tab" rel="additional_information">Additional Information</h3>
-												<div id="additional_information" class="tab_content am-product-description">
-													<p>Nulla eleifend felis vitae velit tristique imperdiet. Etiam nec imperdiet elit. Pellentesque sem lorem, scelerisque sed facilisis sed, vestibulum sit amet eros.</p>
-												</div> -->
-												<!-- #tab3 -->
-												<!-- <h3 class="tab_drawer_heading product-details-tab" rel="reviews">Reviews</h3>
-												<div id="reviews" class="tab_content am-product-description">
-													<p>Integer ultrices lacus sit amet lorem viverra consequat. Vivamus lacinia interdum sapien non faucibus. Maecenas bibendum, lectus at ultrices viverra, elit magna egestas magna, a adipiscing mauris justo nec eros.</p>
-												</div> -->
-												<!-- #tab4 -->
 											</div>
 										</div>
-										
 									</div>
 									<!-- ends product details -->
 								</div>
 							</div>
 						</div>
 					</div>
-					<!-- ends product details section -->
-					<!-- product description section -->
-					<div class="row">
-						<div class="col-md-12">
-
-						</div>
-					</div>
-					<!-- ends product description section -->
 				</div>
 				<div>
 					<div>
@@ -239,15 +208,10 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 				</div>
 			</div>
 		</div>
-		<!-- End PDP Custom page -->
 	</main><!-- #main -->
 </div><!-- #primary -->
-
-<!-- PDP PAGE = PLUS/MINUS -->
 <script>
-
 	jQuery(function($) {
-
 		$(document).ready(function() {
 			//-- Click on QUANTITY
 			
@@ -283,12 +247,9 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 			});
 		});
 	});
-			
-
 </script>
 <script>
 	const product = <?php echo $resultProduct; ?>;
-
 	var variantsJson = product.products[0].variants;
 	var productImages = {};
 	productImages[product.products[0].primaryImageSrc.id] = product.products[0].primaryImageSrc.imageSrc;
