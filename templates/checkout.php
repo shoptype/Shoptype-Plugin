@@ -270,9 +270,11 @@ if(isset($st_checkout)){
 						<div id="st-chkout-product" class="st-chkout-product">
 							<div class="div-block-18">
 								<div class="st-chkout-product-title"><?php echo "{$product->name} - " ?>
-									<?php foreach($product->variant_name_value as $varKey=>$varValue){
-										echo "{$varKey}:{$varValue}, ";
-									} ?>
+									<?php if(!(count($product->variant_name_value)<=1 && reset($product->variant_name_value)=="Default Title")){ ?>
+										<?php foreach($product->variant_name_value as $varKey=>$varValue){
+											echo "{$varKey}:{$varValue}, ";
+										} ?>
+									<?php } ?>
 								<span class="st-chkout-product-qty"> x <?php echo $product->quantity ?></span></div>
 							</div>
 							<div class="st-chkout-product-tot"><?php echo $prodCurrency.number_format((float)($product->quantity*$product->price->amount), 2, '.', '')?></div>
