@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:	
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:	  2.0.8
+Version:	  2.1.1
 Author:	 	  shoptype 
 Author URI:   https://www.shoptype.com
 License:	  GPL2
@@ -546,54 +546,6 @@ function ST_logout() {
 	echo "Logout user";
 	wp_safe_redirect( home_url() );
 	exit();
-}
-
-function have_posts_override(){
-	global $addProductsInSearch;
-	if ( is_search() && $addProductsInSearch ) {
-		global $stPlatformId;
-		global $wp_query;
-		global $stBackendUrl;
-		$q = $wp_query->query_vars;
-		$searchTxt="";
-		foreach ((array)$q['search_terms'] as $term) {
-			$searchTxt .= "$term%20";
-		}
-		$url = "$stBackendUrl/platforms/$stPlatformId/products?count=20&text=$searchTxt";
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
-		curl_close($ch);
-
-		if( !empty( $result ) ) {
-			$st_products = json_decode($result);
-			if (is_array($st_products->products)) {
-				foreach ($st_products->products as $stProduct) {
-					$post = new stdClass();
-					$post->ID = $stProduct->id;
-					$post->post_author = 1;
-					$post->post_date = current_time( 'mysql' );
-					$post->post_date_gmt = current_time( 'mysql', 1 );
-					$post->post_title = $stProduct->title;
-					$post->post_content = $stProduct->description;
-					$post->post_status = 'publish';
-					$post->comment_status = 'closed';
-					$post->ping_status = 'closed';
-					$post->post_name = "products/{$stProduct->id}"; // append random number to avoid clash
-					$post->post_type = 'post';
-					$post->filter = 'raw';
-					$wp_post = new WP_Post( $post );
-					array_unshift($wp_query->posts, $wp_post); 
-				}
-			}
-		}
-	}
-}
-
-//add condition to not override admin pagination
-if (! is_admin() ) {
-	add_action( 'found_posts', 'have_posts_override' );
 }
 
 /**
