@@ -21,7 +21,7 @@ wp_enqueue_script('st-payment-handlers',$path."/js/shoptype-payment.js");
 wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
 wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
-get_header(null);
+get_header();
 
 if($checkoutId == "new"){
 	$productId = $_GET["productid"];
@@ -112,8 +112,26 @@ if($checkoutId == "new"){
 if(isset($st_checkout)){
 ?>
 	<script>var modalCheckout=false;</script>
+	<style>
+		.st-chkout-billing-fullname{margin-right:-10px;}
+		input.st-chkout-billing-fld-val::placeholder, select.st-chkout-billing-fld-val, label {font:14px sans-serif; opacity:0.8;}
+		input.st-chkout-billing-fld-val, select.st-chkout-billing-fld-val {font: 16px/50px sans-serif;background: #EEE;height: 51px;}
+		select.st-chkout-billing-fld-val {background-image: linear-gradient(45deg, transparent 50%, #FFF), linear-gradient(135deg, #FFF, transparent 50%), linear-gradient(to right, #000, #000);background-position: calc(100% - 25px) calc(1em + 3.5px), calc(100% - 10px) calc(1em + 3.5px), calc(100% - 5px) 5px;background-size: 15px 15px, 15px 15px, 40px 40px;background-repeat: no-repeat;}
+		.st-chkout-billing-title { background: #000; margin: 0px -20px 20px; text-align: center; color: #FFF; font: 23px sans-serif;}
+		.st-chkout-billing { border: solid 1px #eee; margin-right: 20px;}
+		select.st-chkout-shipping-select {border: solid 1px #aaa;}
+		.st-chkout-btn-txt, .stripe-pay-btn{color: #FFF !important;background: #000 !important;font: bold 24px sans-serif;}
+		.st-chkout-sum {font: 20px/30px sans-serif;}
+		form.stripe-payment-form span, form.stripe-payment-form input.field {font: 16px/40px sans-serif;color: #000;}
+		.st-chkout-main {margin-bottom:80px;}
+		div#payment-container-main { margin-top: 20px;}
+		.st-pay-title {width: 100%;}
+		.st-pay-title h2 {text-align: center;font: bold 28px sans-serif;background: #000;color: #fff;margin: 0px 0px 0px;padding: 10px 0px;}
+		.st-pay-options {background: #000;padding: 10px;display: flex;justify-content: center;}
+		.st-pay-options img {height: 40px;margin: 0px 5px;}
+	</style>
 	<div class="st-chkout-top">
-		<h1 class="st-chkout-title">Checkouts</h1>
+		<h1 class="st-chkout-title">Checkout</h1>
 		<div class="st-chkout-coupon" style="display:none;">
 			<div class="st-chkout-coupon-title">Have a coupon?</div>
 			<div class="st-chkout-coupon-code">Click here to enter your code</div>
@@ -121,130 +139,113 @@ if(isset($st_checkout)){
 	</div>
 	<div class="st-chkout-main">
 		<div class="st-chkout-billing">
-		<form id="shippingAddressForm">
-			<div class="st-chkout-billing-title">Shipping Details</div>
-			<div class="st-chkout-billing-fld st-chkout-billing-fullname">
-				<div class="st-chkout-billing-fname">
-					<div class="st-chkout-billing-fld-name">First Name *</div>
-					<input type="text" name="fname" class="st-chkout-billing-fld-val" placeholder='First Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->firstname;} ?>" onchange="updateAddress()" required>
+			<form id="shippingAddressForm">
+				<div class="st-chkout-billing-title">DELIVERY DETAILS</div>
+				<div class="st-chkout-billing-fld st-chkout-billing-fullname">
+					<div class="st-chkout-billing-fname">
+						<input type="text" name="fname" class="st-chkout-billing-fld-val" placeholder='First Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->firstname;} ?>" onchange="updateAddress()" required>
+					</div>
+					<div class="st-chkout-billing-fname">
+						<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
+					</div>
 				</div>
-				<div class="st-chkout-billing-fname">
-					<div class="st-chkout-billing-fld-name">Last Name *</div>
-					<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
+				<div class="st-chkout-billing-fld" style="display: none;">
+					<input type="text" name="lastName" class="st-chkout-billing-fld-val">
 				</div>
-			</div>
-			<div class="st-chkout-billing-fld" style="display: none;">
-				<div class="st-chkout-billing-fld-name">Last Name</div>
-				<input type="text" name="lastName" class="st-chkout-billing-fld-val">
-			</div>
-			<div class="st-chkout-billing-fld">
-<div class="st-chkout-billing-flds">
-	
-				
-				<div class="st-chkout-billing-fld-name">Street Address *</div>
-				<input type="text" name="address" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 1 *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->street1;} ?>"	required onchange="updateAddress()">
-</div>
-<div class="st-chkout-billing-flds">
-				<input type="text" name="address2" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 2' onchange="updateAddress()">
+				<div class="st-chkout-billing-fld  st-chkout-billing-fullname">
+					<div class="st-chkout-billing-fname">				
+						<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
+							 <option value="">Select Country</option>
+						</select>
+					</div>
 
-				</div>
-	
-			</div>
-			<div class="st-chkout-billing-fld">
-<div class="st-chkout-billing-flds">
-	
-				<div class="st-chkout-billing-fld-name">Town / City *</div>
-				<input type="text" name="city" class="st-chkout-billing-fld-val" placeholder='Town / City *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->city;} ?>"	required onchange="updateAddress()">
-</div><div class="st-chkout-billing-flds">
-<div class="st-chkout-billing-fld-name">ZIP Code/PIN Code *</div>
-				<input type="text" name="pincode" class="st-chkout-billing-fld-val" placeholder='ZIP Code/PIN Code *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->postalCode;} ?>"	required onchange="updateAddress()">
-			</div>	
-			</div>
-			<div class="st-chkout-billing-fld">
-<div class="st-chkout-billing-flds">				
-<div class="st-chkout-billing-fld-name">Country *</div>
-				
-					<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
-					 <option value="">Select Country</option>
-				</select>
-</div>
-
-<div class="st-chkout-billing-flds">
-				
-<div class="st-chkout-billing-fld-name">State *</div>
-				<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" placeholder='State *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->state;} ?>"	required onchange="updateAddress()">
-					 <option value="">Select state</option>
-				</select>
-	
+					<div class="st-chkout-billing-fname">
+						<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" placeholder='State *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->state;} ?>"	required onchange="updateAddress()">
+							 <option value="">Select state</option>
+						</select>
+					</div >
 				</div >
-			</div >
-						<div class="st-chkout-billing-fld">
-					
-							<div class="st-chkout-billing-flds"><div class="st-chkout-billing-fld-name">Phone</div>
-				<input type="text" name="phone" class="st-chkout-billing-fld-val" placeholder='Phone *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->phone;} ?>"	onchange="updateAddress()"></div>
-<div class="st-chkout-billing-flds">
-				<div class="st-chkout-billing-fld-name">Email Address *</div>
-
-				<input type="text" name="email" class="st-chkout-billing-fld-val" placeholder='Email Address *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->email;} ?>"	required onchange="updateAddress()">
-
+				<div class="st-chkout-billing-fld">
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="address" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 1 *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->street1;} ?>"	required onchange="updateAddress()">
+					</div>
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="address2" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 2' onchange="updateAddress()">
+					</div>
+				</div>
+				<div class="st-chkout-billing-fld">
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="city" class="st-chkout-billing-fld-val" placeholder='Town / City *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->city;} ?>"	required onchange="updateAddress()">
+					</div>
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="pincode" class="st-chkout-billing-fld-val" placeholder='ZIP Code/PIN Code *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->postalCode;} ?>"	required onchange="updateAddress()">
+					</div>	
 				</div>
 
-			</div>
-
-					</form>
+				<div class="st-chkout-billing-fld">
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="phone" class="st-chkout-billing-fld-val" placeholder='Phone *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->phone;} ?>"	onchange="updateAddress()">
+					</div>
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="email" class="st-chkout-billing-fld-val" placeholder='Email Address *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->email;} ?>"	required onchange="updateAddress()">
+					</div>
+				</div>
+			</form>
 		<div>
 			<input type="checkbox" id="billingDifferent" name="billingDifferent" value="true" onchange="billingSelectChanged()" <?php if(isset($st_checkout->billing_address)&&(!$st_checkout->is_shipping_billing)){echo "checked";} ?>>
   			<label for="vehicle1"> Billing address is different</label>
 		</div>
 		<form id="billingAddressForm" style="display:none;">
-			<div class="st-chkout-billing-title">Shipping Details</div>
-			<div class="st-chkout-billing-fld st-chkout-billing-fullname">
-				<div class="st-chkout-billing-fname">
-					<div class="st-chkout-billing-fld-name">First Name *</div>
-					<input type="text" name="fname" class="st-chkout-billing-fld-val" placeholder='First Name *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->firstname;} ?>" onchange="updateAddress()" required>
+				<div class="st-chkout-billing-title">BILLING DETAILS</div>
+				<div class="st-chkout-billing-fld st-chkout-billing-fullname">
+					<div class="st-chkout-billing-fname">
+						<input type="text" name="fname" class="st-chkout-billing-fld-val" placeholder='First Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->firstname;} ?>" onchange="updateAddress()" required>
+					</div>
+					<div class="st-chkout-billing-fname">
+						<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
+					</div>
 				</div>
-				<div class="st-chkout-billing-fname">
-					<div class="st-chkout-billing-fld-name">Last Name *</div>
-					<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->lastname;} ?>" onchange="updateAddress()" required>
+				<div class="st-chkout-billing-fld" style="display: none;">
+					<input type="text" name="lastName" class="st-chkout-billing-fld-val">
 				</div>
-			</div>
-			<div class="st-chkout-billing-fld" style="display: none;">
-				<div class="st-chkout-billing-fld-name">Last Name</div>
-				<input type="text" name="lastName" class="st-chkout-billing-fld-val">
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Street Address *</div>
-				<input type="text" name="address" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 1 *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->street1;} ?>"	required onchange="updateAddress()">
-				<input type="text" name="address2" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 2 *' onchange="updateAddress()">
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Town / City *</div>
-				<input type="text" name="city" class="st-chkout-billing-fld-val" placeholder='Town / City *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->city;} ?>"	required onchange="updateAddress()">
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">State *</div>
-				<select name="state" class="st-chkout-billing-fld-val"  placeholder='State *' id="st-chkout-state" value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->state;} ?>"	required onchange="updateAddress()">
-					 <option value="">Select state</option>
-				</select>
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Country *</div>
-				<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->country;} ?>"	required onchange="updateAddress()">
-					 <option value="">Select Country</option>
-				</select>
-			</div>			
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">ZIP Code/PIN Code *</div>
-				<input type="text" name="pincode" class="st-chkout-billing-fld-val"placeholder='ZIP Code/PIN Code *'  value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->postalCode;} ?>"	required onchange="updateAddress()">
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Phone</div>
-				<input type="text" name="phone" class="st-chkout-billing-fld-val" placeholder='Phone *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->phone;} ?>"	onchange="updateAddress()">
-			</div>
-			<div class="st-chkout-billing-fld">
-				<div class="st-chkout-billing-fld-name">Email Address *</div>
-				<input type="text" name="email" class="st-chkout-billing-fld-val" placeholder='Email Address *' value="<?php if(isset($st_checkout->billing_address)){echo $st_checkout->billing_address->email;} ?>"	required onchange="updateAddress()">
-			</div>
+				<div class="st-chkout-billing-fld  st-chkout-billing-fullname">
+					<div class="st-chkout-billing-fname">				
+						<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
+							 <option value="">Select Country</option>
+						</select>
+					</div>
+
+					<div class="st-chkout-billing-fname">
+						<select name="state" class="st-chkout-billing-fld-val" id="st-chkout-state" placeholder='State *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->state;} ?>"	required onchange="updateAddress()">
+							 <option value="">Select state</option>
+						</select>
+					</div >
+				</div >
+				<div class="st-chkout-billing-fld">
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="address" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 1 *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->street1;} ?>"	required onchange="updateAddress()">
+					</div>
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="address2" class="st-chkout-billing-fld-val" placeholder='Street Address: Line 2' onchange="updateAddress()">
+					</div>
+				</div>
+				<div class="st-chkout-billing-fld">
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="city" class="st-chkout-billing-fld-val" placeholder='Town / City *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->city;} ?>"	required onchange="updateAddress()">
+					</div>
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="pincode" class="st-chkout-billing-fld-val" placeholder='ZIP Code/PIN Code *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->postalCode;} ?>"	required onchange="updateAddress()">
+					</div>	
+				</div>
+
+				<div class="st-chkout-billing-fld">
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="phone" class="st-chkout-billing-fld-val" placeholder='Phone *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->phone;} ?>"	onchange="updateAddress()">
+					</div>
+					<div class="st-chkout-billing-flds">
+						<input type="text" name="email" class="st-chkout-billing-fld-val" placeholder='Email Address *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->email;} ?>"	required onchange="updateAddress()">
+					</div>
+				</div>
 		</form>
 		</div>
 
@@ -270,11 +271,9 @@ if(isset($st_checkout)){
 						<div id="st-chkout-product" class="st-chkout-product">
 							<div class="div-block-18">
 								<div class="st-chkout-product-title"><?php echo "{$product->name} - " ?>
-									<?php if(!(count($product->variant_name_value)<=1 && reset($product->variant_name_value)=="Default Title")){ ?>
-										<?php foreach($product->variant_name_value as $varKey=>$varValue){
-											echo "{$varKey}:{$varValue}, ";
-										} ?>
-									<?php } ?>
+									<?php foreach($product->variant_name_value as $varKey=>$varValue){
+										echo "{$varKey}:{$varValue}, ";
+									} ?>
 								<span class="st-chkout-product-qty"> x <?php echo $product->quantity ?></span></div>
 							</div>
 							<div class="st-chkout-product-tot"><?php echo $prodCurrency.number_format((float)($product->quantity*$product->price->amount), 2, '.', '')?></div>
@@ -305,7 +304,18 @@ if(isset($st_checkout)){
 					<div class="st-chkout-tot-cost"><?php echo $prodCurrency.number_format((float)$st_checkout->total->amount, 2, '.', '') ?></div>
 				</div>
 			</div>
-			<div id="payment-container"></div>
+			<div id="payment-container-main" style="display:none">
+				<div class="st-pay-title"><h2>Payment Info</h2></div>
+				<div class="st-pay-options">
+					<img src="<?php echo st_locate_file("images/Visa.png"); ?>" alt="Visa" class="st-pay-option" />
+					<img src="<?php echo st_locate_file("images/Mastercard.png"); ?>" alt="Master" class="st-pay-option" />
+					<img src="<?php echo st_locate_file("images/Amex.png"); ?>" alt="Amex" class="st-pay-option" />
+					<img src="<?php echo st_locate_file("images/Stripe.png"); ?>" alt="Amex" class="st-pay-option" />
+				</div>
+				<div id="payment-container">
+				</div>	
+			</div>
+
 			<div class="st-chkout-btn" onclick="showPayment()">
 				<div class="st-chkout-btn-txt">Pay Now</div>
 			</div>
@@ -501,6 +511,7 @@ if(isset($st_checkout)){
 				initSTPayment(st_checkoutId, STUtils.backendUrl, st_platform.apiKey, onPaymentReturn);
 				document.querySelector(".st-chkout-btn").style.display="none";
 				document.querySelector("#payment-container").style.display="";
+				document.querySelector("#payment-container-main").style.display="";
 			}catch(e){
 				ShoptypeUI.showError(e.message);
 			}
@@ -512,18 +523,21 @@ if(isset($st_checkout)){
 				ShoptypeUI.showError(payload.message);
 				document.querySelector(".st-chkout-btn").style.display="";
 				document.querySelector("#payment-container").style.display="none";
+				document.querySelector("#payment-container-main").style.display="none";
 				break;
 			case "closed":
 				document.querySelector(".st-chkout-btn").style.display="";
 				document.querySelector("#payment-container").style.display="none";
+				document.querySelector("#payment-container-main").style.display="none";
 				break;
 			case "success":
 				STUtils.setCookie("carts","",0)
-				window.location.href = `/${st_settings.baseUrl}checkout-success/${st_checkoutId}`;
+				window.location.href = `/${st_settings.baseUrl}checkout-success/`+st_checkoutId;
 				break;
 			default:
 				document.querySelector(".st-chkout-btn").style.display="";
 				document.querySelector("#payment-container").style.display="none";
+				document.querySelector("#payment-container-main").style.display="none";
 				break;
 			}
 		}
