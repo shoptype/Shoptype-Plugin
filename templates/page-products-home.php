@@ -16,7 +16,6 @@ get_header();
 ?>
 <script>
 	let options={};
-	let myshop_offset=10;
 	let allLoaded = false;
 	let productsLoading = false;
 	let st_current_page=1;
@@ -38,20 +37,8 @@ get_header();
 				delete options[prop];
 			}	
 		}
-		var sortBySelect = document.getElementById("sort-by");
-		var option = sortBySelect.options[sortBySelect.options.selectedIndex];
-		options["sortBy"]=option.getAttribute("sortBy");
-		filter_str += "sortBy=" + options["sortBy"] + "&";
-		options["orderBy"]=option.getAttribute("orderBy");
-		filter_str += "orderBy=" + options["orderBy"] + "&";
-		st_current_page = page+1;
-		filter_str += "pg=" + st_current_page;
-		myshop_offset = page * st_count
-		if (history.pushState) {
-			var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+filter_str;
-			window.history.pushState({path:newurl},'',newurl);
-		}
-		searchProducts(true);
+
+		searchProducts(page, filter_str);
 	}
 	
 	function clearFilters(){
@@ -73,25 +60,36 @@ get_header();
 		return false;
 	}
 	
-	function searchProducts(remove=true) {
+	function searchProducts(page=0, filter_str) {
 		if(productsLoading){return;}
 		let productTemplate = document.getElementById("st-product-select-template");
 		let productsContainer = document.getElementById("st-product-search-results");
-		if(remove){
-			removeChildren(productsContainer,productTemplate);
-			allLoaded = false;
-		}
-		if(allLoaded){return;}
+		removeChildren(productsContainer,productTemplate);
 		productsLoading = true;
 		//document.querySelector(".st-button-div button").disabled = true;
+		var sortBySelect = document.getElementById("sort-by");
+		var option = sortBySelect.options[sortBySelect.options.selectedIndex];
+		options["sortBy"]=option.getAttribute("sortBy");
+		filter_str += "sortBy=" + options["sortBy"] + "&";
+		options["orderBy"]=option.getAttribute("orderBy");
+		filter_str += "orderBy=" + options["orderBy"] + "&";
+		var search_text = document.getElementById('st-search-box').value;
+		if(search_text!=""){
+			filter_str += "text=" + search_text + "&";
+		}
+		st_current_page = page+1;
+		filter_str += "pg=" + st_current_page;
+		if (history.pushState) {
+			var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+filter_str;
+			window.history.pushState({path:newurl},'',newurl);
+		}
 		options['text'] = document.getElementById('st-search-box').value;
 		options['imgSize'] = "600x0";
-		options['offset'] = myshop_offset;
+		options['offset'] = page * st_count;
 		options['count'] = <?php echo $st_count; ?>;
 		var am_pages = document.getElementById("am-pages");
 		removeChildren(am_pages,null);
 		fetchProducts(options, productsContainer, productTemplate,(x)=>{resetPageCount(x)});
-		myshop_offset+=st_count;
 	}
 	
 	function resetPageCount(productsList){
@@ -152,7 +150,7 @@ get_header();
 select#sort-by{height:40px}
 ul.st-pages{margin:10px 0 20px}
 .st-pages il a{padding:9px;background:#eee;margin:2px 3px}
-.products-main {display: flex;min-height: calc(100vw - 300px);}
+.products-main {display: flex;min-height: calc(100vw - 400px);}
 .st-pages il a.selected-page {background: #333;color: #fff;}
 @media screen and (max-width:767px){
 	div#filterContainer{position:fixed;left:0;top:0;width:100vw;height:100vh;background:#ffffffa0;border-radius:0;max-height:100vh;margin-left:0;z-index:999}
@@ -166,8 +164,8 @@ ul.st-pages{margin:10px 0 20px}
 
 <div class="all-products">
 	<div class="st-myshop-search">
-		<input class="st-myshop-search-box" id="st-search-box" name="Search" >
-		<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo st_locate_file("images/search.svg") ?>" loading="lazy" alt="" class="st-product-search-img"></div>
+		<input class="st-myshop-search-box" id="st-search-box" name="Search" value="<?php echo $_GET['text']; ?>" >
+		<div class="st-product-search-title" onclick="filterProducts(0)"><img src="<?php echo st_locate_file("images/search.svg") ?>" loading="lazy" alt="" class="st-product-search-img"></div>
 	</div>
 	<div class="filter-menu-div">
 		<div class="st-filter-btn" onclick="toggleFilter()"><div>Filter </div><img src="<?php echo st_locate_file("images/Filter-Icon.png") ?>" loading="lazy" alt="" class="st-filter-img"></div>
