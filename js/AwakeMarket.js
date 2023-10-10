@@ -33,6 +33,10 @@ function awakenTheMarket(){
 
 function populateProducts(){
 	let productLists = document.getElementsByClassName('products-container');
+	let autoLoad = productLists.getAttribute("autoload");
+
+	if(autoLoad=="false"){return;}
+
 	for (var i = 0; i < productLists.length; i++) {
 		offset = 0;
 		am_loading=false;
@@ -271,7 +275,7 @@ function updateBrand(brand){
 
 }
 
-function fetchProducts(options, productsContainer, productTemplate){
+function fetchProducts(options, productsContainer, productTemplate, callback){
 	st_platform.products(options).then(productsJson=>{
 		if(!productsJson.products){
 			var amProductsLoadFailed = new CustomEvent("amProductsLoadFailed", {'container': productsContainer});
@@ -285,6 +289,7 @@ function fetchProducts(options, productsContainer, productTemplate){
 			productsContainer.appendChild(newProduct);
 		}
 		am_loading = false;
+		if (callback){callback(productsJson);}
 		var amProductsLoaded = new CustomEvent("amProductsLoaded", {'container': productsContainer});
 		document.dispatchEvent(amProductsLoaded);
 	})
