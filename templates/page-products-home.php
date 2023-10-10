@@ -240,7 +240,7 @@ ul.st-pages{margin:10px 0 20px}
 					foreach($_GET as $key => $value){
 					  $url_params = $url_params . "&" . $key . "=" . $value;
 					}
-					$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/products?offset={$offset}&count={$st_count}{$url_params}");
+					$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/products?imgSize=600x0&offset={$offset}&count={$st_count}{$url_params}");
 					$resultProduct     = wp_remote_retrieve_body( $response );
 					$pluginUrl = plugin_dir_url(__FILE__);
 					$total_pages = 0;

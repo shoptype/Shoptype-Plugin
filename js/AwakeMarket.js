@@ -22,22 +22,23 @@ function awakenTheMarket(){
 		initMarket();
 		populateProducts();
 		populateBrands();
+		am_market_loaded = true;
 	}else{
 		document.addEventListener("ShoptypeUILoaded", ()=>{
 			initMarket();
 			populateProducts();
 			populateBrands();
+			am_market_loaded = true;
 		});
 	}
 }
 
 function populateProducts(){
 	let productLists = document.getElementsByClassName('products-container');
-	let autoLoad = productLists.getAttribute("autoload");
-
-	if(autoLoad=="false"){return;}
 
 	for (var i = 0; i < productLists.length; i++) {
+		var autoLoad = productLists[i].getAttribute("autoload");
+		if(autoLoad=="false"){continue;}
 		offset = 0;
 		am_loading=false;
 		addProducts(productLists[i]);
