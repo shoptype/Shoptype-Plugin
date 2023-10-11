@@ -152,9 +152,11 @@ ul.st-pages{margin:10px 0 20px}
 .st-pages il a{padding:9px;background:#eee;margin:2px 3px}
 .products-main {display: flex;min-height: calc(100vw - 400px);}
 .st-pages il a.selected-page {background: #333;color: #fff;}
+.single-product, .single-brand {max-width:calc(25% - 6px);min-width:300px;}
 @media screen and (max-width:767px){
 	div#filterContainer{position:fixed;left:0;top:0;width:100vw;height:100vh;background:#ffffffa0;border-radius:0;max-height:100vh;margin-left:0;z-index:999}
 	div#st-filter{margin-left:auto;margin-right:0}
+	.single-product, .single-brand {max-width:calc(100% - 20px);min-width:300px;}
 }
 
 
