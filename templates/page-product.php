@@ -297,11 +297,13 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 						productimage.src(imagesrc);
 					}
 				}
-				var cosellBtn = document.querySelector(".am-cosell-btn");
-				cosellBtn.innerHTML = cosellBtn.innerHTML.replace(/(\d*\.)?\d+/g,productCommission.toFixed(2));
 				addtocartbtn.setAttribute("variantid", variantsJson[key]['id']);
 				addtocartbtn.setAttribute("variantname", JSON.stringify(variantsJson[key]['variantNameValue']));
 				document.getElementById("productprice").innerHTML = productprice;
+				var cosellBtn = document.querySelector(".am-cosell-btn");
+				if(cosellBtn){
+					cosellBtn.innerHTML = cosellBtn.innerHTML.replace(/(\d*\.)?\d+/g,productCommission.toFixed(2));
+				}
 			}
 		}
 		if(!variantSelected){
