@@ -37,9 +37,11 @@ function shoptype_header(){
 	$siteName = get_bloginfo('name');
 
 	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js');
-	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js?1');
-	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js?1');
+	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js');
+	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js');
 	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css');
+	wp_enqueue_style( 'awake-prod-style', ST__PLUGIN_URL . 'css/awake-prod-style.css' );
+	wp_enqueue_style( 'awake-prod-media-style', ST__PLUGIN_URL . 'css/awake-prod-media-style.css' );
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>"; 
 	?>
 	<div class="st-cosell-btn">
@@ -315,13 +317,6 @@ function redirect_to_login($temp){
 	wp_redirect( "{$loginUrl}?redirectUrl=" . urlencode($current_url) . "&$temp", 302 );
     exit();
 }
-
-//Enqueue Product and brand page css
-function theme_scripts() {
-	wp_enqueue_style( 'awake-prod-style', ST__PLUGIN_URL . 'css/awake-prod-style.css?1' );
-	wp_enqueue_style( 'awake-prod-media-style', ST__PLUGIN_URL . 'css/awake-prod-media-style.css' );
-}
-add_action( 'wp_enqueue_scripts', 'theme_scripts' );
 
 //Add Custom Var to Groups
 add_action( 'bp_groups_admin_meta_boxes', 'bpgcp_add_admin_metabox' );
