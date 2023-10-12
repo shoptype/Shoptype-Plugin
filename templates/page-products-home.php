@@ -147,7 +147,7 @@ get_header();
 .all-products{max-width:1240px;margin:auto}
 .filter-menu-div{margin:9px;display:flex;justify-content:space-between}
 .st-sort-div{display:flex;font-size:18px;align-items:center}
-select#sort-by{height:40px}
+select#sort-by{height:40px;width: 130px;}
 ul.st-pages{margin:10px 0 20px}
 .st-pages il a{padding:9px;background:#eee;margin:2px 3px}
 .products-main {display: flex;min-height: calc(100vw - 400px);}
