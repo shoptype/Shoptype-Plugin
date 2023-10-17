@@ -241,6 +241,7 @@ function shoptypeSettings() {
     global $stCurrency;
     $stCurrency["USD"] = "$";
     $stCurrency["INR"] = "₹";
+    $stCurrency["CAD"] = "C$";
     global $productsInGroup;
     $productsInGroup = get_option('productsInGroup');
     global $restrict_myshop;
