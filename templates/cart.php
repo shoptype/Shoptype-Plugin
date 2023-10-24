@@ -51,7 +51,7 @@ get_header(null);
               <div class="st-cart-product-sum">
                 <h2 class="st-cart-product-title"><?php echo $value->name ?></h2>
                 <div>
-                  <?php if(!(count($value->variant_name_value)<=1 && reset($value->variant_name_value)=="Default Title")){ ?>
+                  <?php if(!(count((array)$value->variant_name_value)<=1 && reset($value->variant_name_value)=="Default Title")){ ?>
                     <?php foreach($value->variant_name_value as $varKey=>$varValue): ?>
                       <div id="st-cart-product-var" class="st-cart-product-var">
                         <div class="st-cart-product-var-title"><?php echo $varKey ?>:</div>

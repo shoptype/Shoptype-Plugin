@@ -116,7 +116,7 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 																		<div class="form-group">
 																			<select name="<?php echo $optionName->name ?>" id="<?php echo $optionName->name ?>" class="form-control product-option-select" onchange="variantChanged()">
 																				<?php foreach ($optionName->values as $optionValue) {
-																					echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
+																					echo '<option value="' . htmlspecialchars($optionValue) . '">' . $optionValue . '</option>';
 																				}
 																				?>
 																			</select>
