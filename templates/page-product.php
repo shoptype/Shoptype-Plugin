@@ -132,7 +132,7 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 											<div>Quantity : </div>
 											<div>
 												<div class="btn-minus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)<1?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)-1">-</div>
-												<input class="product-quantity am-add-cart-quantity" type="number" id="quantity" name="quantity" value="1" max=""/>
+												<input class="product-quantity am-add-cart-quantity" type="number" id="quantity" name="quantity" value="1" max="<?php echo $st_product->variants[0]->quantity ?>"/>
 												<div class="btn-plus" onclick="document.querySelector('#quantity').value=parseInt(document.querySelector('#quantity').value)>(document.getElementById('quantity').max)?parseInt(document.querySelector('#quantity').value):parseInt(document.querySelector('#quantity').value)+1">+</div>
 											</div>
 										</div>
