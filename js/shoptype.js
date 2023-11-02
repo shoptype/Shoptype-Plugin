@@ -366,7 +366,7 @@ class STUser {
           var endpoint = {
             resource: `/invites`,
             header: {'authorization':this.#token},
-            body:{},
+            body:{"type": "referrer"},
             method: 'post' 
           };
           return endpoint;
