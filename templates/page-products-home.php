@@ -32,7 +32,9 @@ get_header();
 		for (const prop in selected) {
 			if(selected[prop]!=""){
 				options[prop] = selected[prop];
-				filter_str += prop + "=" + selected[prop] + "&";
+				if(prop != "text"){
+					filter_str += prop + "=" + selected[prop] + "&";
+				}
 			}else{
 				delete options[prop];
 			}	
@@ -73,9 +75,12 @@ get_header();
 		filter_str += "sortBy=" + options["sortBy"] + "&";
 		options["orderBy"]=option.getAttribute("orderBy");
 		filter_str += "orderBy=" + options["orderBy"] + "&";
-		var search_text = document.getElementById('st-search-box').value;
-		if(search_text!=""){
-			filter_str += "text=" + search_text + "&";
+		var search_elem = document.getElementById('st-search-box');
+		if(options["text"]){
+			search_elem.value = options["text"].replaceAll(","," ").trim();
+		}
+		if(search_elem.value !=""){
+			filter_str += "text=" + search_elem.value + "&";
 		}
 		st_current_page = page+1;
 		filter_str += "pg=" + st_current_page;
@@ -148,8 +153,9 @@ get_header();
 .filter-menu-div{margin:9px;display:flex;justify-content:space-between}
 .st-sort-div{display:flex;font-size:18px;align-items:center}
 select#sort-by{height:40px;width: 130px;}
-ul.st-pages{margin:10px 0 20px}
-.st-pages il a{padding:9px;background:#eee;margin:2px 3px}
+ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
+.st-pages il {height: 30px;margin-bottom: 15px;width: 40px;}
+.st-pages il a{padding:9px 0px;background:#eee;margin:2px 3px;display: flex; width: 36px;justify-content: center;}
 .products-main {display: flex;min-height: calc(100vw - 400px);}
 .st-pages il a.selected-page {background: #333;color: #fff;}
 .single-product, .single-brand {max-width:calc(25% - 6px);min-width:300px;}
@@ -158,8 +164,6 @@ ul.st-pages{margin:10px 0 20px}
 	div#st-filter{margin-left:auto;margin-right:0}
 	.single-product, .single-brand {max-width:calc(100% - 20px);min-width:300px;}
 }
-
-
 </style>
 <?php the_content(); ?>
 <div class="products-main-container">
@@ -216,7 +220,7 @@ ul.st-pages{margin:10px 0 20px}
 													$checked = "checked";
 												}
 											 ?>
-											<input class="filter-checkbox-item" type="<?php echo $inputType ?>" id="<?php echo "{$filter->key}-{$filterValue->value}" ?>" name="<?php echo $filter->key ?>" value="<?php echo $filterValue->value ?>" <?php echo $checked; ?>  onchange="filterProducts()">
+											<input class="filter-checkbox-item" type="<?php echo $inputType ?>" id="<?php echo htmlentities("{$filter->key}-{$filterValue->value}"); ?>" name="<?php echo $filter->key ?>" value="<?php echo htmlentities($filterValue->value) ?>" <?php echo $checked; ?>  onchange="filterProducts()">
 											<label for="<?php echo "{$filter->key}-{$filterValue->value}" ?>"><?php echo $filterValue->name ?></label>
 										</div>
 									<?php } ?>
