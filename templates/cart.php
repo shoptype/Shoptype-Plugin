@@ -113,6 +113,7 @@ get_header(null);
     shoptype_UI.stShowLoader();
     st_platform.updateCart(productId, variantId, variantName, quantity)
       .then(cartJson => {
+        shoptype_UI.stHideLoader();
         if(quantity==0){
           qtyInput.parentElement.parentElement.remove();
         }else{
@@ -140,25 +141,28 @@ get_header(null);
   function checkout(){
     shoptype_UI.stShowLoader();
     st_platform.createCheckout((checkoutJson)=>{
-      if(checkoutJson.message){
-          shoptype_UI.stHideLoader();
-          ShoptypeUI.showError(checkoutJson.message);
-        }else if(checkout.external_url){
-          let childWindow = null;
-          let st_redirect_uri = checkout.redirect_uri;
-          if(st_hostDomain && st_hostDomain!=""){
-            let st_checkoutUrl = new URL(st_redirect_uri);
-            st_redirect_uri = st_checkoutUrl.href.replace(st_checkoutUrl.host,st_hostDomain)
-          }
-
-          if(stCheckoutType == "newWindow"){
-            childWindow = window.open(st_redirect_uri);
-          }else{
-            window.location.href = st_redirect_uri;           
-          }
-        }else{
-          window.location.href = `/${st_settings.baseUrl}checkout/` + checkoutJson.checkout_id; 
+      if(checkoutJson.message || (!checkoutJson.checkout_id)){
+        shoptype_UI.stHideLoader();
+        if(!checkoutJson.message){
+          checkoutJson.message="Oops! we are unable to create the checkout at the moment";
         }
+        ShoptypeUI.showError(checkoutJson.message);
+      }else if(checkout.external_url){
+        let childWindow = null;
+        let st_redirect_uri = checkout.redirect_uri;
+        if(st_hostDomain && st_hostDomain!=""){
+          let st_checkoutUrl = new URL(st_redirect_uri);
+          st_redirect_uri = st_checkoutUrl.href.replace(st_checkoutUrl.host,st_hostDomain)
+        }
+
+        if(stCheckoutType == "newWindow"){
+          childWindow = window.open(st_redirect_uri);
+        }else{
+          window.location.href = st_redirect_uri;           
+        }
+      }else{
+        window.location.href = "/checkout/" + checkoutJson.checkout_id; 
+      }
     })
   }
   function removeProduct(removeBtn){
