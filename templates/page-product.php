@@ -107,7 +107,7 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 												<form method="post" class="single-option" id="varientform">
 													<?php if (count($st_product->options) > 0) {
 														foreach ($st_product->options as $optionName) {
-															if ($optionName->name != 'title') { ?>
+															if (($optionName->name != 'title')||(count($optionName->values)>1)||($optionName->values[0]!="Default Title")) { ?>
 																<div class="option-container">
 																	<div class="product-option-text">
 																		<h4> <?php echo "$optionName->name "; ?></h4>
