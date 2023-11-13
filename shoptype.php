@@ -465,6 +465,9 @@ function shoptype_login(){
 		$token = $_GET['token'];
 		if ( empty($token)) {return;}
 	}else{
+		if (!is_user_logged_in()) {
+			setcookie( "stToken", "", 0 );
+		}	
 		return;
 	}
 	global $stBackendUrl;
