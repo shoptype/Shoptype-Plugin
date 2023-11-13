@@ -10,7 +10,7 @@
 .single-product,
 .single-brand {
   box-sizing: border-box;
-  flex: 1 1 calc(25% - 8px);
+  flex: 0 1 calc(25% - 8px);
   background-color: white;
   margin: 3px;
   border-radius: 3px;
