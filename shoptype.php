@@ -500,13 +500,16 @@ function shoptype_login(){
 		if(count($parts) > 1) {
 			$lastname = array_pop($parts);
 			$firstname = implode(" ", $parts);
+			$new_user_name = substr($firstname, 0, 1) . "." . $lastname;
 		}
 		else{
 			$firstname = $name;
 			$lastname = " ";
+			$new_user_name = $firstname;
 		}
+		$new_user_name = get_unique_user_name($new_user_name);
 		$user_id = wp_insert_user( array(
-			'user_login' => $st_user->email,
+			'user_login' => $new_user_name,
 			'user_pass' => $token,
 			'user_email' => $st_user->email,
 			'first_name' => $firstname,
@@ -524,6 +527,14 @@ function shoptype_login(){
 		do_action( 'wp_login', $wp_user->user_login, $wp_user );
 	}
 };
+
+function get_unique_user_name($user_name, $sufix=""){
+	if(username_exists($user_name.$sufix)){
+		return get_unique_user_name($user_name, "_".rand(10,9999));
+	}else{
+		return $user_name.$sufix;
+	}
+}
 
 //Redirect users to home after logout
 add_action('wp_logout','ST_redirect_after_logout');
