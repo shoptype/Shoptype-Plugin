@@ -107,8 +107,10 @@ class ShoptypeUI{
 	}
 
 	updateUrlTid(){
-		var newUrl = ShoptypeUI.replaceUrlParam(window.location.href, "tid", this.#userTId);
-		window.history.replaceState({}, '', newUrl);
+		if(this.#userTId!=null && this.#userTId!=""){
+			var newUrl = ShoptypeUI.replaceUrlParam(window.location.href, "tid", this.#userTId);
+			window.history.replaceState({}, '', newUrl);
+		}
 	}
 
 	sendViewEvent(platformId){
@@ -533,15 +535,21 @@ class STCheckout{
 			let countryField = document.getElementById("st-chkout-country");
 			let selectedCntry =	countryField.getAttribute("value");
 			let selectedVal = null;
+			let usOption = null;
 			for (var i = 0; i < countriesJson.data.length; i++) {
 				var option = document.createElement("option");
 				option.text = countriesJson.data[i].name;
 				option.value = countriesJson.data[i].iso2;
+				if(countriesJson.data[i].iso2 == "US"){
+					usOption = option;
+				}
 				if(selectedCntry==countriesJson.data[i].name){
 					option.setAttribute("selected","");
 				}
 				countryField.add(option);
 			}
+			countryField.removeChild(usOption);
+			countryField.insertBefore(usOption, countryField.options[1]);
 			countryField.addEventListener('change', () => {
 				if(countryField.value && countryField.value != ""){
 					STUtils.states(countryField.value)

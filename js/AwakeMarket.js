@@ -381,7 +381,14 @@ function createProduct(productTemplate, product){
 	}	
 	let productLink = newProduct.querySelector(".am-product-link");
 	if(productLink){
-		productLink.href = productPage.replace("{{productId}}", product.id).replace("{{tid}}", product.tid??"");
+		var thisProductLink = productPage.replace("{{productId}}", product.id);
+		if(product.tid!=null && product.tid!=""){
+			thisProductLink = thisProductLink.replace("{{tid}}", product.tid);
+		}else{
+			thisProductLink = thisProductLink.replace("tid={{tid}}", "");
+			thisProductLink = thisProductLink.replace(/\?+$/g, '');;
+		}
+		productLink.href = thisProductLink;
 	}
 	return newProduct;
 }
