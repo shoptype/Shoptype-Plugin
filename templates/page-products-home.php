@@ -8,6 +8,8 @@ global $stCurrency;
 global $marketUrl;
 global $productUrl;
 
+$trimmed_productUrl = str_replace("tid={{tid}}", $productUrl);
+$trimmed_productUrl = rtrim($trimmed_productUrl,"?");
 $pg_str = $_GET['pg'];
 $pg = (int)$pg_str;
 $st_count = 20;
@@ -297,7 +299,7 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 
 						?>
 						<div class="product-container single-product" id="st-product-select-template">
-							<a href="<?php echo str_replace("{{productId}}",$product->id, $productUrl) ?>" class="am-product-link">
+							<a href="<?php echo str_replace("{{productId}}",$product->id, $trimmed_productUrl) ?>" class="am-product-link">
 								<div class="product-image">
 									<div class="am-product-img-div">
 										<?php if($soldout){ ?>
