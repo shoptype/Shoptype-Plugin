@@ -33,7 +33,6 @@
       $tracker ="";
     }
   }
-echo "<!--Tracker $tracker -->";
 
 if(!empty($tracker)){
   if (!function_exists('http_build_url')){
