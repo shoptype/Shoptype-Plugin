@@ -8,7 +8,7 @@ global $stCurrency;
 global $marketUrl;
 global $productUrl;
 
-$trimmed_productUrl = str_replace("tid={{tid}}", $productUrl);
+$trimmed_productUrl = str_replace("tid={{tid}}", "", $productUrl);
 $trimmed_productUrl = rtrim($trimmed_productUrl,"?");
 $pg_str = $_GET['pg'];
 $pg = (int)$pg_str;
