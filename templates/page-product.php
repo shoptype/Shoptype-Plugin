@@ -91,7 +91,8 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 											echo "<a href='{$st_product->primaryImageSrc->imageSrc}'><img src='{$st_product->primaryImageSrc->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
 											if(isset($st_product->secondaryImageSrc)){
 												foreach ($st_product->secondaryImageSrc as $img) {
-													echo "<a href='{$img->imageSrc}'><img src='{$img->imageSrc}' class='xzoom-gallery' alt='' width='80'/></a>";
+													$imgIcon = "https://images.shoptype.com/unsafe/100x0/".urlencode($img->imageSrc);
+													echo "<a href='{$img->imageSrc}'><img src='{$imgIcon}' class='xzoom-gallery' alt='' width='80'/></a>";
 												}
 											}
 											?>
