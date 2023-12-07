@@ -80,7 +80,9 @@ wp_enqueue_script( 'js-file', ST__PLUGIN_URL . 'js/st-login-handler.min.js?1');
 				kvp[kvp.length] = [key,value].join('=');
 			}
 
-			// can return this or...
+			kvp=kvp.filter(function (el) {
+				return !(el == null || el == "");
+			});
 			let params = kvp.join('&');
 
 			// reload page with new params
