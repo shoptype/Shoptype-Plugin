@@ -380,7 +380,19 @@ function my_shop_tab_content() {
 		</div>
 	</div>
 </div>
-
+<style>
+	.st-product-search-title {height:40px}
+	.st-shop-buttons {width:190px}
+	.st-product-search {width: calc(100% - 190px)}
+	.st-button {height: 40px;padding: 0px 10px !important}
+	@media screen and (max-width: 516px) {
+		.st-shop-buttons {width: 360px;justify-content: flex-end;}
+		.st-product-search-results {top:100px}
+		.st-product-search-box {width: calc(100% - 30px);}
+		.st-product-search {width:370px;padding: 5px 0px;}
+		.st-product-add-drawer {flex-direction: column;align-content: center;}
+	}
+</style>
 <script type="text/javascript">
 	function callBpApi(dataUri, callBack, type, data){
 		wp.apiRequest( {
