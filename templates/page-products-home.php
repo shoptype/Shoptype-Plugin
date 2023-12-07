@@ -41,7 +41,6 @@ get_header();
 				delete options[prop];
 			}	
 		}
-
 		searchProducts(page, filter_str);
 	}
 	
@@ -94,28 +93,65 @@ get_header();
 		options['imgSize'] = "600x0";
 		options['offset'] = page * st_count;
 		options['count'] = <?php echo $st_count; ?>;
+		if(!options['inStock']){options['inStock']=true;}
 		var am_pages = document.getElementById("am-pages");
 		removeChildren(am_pages,null);
 		fetchProducts(options, productsContainer, productTemplate,(x)=>{resetPageCount(x)});
 	}
 	
-	function resetPageCount(productsList){
+	function resetPageCount(product_count, mid_page){
 		var am_pages = document.getElementById("am-pages");
-		var page_count = Math.ceil(productsList.count/st_count);
+		var page_count = Math.ceil(product_count/st_count);
+		let params = (new URL(document.location)).searchParams;
+		var selected_pg = parseInt(params.get("pg"));
 		var pg_url = new URL(window.location.href);
+		var addNext = false;
 		for(var i = 1; i<=page_count; i++){
-			var newIl = document.createElement("il");
-			var newPage = document.createElement("a");
-			if(i==st_current_page){
-				newPage.classList.add("selected-page");
+			var page_classes = ["st-page"];
+			
+			if(addNext){
+				addPageLink("...", "#", "return loadNext("+product_count+","+ mid_page +")",["st-page", "st-disp-page"], am_pages);
 			}
-			newPage.innerText = i;
+			
+			if((i>=mid_page-2 && i<=mid_page+2)||(i==1 || i==page_count)){
+				page_classes.push("st-disp-page");
+			}else if(i==2){
+				addPageLink("...", "#", "return loadPrev("+product_count+","+ mid_page +")",["st-page", "st-disp-page"], am_pages);
+			}else if(i==page_count-1){
+				addNext=true;
+			}
+			
+			if(i==selected_pg){
+				page_classes.push("selected-page");
+			}
 			pg_url.searchParams.set('pg', i);
-			newPage.href = pg_url.href;
-			newPage.setAttribute("onclick", "return ajaxLoad("+ (i-1) +")");
-			newIl.appendChild(newPage);
-			am_pages.appendChild(newIl);
+			addPageLink(i, pg_url.href, "return ajaxLoad("+ (i-1) +")",page_classes, am_pages);
 		}
+	}
+
+	function addPageLink(pageNo, pg_url, onClick, page_classes, pages_elem){
+		var newIl = document.createElement("il");
+		var newPage = document.createElement("a");
+		newPage.innerText = pageNo;
+		newPage.href = pg_url;
+		page_classes.forEach(x=>{newPage.classList.add(x);});
+		newPage.setAttribute("onclick", onClick);
+		newIl.appendChild(newPage);
+		pages_elem.appendChild(newIl);
+	}
+	
+	function loadNext(total_prods, mid_page){
+		var am_pages = document.getElementById("am-pages");
+		removeChildren(am_pages, null);
+		resetPageCount(total_prods, mid_page+3);
+		return false;
+	}
+	
+	function loadPrev(total_prods, mid_page){
+		var am_pages = document.getElementById("am-pages");
+		removeChildren(am_pages, null);
+		resetPageCount(total_prods, mid_page-3);
+		return false;
 	}
 
 	function removeChildren(node, dontRemove){
@@ -128,6 +164,16 @@ get_header();
 	document.addEventListener("amProductsLoaded", ()=>{
 		productsLoading = false;
 		//document.querySelector(".st-button-div button").disabled = false;
+	});
+
+	addEventListener("DOMContentLoaded", ()=>{
+		document.getElementById("st-search-box").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				console.info("enter click");
+				document.querySelector(".st-product-search-title").click();
+			}
+		});
 	});
 		
 	document.addEventListener("amProductsLoadFailed", ()=>{
@@ -167,6 +213,9 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 	.single-product, .single-brand {max-width:calc(100% - 20px);min-width:300px;}
 }
 </style>
+
+
+
 <?php the_content(); ?>
 <div class="products-main-container">
 
@@ -200,36 +249,38 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 							<?php
 							if(isset($stFilterJson)){
 								$stFilters = json_decode($stFilterJson);
-								foreach ($stFilters as $filter) {
-								?>
-									<div class="menu-brand-select">
-									<div class="menu-option-block1">
-									<h4 class="menu-option-title"><?php echo $filter->name ?></h4>
-									</div>
-									<div class="filter-checkbox-main">
-									<?php 
-										if($filter->multi == 0){
-											$inputType = "radio";
-										}else{
-											$inputType = "checkbox";
-										}
-									    foreach ($filter->values as $filterValue) {	?>
-										<div class="filter-checkbox">
-											<?php
-												$checked = "";
-												$filter_param = $_GET[$filter->key];
-												if(isset($filter_param) && str_contains($filter_param,$filterValue->value)){
-													$checked = "checked";
-												}
-											 ?>
-											<input class="filter-checkbox-item" type="<?php echo $inputType ?>" id="<?php echo htmlentities("{$filter->key}-{$filterValue->value}"); ?>" name="<?php echo $filter->key ?>" value="<?php echo htmlentities($filterValue->value) ?>" <?php echo $checked; ?>  onchange="filterProducts()">
-											<label for="<?php echo "{$filter->key}-{$filterValue->value}" ?>"><?php echo $filterValue->name ?></label>
+								if ($stFilters != null) {
+									foreach ($stFilters as $filter) {
+									?>
+										<div class="menu-brand-select">
+										<div class="menu-option-block1">
+										<h4 class="menu-option-title"><?php echo $filter->name ?></h4>
 										</div>
-									<?php } ?>
-									</div>
-									</div>
+										<div class="filter-checkbox-main">
+										<?php 
+											if($filter->multi == 0){
+												$inputType = "radio";
+											}else{
+												$inputType = "checkbox";
+											}
+										    foreach ($filter->values as $filterValue) {	?>
+											<div class="filter-checkbox">
+												<?php
+													$checked = "";
+													$filter_param = $_GET[$filter->key];
+													if(isset($filter_param) && str_contains($filter_param,$filterValue->value)){
+														$checked = "checked";
+													}
+												 ?>
+												<input class="filter-checkbox-item" type="<?php echo $inputType ?>" id="<?php echo htmlentities("{$filter->key}-{$filterValue->value}"); ?>" name="<?php echo $filter->key ?>" value="<?php echo htmlentities($filterValue->value) ?>" <?php echo $checked; ?>  onchange="filterProducts()">
+												<label for="<?php echo "{$filter->key}-{$filterValue->value}" ?>"><?php echo $filterValue->name ?></label>
+											</div>
+										<?php } ?>
+										</div>
+										</div>
 
-									<?php
+										<?php
+									}
 								}
 							}
 							?>
@@ -245,6 +296,9 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 					$url_params = "";
 					foreach($_GET as $key => $value){
 					  $url_params = $url_params . "&" . $key . "=" . $value;
+					}
+					if(!isset($_GET["inStock"])){
+						$url_params = $url_params . "&inStock=true";
 					}
 					$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/products?imgSize=600x0&offset={$offset}&count={$st_count}{$url_params}");
 					$resultProduct     = wp_remote_retrieve_body( $response );
@@ -341,9 +395,18 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 						for ($x = 1; $x <= $total_pages; $x++) {
 							$pageUrl = str_replace("{{page}}",$x,$current_url);
 							$p_count = $x -1;
-							$selected_pg="";
-							if($pg == $x){$selected_pg="class=\"selected-page\"";};
-							echo "<il><a onclick=\"return ajaxLoad({$p_count});\" href=\"{$pageUrl}\" $selected_pg >$x</a></il>";
+							$pg_class = "st-page";
+							$disp_next = "";
+							if(($pg >= $x-2 && $pg <= $x+2)||($x==$total_pages || $x==1)){
+								$pg_class = $pg_class." st-disp-page";
+							}else if($x==2){
+								echo "<il><a onclick=\"return loadPrev({$st_products->count},{$pg});\" href=\"#\" class=\"st-page st-disp-page\" >...</a></il>";
+							}else if($x==$total_pages-1){
+								$disp_next = "<il><a onclick=\"return loadNext({$st_products->count},{$pg});\" href=\"#\" class=\"st-page st-disp-page\" >...</a></il>";
+							}
+							if($pg == $x){$pg_class = $pg_class." selected-page";}
+							
+							echo "<il><a onclick=\"return ajaxLoad({$p_count});\" href=\"{$pageUrl}\" class=\"{$pg_class}\" >$x</a></il>$disp_next";
 						}
 					?>
 				</ul>
