@@ -149,9 +149,6 @@ if(isset($st_checkout)){
 						<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
 					</div>
 				</div>
-				<div class="st-chkout-billing-fld" style="display: none;">
-					<input type="text" name="lastName" class="st-chkout-billing-fld-val">
-				</div>
 				<div class="st-chkout-billing-fld  st-chkout-billing-fullname">
 					<div class="st-chkout-billing-fname">				
 						<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
@@ -204,9 +201,6 @@ if(isset($st_checkout)){
 					<div class="st-chkout-billing-fname">
 						<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
 					</div>
-				</div>
-				<div class="st-chkout-billing-fld" style="display: none;">
-					<input type="text" name="lastName" class="st-chkout-billing-fld-val">
 				</div>
 				<div class="st-chkout-billing-fld  st-chkout-billing-fullname">
 					<div class="st-chkout-billing-fname">				
