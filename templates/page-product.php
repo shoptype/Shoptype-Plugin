@@ -12,6 +12,12 @@ global $stCurrency;
 global $brandUrl;
 global $stBackendUrl;
 global $shoptypeUrlBase;
+global $productUrl;
+
+$trimmed_productUrl = str_replace("tid={{tid}}", "", $productUrl);
+$trimmed_productUrl = rtrim($trimmed_productUrl,"?");
+$urlparts = wp_parse_url(home_url());
+$domain = $urlparts['host'];
 try {
 	
 	$vendorId = 0;
@@ -23,6 +29,13 @@ try {
 	
 	if (!empty($resultProduct)) {
 		$st_products = json_decode($resultProduct);
+		if(!isset($st_products->products[0])){
+			global $wp_query;
+			$wp_query->set_404();
+			status_header( 404 );
+			get_template_part( 404 );
+			exit();
+		}
 		$st_product = $st_products->products[0];
 		$commission = $st_product->variants[0]->discountedPriceAsMoney->amount * $st_product->productCommission->percentage / 100;
 		$prodCurrency = $stCurrency[$st_product->currency];
@@ -102,6 +115,31 @@ h1.main-product-title{font-size:30px;margin:0 0 20px;line-height:30px}
 									<!-- product details -->
 									<div class="product-info">
 										<h1 class="main-product-title"><?php echo $st_product->title ?></h1>
+										<script type="application/ld+json">
+										{
+										  "@context": "https://schema.org/",
+										  "@type": "Product",
+										  "name": <?php echo json_encode($st_product->title) ?>,
+										  "image": [<?php echo $imgListStr ?>],
+										  "description": <?php echo json_encode($st_product->description) ?>,
+										  "sku": "<?php echo $st_product->id ?>",
+										  "mpn": "<?php echo $st_product->sourceId ?>",
+										  "brand": {
+											"@type": "Brand",
+											"name": "<?php echo $st_product->vendorName ?>"
+										  },
+										  },
+										  "offers": {
+											"@type": "Offer",
+											"url": "<?php echo 'https://'.$domain.str_replace('{{productId}}',$st_product->id, $trimmed_productUrl) ?>",
+											"priceCurrency": "<?php echo $st_product->variants[0]->discountedPriceAsMoney->currency ?>",
+											"price": <?php echo number_format($st_product->variants[0]->discountedPrice, 2) ?>,
+											"priceValidUntil": "2024-11-20",
+											"itemCondition": "https://schema.org/NewCondition",
+											"availability": "https://schema.org/InStock"
+										  }
+										}
+										</script>
 										<h5 class="am-product-vendor"><a href="<?php echo str_replace("{{brandId}}", $st_product->catalogId, $brandUrl); ?>"><?php echo $st_product->vendorName ?></a></h5>
 										<h4 class="main-product-price"><span class="currency-symbol"><?php echo $prodCurrency ?></span><span id="productprice"><?php echo number_format($st_product->variants[0]->discountedPrice, 2) ?></span></h4>
 										<div class="options-container">
