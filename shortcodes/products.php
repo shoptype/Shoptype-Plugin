@@ -46,4 +46,47 @@ function renderAwakeProducts($atts = []){
     <?php return ob_get_clean();
 }
 add_shortcode('awake_products', 'renderAwakeProducts');
+
+function renderAwakeProduct($atts = []){
+    if(isset($atts['url'])){
+        $productUrl = $atts['url'];
+        $parsedUrl = parse_url($productUrl);
+        $productId = end(array_filter(explode("/",$parsedUrl["path"])));
+    }else{
+        return "";
+    }
+    global $stBackendUrl;
+    global $stPlatformId;
+    global $stCurrency;
+    $productId = get_query_var('stproduct');
+    $response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/products?productIds=$productId");
+    $resultProduct = wp_remote_retrieve_body( $response );
+    $st_products = json_decode($resultProduct);
+    if (isset($st_products->products[0])) {
+        $st_product = $st_products->products[0];
+        $prodCurrency = $stCurrency[$st_product->currency];
+        ob_start(); ?>
+        <div class="st-product-embed" id="st-product-" style="border: solid #ccc 1px; max-width:600px">
+            <a href="<?php echo $productUrl ?>" class="st-product-embed-link" style="display:flex;">
+                <div class="product-image">
+                    <div class="st-product-embed-img-div">
+                        <div class="sold-out" style="display:none;">Sold Out</div>
+                        <div class="on-sale" style="display:none;">Sale</div>
+                        <img class="st-product-embed-image" style="max-width:140px" src="<?php echo $st_product->primaryImageSrc->imageSrc ?>" loading="lazy" alt="">
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h5 class="st-product-title"><?php echo $st_product->title ?></h5>
+                    <div class="st-brand-title"><?php echo $st_product->vendorName ?></div>
+                    <div class="st-product-price"><?php echo $prodCurrency ?> <?php echo number_format($st_product->variants[0]->discountedPrice, 2) ?></div>
+                </div>
+            </a>
+        </div>
+        <?php 
+        return ob_get_clean();
+    }else{
+        return "";
+    }
+}
+add_shortcode('show_product', 'renderAwakeProduct');
 ?>
