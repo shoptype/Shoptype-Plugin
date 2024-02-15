@@ -21,9 +21,15 @@
   .details-box .product-slider {
     width: 100%;
   }
+  .single-product-image{
+    width: 100%;
+  }
   .product-info {
     width: 100%;
     padding: 20px;
+  }
+  .options-container{
+    gap: 20px;
   }
   .options-container .single-option {
     flex-direction: column;

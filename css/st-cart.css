@@ -775,10 +775,10 @@ input.st-cart-product-qty::-webkit-inner-spin-button, input.st-cart-product-qty:
 
 .st-chkout-billing-fullname{
   display: flex;
+  gap: 10px;
 }
 .st-chkout-billing-fname{
   flex: 1 1 50%;
-  margin-right: 10px;
 }
 .st-chkout-billing-lname{
   flex: 1 1 50%;

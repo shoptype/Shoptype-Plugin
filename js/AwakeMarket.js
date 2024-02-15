@@ -360,6 +360,19 @@ function createProduct(productTemplate, product){
 	newProduct.querySelector(".am-product-image").src = product.primaryImageSrc.imageSrc;
 	newProduct.querySelector(".am-product-title").innerHTML = product.title;
 	newProduct.querySelector(".am-product-vendor").innerHTML = product.vendorName;
+
+	let productOptions = newProduct.querySelector(".st-buy-options");
+	if(productOptions && product.variants.length==1){
+		productOptions.style.display="";
+		let addToCartBtn = productOptions.querySelector(".st-buynow-btn");
+		if(addToCartBtn){
+			setCartBtnAttributes(addToCartBtn, product);
+		}
+		let buyBtn = productOptions.querySelector(".st-addcart-btn");
+		if(buyBtn){
+			setCartBtnAttributes(buyBtn, product);
+		}	
+	}
 	let productPrice = newProduct.querySelector(".am-product-price");
 	if(productPrice){
 		productPrice.innerHTML = getProductPrice(product);
@@ -371,14 +384,7 @@ function createProduct(productTemplate, product){
 			if(saleLable){saleLable.style.display="block"}
 		}
 	}
-	let addToCartBtn = newProduct.querySelector(".am-product-add-cart-btn");
-	if(addToCartBtn){
-		setCartBtnAttributes(addToCartBtn, product);
-	}
-	let buyBtn = newProduct.querySelector(".am-product-buy-btn");
-	if(buyBtn){
-		setCartBtnAttributes(buyBtn, product);
-	}	
+
 	let productLink = newProduct.querySelector(".am-product-link");
 	if(productLink){
 		var thisProductLink = productPage.replace("{{productId}}", product.id);
@@ -394,10 +400,11 @@ function createProduct(productTemplate, product){
 }
 
 function setCartBtnAttributes(btn, product){
-		btn.setAttribute("variantid",product.variants[0].id);
-		btn.setAttribute("productid",product.id);
-		btn.setAttribute("vendorid",product.vendor.id);
-		btn.setAttribute("quantitySelect",".am-add-cart-quantity");
+	btn.setAttribute("variantid",product.variants[0].id);
+	btn.setAttribute("productid",product.id);
+	btn.setAttribute("vendorid",product.catalogId);
+	btn.setAttribute("variantName",JSON.stringify(product.variants[0].variantNameValue));
+	btn.setAttribute("quantitySelect",".am-add-cart-quantity");
 }
 
 function setCosellAttributes(btn, product){

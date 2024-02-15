@@ -26,7 +26,11 @@ function renderAwakeProducts($atts = []){
     if(isset($atts['instock']) && !empty($atts['instock'])) $inStock = "inStock=".$atts['instock'];?>
 
     <div count="<?php echo $perRow; ?>" <?php echo "$my_shop $offset $sortBy $orderBy $collection $inStock"; ?> imageSize="<?php echo $imgSize; ?>" vendorid="<?php echo $vendorId; ?>" <?php echo "$tags $loadmore"; ?> class="products-container">
-        <div class="product-container single-product" style="display: none;" id="st-product-select-template">
+        <div class="product-container single-product" style="position:relative;display: none;" id="st-product-select-template">
+            <div class="st-buy-options" style="display:none">
+                <div class="st-buynow-btn" variantid="" variantName='' productid="" onclick="shoptype_UI.buyNow(this)">Buy Now</div>
+                <div class="st-addcart-btn" variantid="" variantName='' productid="" onclick="shoptype_UI.addToCart(this)">Add to Cart</div>
+            </div>
             <a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
                 <div class="product-image">
                     <div class="am-product-img-div">
@@ -36,7 +40,7 @@ function renderAwakeProducts($atts = []){
                     </div>
                 </div>
                 <div class="product-info">
-                    <p class="am-product-title product-title">Product Title</p>
+                    <p class="am-product-title product-title">Product Title</p> 
                     <p class="am-product-vendor brand-title">Brand Title</p>
                     <div class="market-product-price am-product-price">$ 00.00</div>
                 </div>
@@ -66,7 +70,11 @@ function renderAwakeProduct($atts = []){
         $st_product = $st_products->products[0];
         $prodCurrency = $stCurrency[$st_product->currency];
         ob_start(); ?>
-        <div class="st-product-embed" id="st-product-" style="border: solid #ccc 1px; max-width:600px">
+        <div class="product-container single-product" style="position:relative;display: none;" id="st-product-select-template">
+            <div class="st-buy-options" style="display:none">
+                <div class="st-buynow-btn" variantid="" variantName='' productid="" onclick="shoptype_UI.buyNow(this)">Buy Now</div>
+                <div class="st-addcart-btn" variantid="" variantName='' productid="" onclick="shoptype_UI.addToCart(this)">Add to Cart</div>
+            </div>
             <a href="<?php echo $productUrl ?>" class="st-product-embed-link" style="display:flex;">
                 <div class="product-image">
                     <div class="st-product-embed-img-div">

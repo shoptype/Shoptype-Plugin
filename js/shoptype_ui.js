@@ -145,7 +145,7 @@ class ShoptypeUI{
 	    	variantId = variant.id;
 		}
 
-		if (quantSelect && quantSelect!=""){
+		if (quantSelect && quantSelect!="" && document.querySelector(quantSelect)!==null){
 			quantity = parseInt(document.querySelector(quantSelect).value);
 		}
 		if(quantity==0){
@@ -161,6 +161,33 @@ class ShoptypeUI{
 				}
 			});
 		return false;
+	}
+
+	buyNow(button){
+		this.stShowLoader();
+		let variantId = button.getAttribute("variantid");
+		let variantName = JSON.parse(button.getAttribute("variantName"));
+		let productId = button.getAttribute("productid");
+
+		window.location.href = `/checkout/new/?productid=${productId}&variantid=${variantId}`;
+	}
+
+	addVendorOffers(vendorId, offersDiv){
+		var endpoint = {
+			resource:"/platforms/" + this.#platformId + "/vendors/?vendorId=" + vendorId,
+			method:"get"
+		};
+		STUtils.request(endpoint,(data)=>{
+			var metadata = data.vendors[0];
+			var vendorOffers=null;
+			data.vendors[0].vendor_meta_data.forEach((item)=>{
+				if(item.key=="Promo Offers"){
+					vendorOffers = item.value;
+				}
+			});
+			offersDiv.innerHTML=vendorOffers;
+		});
+
 	}
 
 	static pluralize = (count, noun, suffix = 's') =>

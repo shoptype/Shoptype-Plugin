@@ -9,12 +9,23 @@ get_header();
 $st_brand = [];
 try {
 	$brandId = get_query_var( 'brand' );
-	$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/vendors?vendorId=$brandId");
+	if (preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $brandId)) {
+		$brandSearch = "vendorId=$brandId";
+	} else {
+		$brandSearch = "text=$brandId";
+	}
+	$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/vendors?$brandSearch");
 	$result = wp_remote_retrieve_body( $response );
-	 
+
 	if( !empty( $result ) ) {
 		$st_brands = json_decode($result);
 		$st_brand = $st_brands[0];
+		if(isset($st_brand->vendor_meta_data)){
+			$meta_fields = array();
+			foreach ($st_brand->vendor_meta_data as $meta_data) {
+			  $meta_fields[$meta_data->key] = $meta_data->value;
+			}
+		}
 		$productCategories = join(", ",$st_brand->productCategories);
 		$store = $st_brand->store;
 		if( function_exists('groups_get_id')) {
@@ -53,12 +64,27 @@ catch(Exception $e) {
 							<!-- <p class="brand-since">Member since:<span>28 April 2020</span></p> -->
 							<!-- <p class="brand-fame">Brand Fame:<span>10K</span></p> -->
 							<p class="brand-location">Located in:<span><?php echo (!empty($store->countryState) ? $store->countryState : "Not Specified"); ?></span></p>
-							<p class="brand-speciality am-brand-categories">Specialises in:<span><?php echo (!empty($productCategories) ? $productCategories : "Not Specified"); ?></span></p>
-							<?php if(!empty($group->description)) : ?>
+							<?php if(isset($meta_fields["Speciality"])) : ?>
+								<div class="coseller-bio">
+									<p class="bio-heading">Specialises in:</p>
+									<p class="bio-desc">
+										<?php echo $meta_fields["Speciality"]; ?>
+									</p>
+								</div>
+							<?php endif; ?>
+							<?php if(isset($meta_fields["Description"])) : ?>
 								<div class="coseller-bio">
 									<p class="bio-heading">About:</p>
 									<p class="bio-desc">
-										<?php echo$group->description; ?>
+										<?php echo $meta_fields["Description"]; ?>
+									</p>
+								</div>
+							<?php endif; ?>
+							<?php if(isset($meta_fields["Return & Refund Policy"])) : ?>
+								<div class="coseller-bio">
+									<p class="bio-heading">Return &amp; Refund Policy:</p>
+									<p class="bio-desc">
+										<?php echo $meta_fields["Return & Refund Policy"]; ?>
 									</p>
 								</div>
 							<?php endif; ?>

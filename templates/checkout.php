@@ -21,6 +21,9 @@ wp_enqueue_script('st-payment-handlers',$path."/js/shoptype-payment.js");
 wp_enqueue_script('stripe',"https://js.stripe.com/v3/");
 wp_enqueue_script('razorpay',"https://checkout.razorpay.com/v1/checkout.js");
 $checkoutId = get_query_var( 'checkout' );
+
+wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
+wp_enqueue_script( 'jquery_validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js');
 get_header();
 
 if($checkoutId == "new"){
@@ -116,7 +119,6 @@ if(isset($st_checkout)){
 		.st-chkout-billing-fullname{margin-right:-10px;}
 		input.st-chkout-billing-fld-val::placeholder, select.st-chkout-billing-fld-val, label {font:14px sans-serif; opacity:0.8;}
 		input.st-chkout-billing-fld-val, select.st-chkout-billing-fld-val {font: 16px/50px sans-serif;background: #EEE;height: 51px;}
-		select.st-chkout-billing-fld-val {background-image: linear-gradient(45deg, transparent 50%, #FFF), linear-gradient(135deg, #FFF, transparent 50%), linear-gradient(to right, #000, #000);background-position: calc(100% - 25px) calc(1em + 3.5px), calc(100% - 10px) calc(1em + 3.5px), calc(100% - 5px) 5px;background-size: 15px 15px, 15px 15px, 40px 40px;background-repeat: no-repeat;}
 		.st-chkout-billing-title { background: #000; margin: 0px -20px 20px; text-align: center; color: #FFF; font: 23px sans-serif;}
 		.st-chkout-billing { border: solid 1px #eee; margin-right: 20px;}
 		select.st-chkout-shipping-select {border: solid 1px #aaa;}
@@ -148,6 +150,9 @@ if(isset($st_checkout)){
 					<div class="st-chkout-billing-fname">
 						<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
 					</div>
+				</div>
+				<div class="st-chkout-billing-fld" style="display: none;">
+					<input type="text" name="lastName" class="st-chkout-billing-fld-val">
 				</div>
 				<div class="st-chkout-billing-fld  st-chkout-billing-fullname">
 					<div class="st-chkout-billing-fname">				
@@ -202,6 +207,7 @@ if(isset($st_checkout)){
 						<input type="text" name="lname" class="st-chkout-billing-fld-val" placeholder='Last Name *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->lastname;} ?>" onchange="updateAddress()" required>
 					</div>
 				</div>
+
 				<div class="st-chkout-billing-fld  st-chkout-billing-fullname">
 					<div class="st-chkout-billing-fname">				
 						<select name="country" class="st-chkout-billing-fld-val" id="st-chkout-country" placeholder='Country *' value="<?php if(isset($st_checkout->shipping_address)){echo $st_checkout->shipping_address->country;} ?>"	required onchange="updateAddress()">
@@ -264,10 +270,13 @@ if(isset($st_checkout)){
 						<?php foreach($items->cart_lines as $key=>$product): ?>
 						<div id="st-chkout-product" class="st-chkout-product">
 							<div class="div-block-18">
-								<div class="st-chkout-product-title"><?php echo "{$product->name} - " ?>
+								<div class="st-chkout-product-title"><?php echo "{$product->name}" ?>
+								<?php if(isset($product->variant_name_value) && !(count((array)$product->variant_name_value)<=1 && reset($product->variant_name_value)=="Default Title")){ ?>
+									<?php echo " - "; ?>
 									<?php foreach($product->variant_name_value as $varKey=>$varValue){
-										echo "{$varKey}:{$varValue}, ";
+											echo "{$varKey}:{$varValue}, ";
 									} ?>
+								<?php } ?>
 								<span class="st-chkout-product-qty"> x <?php echo $product->quantity ?></span></div>
 							</div>
 							<div class="st-chkout-product-tot"><?php echo $prodCurrency.number_format((float)($product->quantity*$product->price->amount), 2, '.', '')?></div>
@@ -336,15 +345,21 @@ if(isset($st_checkout)){
 		function addCountriesTo(countryField,countriesJson,stateField){
 			let selectedCntry =	countryField.getAttribute("value");
 			let selectedVal = null;
+			let usOption = null;
 			for (var i = 0; i < countriesJson.data.length; i++) {
 				var option = document.createElement("option");
 				option.text = countriesJson.data[i].name;
 				option.value = countriesJson.data[i].iso2;
+				if(countriesJson.data[i].iso2 == "US"){
+					usOption = option;
+				}
 				if(selectedCntry==countriesJson.data[i].name){
 					option.setAttribute("selected","");
 				}
 				countryField.add(option);
 			}
+			countryField.removeChild(usOption);
+			countryField.insertBefore(usOption, countryField.options[1]);
 			countryField.addEventListener('change', () => {
 				if(countryField.value && countryField.value != ""){
 					STUtils.states(countryField.value)
@@ -494,7 +509,11 @@ if(isset($st_checkout)){
 		}
 		
 		function showPayment(){
-			var shippingSelect = document.querySelector(".st-chkout-products").getElementsByClassName("st-chkout-billing-fld-val");shippingSelect
+			var shippingSelect = document.querySelector(".st-chkout-products").getElementsByClassName("st-chkout-billing-fld-val");
+			if(!$("#shippingAddressForm").valid()){
+				ShoptypeUI.showError("Please enter a valid Shipping Address");
+				return;
+			}
 			for (let i = 0; i < shippingSelect.length; i++) {
 				if(shippingSelect[i].value == null ||shippingSelect[i].value == "" ){
 					ShoptypeUI.showError("Shipping method not selected");
@@ -557,8 +576,84 @@ if(isset($st_checkout)){
 			});
 		}
 		billingSelectChanged();
+		
+		$(document).ready(function(){
+			$("#shippingAddressForm").validate({
+				rules:{ 
+					fname: {required:true},
+					lname: {required:true},
+					country: {required:true},
+					state: {required:true},
+					address: {required:true},
+					city: {required:true},
+					pincode: {required:true},
+					phone: {required:true,minlength:10,maxlength:10},
+					email: {required:true,email: true}
+				},
+				messages: {
+					email: {
+						required: "Please enter email address",
+						email: "Please enter valid email address"
+					},
+					fname: {required:"Please enter your first name"},
+					lname: {required:"Please enter your last name"},
+					country: {required:"Please select the country to ship to"},
+					state: {required:"Please select the state"},
+					address: {required:"Please enter the address to ship to"},
+					city: {required:"Please enter the city to ship to"},
+					pincode: {required:"Please enter the zip code of the shipping address"},
+					phone: {
+						required:"Please enter your phone number",
+						minlength:"Enter your 10 digit phone number",
+						maxlength:"Enter your 10 digit phone number"
+					},
+				},
+				errorClass: "address_error"  
+			})
+		});
 	</script>
-
+<style>
+input.st-chkout-billing-fld-val.address_error,select.st-chkout-billing-fld-val.address_error {border: solid 1px red;}
+label.address_error {color: red;margin-top:-30px}
+.st-chkout-sum:before,.st-chkout-sum:after {display: none;}
+.cart-back {margin-top: 20px;margin-bottom: 20px;background: transparent;}
+.st-chkout-top {margin: auto;}
+.cart-text h2,.checkout-text h2 {font-family: 'Colfax';font-style: normal;font-weight: 400;font-size: 24px;line-height: 104.9%;color: #0D2B24;opacity: 0.5;}
+.cart-checkout {max-width: 81%;min-width: 90%;margin-left: auto;margin-right: auto;}
+.cart-back {margin-left: 8%;cursor: pointer;}
+body {background: rgba(248, 248, 255, 1);}
+.st-chkout-billing-title {display: flex;margin-top: -20px;margin-left: -20px;margin-right: -20px;border-radius: 30px 30px 0px 0px;background: #000000;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);justify-content: center;align-items: center;margin-bottom: 20px;}
+.st-chkout-billing-title h3 {padding: 10px !important;margin: 0px;color: #ffffff;text-align: center;font-family: Josefin Sans;font-size: 22px;font-style: normal;font-weight: 300;line-height: 150%;text-transform: uppercase;}
+.st-chkout-billing-fld-name {display: none;}
+input.st-chkout-billing-fld-val,select.st-chkout-billing-fld-val {padding-left: 20px;height: 45px;border-radius: 30px;border: 1px solid #E9E9F4;color: #03003F;font-family: Josefin Sans;font-size: 15px;font-style: normal;font-weight: 300;line-height: 100%;}
+input.st-chkout-billing-fld-val::placeholder,select.st-chkout-billing-fld-val::placeholder {color: #03003F;}
+.custom-arrow {position: relative;top: -32px;left: 94%;transform: translateY(-50%);color: red;font-size: 16px;pointer-events: none;}
+.st-chkout-main {gap: 40px;}
+.st-chkout-billing {margin-top: 20px;border-radius: 30px;background: #FFF;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);}
+.note-bottom {display: flex;justify-content: space-between;align-content: center;}
+.note-bottom * {color: #03003F;font-family: Josefin Sans;font-size: 15px;font-style: normal;font-weight: 300;line-height: 100%;}
+.st-chkout-main {gap: 40px;}
+.st-chkout-billing {margin-top: 20px;border-radius: 30px;background: #FFF;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);}
+.note-bottom {display: flex;justify-content: space-between;align-content: center;}
+.note-bottom * {color: #03003F;font-family: Josefin Sans;font-size: 15px;font-style: normal;font-weight: 300;line-height: 100%;}
+.st-chkout-main {margin-bottom: 50px;}
+.st-chkout-sum {border-radius: 30px;background: #FFF;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);}
+.checkout-summry h3 {padding: 20px;color: #ffffff;text-align: center;font-family: Josefin Sans;font-size: 22px;font-style: normal;font-weight: 300;line-height: 150%;text-transform: uppercase;}
+.checkout-summry {margin-left: -20px;margin-right: -20px;margin-top: -20px;border-radius: 30px 30px 0px 0px;background: #000000;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);}
+.st-chkout-products-title,.st-chkout-products-tot,.st-chkout-product-title,.st-chkout-product-tot,.st-chkout-tot-title,.st-chkout-cost,.st-chkout-shipping-tot,.st-chkout-tot-cost {color: #000000;font-family: Josefin Sans;font-size: 15px;font-style: normal;font-weight: 300;line-height: 150%;}
+div#st-chkout-product {border-color: #FF0A53;}
+div#st-chkout-products-list * {border-color: #03003F;}
+.st-chkout-btn {position: absolute;bottom: 0px;right: 0px;border-radius: 0px 0px 30px 30px;background: #03003F;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);}
+.st-chkout-btn-txt {padding: 20px !important;color: #ffffff;text-align: center;font-family: Josefin Sans;font-size: 22px;font-style: normal;font-weight: 300;line-height: 150%;text-transform: uppercase;border-radius: 0px 0px 30px 30px;background: #000000;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.10);}
+form#billingAddressForm {margin-top: 100px;}
+.st-chkout-billing-title {color: #ffffff;text-align: center;font-family: Josefin Sans;font-size: 22px;font-style: normal;font-weight: 300;line-height: 150%;text-transform: uppercase;}
+h1.st-chkout-title {margin-top: 2%;margin-bottom: 2%;}
+select.st-chkout-billing-fld-val {background-image: none !important;}
+@media only screen and (max-width: 768px) {
+  .st-chkout-billing {padding-right: 0px;}
+}
+input::placeholder,select::placeholder,select *,select {color: #000 !important;}
+</style>
 <?php
 }
 get_footer();

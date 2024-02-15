@@ -23,7 +23,7 @@ get_header();
 	let st_current_page=1;
 	const st_count = <?php echo $st_count; ?>;
 	
-	function filterProducts(page=0){
+	function filterProducts(page=0,newSearch=false){
 		var selected = {};
 
 		Array.from(document.getElementsByClassName("filter-checkbox-item")).forEach(x=>{ 
@@ -31,6 +31,10 @@ get_header();
 			selected[x.getAttribute("name")] = selected[x.getAttribute("name")]?selected[x.getAttribute("name")] + filterVal:filterVal;
 		});
 		var filter_str = "";
+		if(newSearch){
+			var search_elem = document.getElementById('st-search-box');
+			selected["text"] = search_elem.value;
+		}
 		for (const prop in selected) {
 			if(selected[prop]!=""){
 				options[prop] = selected[prop];
@@ -41,6 +45,7 @@ get_header();
 				delete options[prop];
 			}	
 		}
+
 		searchProducts(page, filter_str);
 	}
 	
@@ -69,7 +74,6 @@ get_header();
 		let productsContainer = document.getElementById("st-product-search-results");
 		removeChildren(productsContainer,productTemplate);
 		productsLoading = true;
-		//document.querySelector(".st-button-div button").disabled = true;
 		var sortBySelect = document.getElementById("sort-by");
 		var option = sortBySelect.options[sortBySelect.options.selectedIndex];
 		options["sortBy"]=option.getAttribute("sortBy");
@@ -96,7 +100,7 @@ get_header();
 		if(!options['inStock']){options['inStock']=true;}
 		var am_pages = document.getElementById("am-pages");
 		removeChildren(am_pages,null);
-		fetchProducts(options, productsContainer, productTemplate,(x)=>{resetPageCount(x)});
+		fetchProducts(options, productsContainer, productTemplate,(x)=>{resetPageCount(x.count,st_current_page)});
 	}
 	
 	function resetPageCount(product_count, mid_page){
@@ -128,7 +132,7 @@ get_header();
 			addPageLink(i, pg_url.href, "return ajaxLoad("+ (i-1) +")",page_classes, am_pages);
 		}
 	}
-
+	
 	function addPageLink(pageNo, pg_url, onClick, page_classes, pages_elem){
 		var newIl = document.createElement("il");
 		var newPage = document.createElement("a");
@@ -163,9 +167,8 @@ get_header();
 	
 	document.addEventListener("amProductsLoaded", ()=>{
 		productsLoading = false;
-		//document.querySelector(".st-button-div button").disabled = false;
 	});
-
+	
 	addEventListener("DOMContentLoaded", ()=>{
 		document.getElementById("st-search-box").addEventListener("keypress", function(event) {
 			if (event.key === "Enter") {
@@ -179,7 +182,6 @@ get_header();
 	document.addEventListener("amProductsLoadFailed", ()=>{
 		allLoaded = true;
 		productsLoading = false;
-		//document.querySelector(".st-button-div button").disabled = true;
 	});
 
 	var scrollBefore = 0;
@@ -193,36 +195,40 @@ get_header();
 	        document.getElementById("filterContainer").style.top = "0px";
 	    }
 	})
-	
 </script>
+
 <style type="text/css">
 .st-filter-btn{box-shadow:none!important;border:1px solid #bbb;border-top-right-radius:2px!important;border-bottom-right-radius:2px!important;margin:0;display:flex;width:140px!important;font-size:20px;align-items:center;justify-content:center;cursor:pointer}
 .all-products{max-width:1240px;margin:auto}
 .filter-menu-div{margin:9px;display:flex;justify-content:space-between}
 .st-sort-div{display:flex;font-size:18px;align-items:center}
 select#sort-by{height:40px;width: 130px;}
-ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
-.st-pages il {height: 30px;margin-bottom: 15px;width: 40px;}
-.st-pages il a{padding:9px 0px;background:#eee;margin:2px 3px;display: flex; width: 36px;justify-content: center;}
+ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap:wrap;}
 .products-main {display: flex;min-height: calc(100vw - 400px);}
-.st-pages il a.selected-page {background: #333;color: #fff;}
+.st-pages il a.selected-page {background: #333;color: #fff;display: flex;}
 .single-product, .single-brand {max-width:calc(25% - 6px);min-width:300px;}
+.st-product-search-title {background: #000;cursor: pointer;}
+div .product-container{min-width:250px;}
+.st-pages il a {padding:5px;background:#eee;margin:2px 3px;width: 24px;justify-content: center;font-size: 12px !important;}
+a.st-page {display: none;}
+a.st-page.st-disp-page {display:flex;}
+.product-container:hover .st-buy-options {display: flex;}
+.st-buy-options{position:absolute;z-index: 1;display:none;flex-direction: column;height: 100px;width: 200px;justify-content: space-evenly;left: calc(50% - 100px);top: 75px;align-content: center;flex-wrap: wrap;}
+.st-buynow-btn, .st-addcart-btn{background: #ffffffaa;padding: 2px 10px;width: 110px;height: 30px;border-radius: 15px;cursor: pointer;text-align: center; border: solid 1px #333;font: 400 14px/28px sans-serif;}
+.st-buynow-btn:hover, .st-addcart-btn:hover{background: #ffffff;}
 @media screen and (max-width:767px){
 	div#filterContainer{position:fixed;left:0;top:0;width:100vw;height:100vh;background:#ffffffa0;border-radius:0;max-height:100vh;margin-left:0;z-index:999}
 	div#st-filter{margin-left:auto;margin-right:0}
 	.single-product, .single-brand {max-width:calc(100% - 20px);min-width:300px;}
 }
 </style>
-
-
-
 <?php the_content(); ?>
 <div class="products-main-container">
 
 <div class="all-products">
 	<div class="st-myshop-search">
-		<input class="st-myshop-search-box" id="st-search-box" name="Search" value="<?php echo $_GET['text']; ?>" >
-		<div class="st-product-search-title" onclick="filterProducts(0)"><img src="<?php echo st_locate_file("images/search.svg") ?>" loading="lazy" alt="" class="st-product-search-img"></div>
+		<input class="st-myshop-search-box" id="st-search-box" name="Search" value="<?php echo htmlspecialchars(wp_unslash($_GET['text'])); ?>" >
+		<div class="st-product-search-title" onclick="filterProducts(0,true)"><img src="<?php echo st_locate_file("images/search.svg") ?>" loading="lazy" alt="" class="st-product-search-img"></div>
 	</div>
 	<div class="filter-menu-div">
 		<div class="st-filter-btn" onclick="toggleFilter()"><div>Filter </div><img src="<?php echo st_locate_file("images/Filter-Icon.png") ?>" loading="lazy" alt="" class="st-filter-img"></div>
@@ -230,7 +236,7 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 			<div>Sort By :</div>
 			<select id="sort-by" name="sortByFacets" class="" onchange="filterProducts()">
 				<option sortBy="quantitySold" orderBy="desc" value="sortBy=quantitySold&orderBy=desc">Featured</option>
-				<option sortBy="createdAt" orderBy="desc" value="sortBy=createdAt&orderBy=desc">New Arrivals</option>
+				<option sortBy="createdAt" orderBy="desc" selected value="sortBy=createdAt&orderBy=desc">New Arrivals</option>
 				<option sortBy="price" orderBy="asc" value="sortBy=price&orderBy=asc">Price, low to high</option>
 				<option sortBy="price" orderBy="desc" value="sortBy=price&orderBy=desc">Price, high to low</option>
 			</select>
@@ -249,7 +255,7 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 							<?php
 							if(isset($stFilterJson)){
 								$stFilters = json_decode($stFilterJson);
-								if ($stFilters != null) {
+								 if ($stFilters != null) {
 									foreach ($stFilters as $filter) {
 									?>
 										<div class="menu-brand-select">
@@ -263,7 +269,7 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 											}else{
 												$inputType = "checkbox";
 											}
-										    foreach ($filter->values as $filterValue) {	?>
+											foreach ($filter->values as $filterValue) {	?>
 											<div class="filter-checkbox">
 												<?php
 													$checked = "";
@@ -290,12 +296,15 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 			</div>
 		</div>
 		<div>
-			<div count="<?php echo $st_count; ?>" imageSize="600x0" loadmore class="products-container" autoLoad="false" sortBy="createdAt" orderBy="desc" id="st-product-search-results" >
+			<div count="<?php echo $st_count; ?>" imageSize="600x0" loadmore class="products-container" autoLoad="false" id="st-product-search-results" >
 				<?php
 					$offset = ($pg-1) * $st_count;
 					$url_params = "";
+					if(!isset($_GET["sortBy"])){
+						$url_params = "&sortBy=createdAt&orderBy=desc";
+					}
 					foreach($_GET as $key => $value){
-					  $url_params = $url_params . "&" . $key . "=" . $value;
+					  	$url_params = $url_params . "&" . $key . "=" . wp_unslash($value);
 					}
 					if(!isset($_GET["inStock"])){
 						$url_params = $url_params . "&inStock=true";
@@ -308,7 +317,11 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 						$st_products = json_decode($resultProduct);
 					}
 				?>
-				<div class="product-container single-product" style="display: none;" id="st-product-select-template">
+				<div class="product-container single-product" style="position:relative;display: none;" id="st-product-select-template">
+					<div class="st-buy-options" style="display:none">
+						<div class="st-buynow-btn" variantid="" variantName='' productid="" onclick="shoptype_UI.buyNow(this)">Buy Now</div>
+						<div class="st-addcart-btn" variantid="" variantName='' productid="" onclick="shoptype_UI.addToCart(this)">Add to Cart</div>
+					</div>
 					<a href="demo/awake/pdp/?product-id={{productId}}" class="am-product-link">
 						<div class="product-image">
 							<div class="am-product-img-div">
@@ -352,7 +365,14 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 							}
 
 						?>
-						<div class="product-container single-product" id="st-product-select-template">
+						<div class="product-container single-product" style="position:relative;" id="st-product-select-template">
+							<?php if(count($product->variants)==1){ ?>
+							<div class="st-buy-options">
+								<div class="st-buynow-btn" variantid="<?php echo $product->variants[0]->id ?>" variantName='<?php echo json_encode($product->variants[0]->variantNameValue) ?>' productid="<?php echo $product->id ?>" onclick="shoptype_UI.buyNow(this)">Buy Now</div>
+								<div class="st-addcart-btn" variantid="<?php echo $product->variants[0]->id ?>" variantName='<?php echo json_encode($product->variants[0]->variantNameValue) ?>' productid="<?php echo $product->id ?>" onclick="shoptype_UI.addToCart(this)">Add to Cart</div>
+							</div>
+
+							<?php } ?>
 							<a href="<?php echo str_replace("{{productId}}",$product->id, $trimmed_productUrl) ?>" class="am-product-link">
 								<div class="product-image">
 									<div class="am-product-img-div">
@@ -375,7 +395,7 @@ ul.st-pages{margin:10px 0 20px;display: flex;flex-wrap: wrap;padding: 0px;}
 					<?php } ?>
 				<?php } ?>
 			</div>
-			<div class="st-button-div">
+			<div class="st-button-div" style="justify-content: center;">
 				<ul class="st-pages" id="am-pages">
 					<?php
 						global $wp;

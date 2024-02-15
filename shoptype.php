@@ -3,7 +3,7 @@
 Plugin Name:  Shoptype
 Plugin URI:	
 Description:  Integrate shoptype directly into your network with native login, checkout, market, product features and native integrations with budypress social features. 
-Version:	  2.1.5
+Version:	  2.1.6
 Author:	 	  shoptype 
 Author URI:   https://www.shoptype.com
 License:	  GPL2
@@ -64,12 +64,12 @@ add_action( 'bp_enqueue_scripts', 'example_enqueue_script' );
 add_action('init', function(){
 	global $shoptypeUrlBase;
 	add_rewrite_rule( $shoptypeUrlBase.'products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[1]', 'top' );
-	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/products/([a-z0-9\-]+)[/]?$', 'index.php?stproduct=$matches[2]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/products/([A-Za-z0-9\-\\s]+)[/]?$', 'index.php?stproduct=$matches[2]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[2]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[2]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[2]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'shop/(.+)/cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[2]&shop_name=$matches[1]', 'top' );	
-	add_rewrite_rule( $shoptypeUrlBase.'brands/([a-z0-9\-]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
+	add_rewrite_rule( $shoptypeUrlBase.'brands/([A-Za-z0-9\-\\s]+)[/]?$', 'index.php?brand=$matches[1]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'cart/([a-z0-9\-]+)[/]?$', 'index.php?cart=$matches[1]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'checkout/([a-z0-9\-]+)[/]?$', 'index.php?checkout=$matches[1]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'shop-wizard/(.+)[/]?$', 'index.php?stwizard=$matches[1]', 'top' );
@@ -78,7 +78,6 @@ add_action('init', function(){
 	add_rewrite_rule( $shoptypeUrlBase.'tags/(.+)[/]?$', 'index.php?sttag=$matches[1]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'checkout-success/(.+)[/]?$', 'index.php?success_chkout=$matches[1]', 'top' );
 	add_rewrite_rule( $shoptypeUrlBase.'cosell/(.+)[/]?$', 'index.php?cosell_link=$matches[1]', 'top' );
-
 });
 
 add_filter( 'query_vars', function( $query_vars ) {
