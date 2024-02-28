@@ -15,13 +15,13 @@ function renderAwakeProducts($atts = []){
 
     // Need to add other attributes here such as is_slider, slides_to_show
     if(isset($atts['vendor_id']) && !empty($atts['vendor_id'])) $vendorId = $atts['vendor_id'];
-    if(isset($atts['imgSize']) && !empty($atts['imgSize'])) $imgSize = $atts['imgSize'];
+    if(isset($atts['imgsize']) && !empty($atts['imgSize'])) $imgSize = $atts['imgSize'];
     if(isset($atts['tags']) && !empty($atts['tags'])) $tags = "tags=".$atts['tags'];
     if(isset($atts['loadmore']) && !empty($atts['loadmore'])) $loadmore = "loadmore=".$atts['loadmore'];
     if(isset($atts['my_shop']) && !empty($atts['my_shop'])) $my_shop = "myshop=".$atts['my_shop']; 
     if(isset($atts['offset']) && !empty($atts['offset'])) $offset = "offset=".$atts['offset'];
-    if(isset($atts['orderBy']) && !empty($atts['orderBy'])) $orderBy = "orderBy=".$atts['orderBy'];
-    if(isset($atts['sortBy']) && !empty($atts['sortBy'])) $sortBy = "sortBy=".$atts['sortBy'];
+    if(isset($atts['orderby']) && !empty($atts['orderBy'])) $orderBy = "orderBy=".$atts['orderBy'];
+    if(isset($atts['sortby']) && !empty($atts['sortBy'])) $sortBy = "sortBy=".$atts['sortBy'];
     if(isset($atts['collection']) && !empty($atts['collection'])) $collection = "collection_id=".$atts['collection'];
     if(isset($atts['instock']) && !empty($atts['instock'])) $inStock = "inStock=".$atts['instock'];?>
 

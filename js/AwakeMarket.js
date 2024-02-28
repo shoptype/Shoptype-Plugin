@@ -377,6 +377,7 @@ function createProduct(productTemplate, product){
 	if(productPrice){
 		productPrice.innerHTML = getProductPrice(product);
 		if(product["soldOut"]){
+			productOptions.style.display="none";
 			var soldLable = newProduct.querySelector(".sold-out");
 			if(soldLable){soldLable.style.display="block"}
 		}else if(product["sale"]){
