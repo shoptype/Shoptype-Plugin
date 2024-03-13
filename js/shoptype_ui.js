@@ -297,6 +297,15 @@ class ShoptypeUI{
 		setTimeout(()=>{ShoptypeUI.hideMessage(newCloseBtn)}, closeTicks)
 	}
 
+	static showInnerError(error, closeTicks = 5000){
+		if(error.error)
+		{
+			ShoptypeUI.showInnerError(error.error, closeTicks);
+		}else{
+			ShoptypeUI.showError(error.message, closeTicks);
+		}
+	}
+
 	static showError(message, closeTicks = 5000){
 		ShoptypeUI.showMessage(message, "st-error", closeTicks);
 	}

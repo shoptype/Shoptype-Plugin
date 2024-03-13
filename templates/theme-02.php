@@ -10,35 +10,36 @@ global $stPlatformId;
 global $stRefcode;
 global $stCurrency;
 global $brandUrl;
-$path = dirname(plugin_dir_url( __FILE__ ));
 
-$userName = urldecode(get_query_var( 'shop' ));
+$shop_name = urldecode(get_query_var( 'shop' ));
 
-try {
-  $ch = curl_init();
-  $urlparts = parse_url(home_url());
-  $domain = $urlparts['host'];
-
-	$response = wp_remote_get("https://$domain/wp-json/shoptype/v1/shop/".$userName."?count=100");
-	$result     = wp_remote_retrieve_body( $response );
-
-  if( !empty( $result ) ) {
-    $st_user_products = json_decode($result);
+$result = wp_remote_get( "{$stBackendUrl}/cosellers/fetch-mini-stores?name=$shop_name" );
+if( ! is_wp_error( $result ) ) {
+  $body = wp_remote_retrieve_body( $result );
+  $user_mini_stores = json_decode($body);
+  if($user_mini_stores->count==0){
+    
   }else{
+    $result = wp_remote_get( "{$stBackendUrl}/cosellers/mini-stores/".$user_mini_stores->mini_stores[0]->id );
+    $body = wp_remote_retrieve_body( $result );
+    $mini_store = json_decode($body);
   }
 }
-catch(Exception $e) {
+ob_start();
+get_header('shop');
+$header = ob_get_clean();
+$header = preg_replace('#<title>(.*?)<\/title>#', "<title>$mini_store->name</title>", $header);
+echo $header;
 
-}
 add_action('wp_head', function () use ($st_user_products) {
       $description = substr($st_user_products->shop_bio, 0, 160);
-      echo "<meta name='description' content='$st_user_products->shop_bio'/>";
+      echo "<meta name='description' content='$description'>";
       echo "<meta property='og:title' content='$st_user_products->shop_name' />";
       echo "<meta property='og:description' content='$st_user_products->shop_bio' />";
       echo "<meta property='og:image' content='{$st_user_products->avatar}' />";
-    }, 0);
+    }, 1);
 
-    wp_enqueue_style( 'my-shop-css', $path . '/css/st-my-shop.css' );
+wp_enqueue_style( 'my-shop-css', st_locate_file('css/st-my-shop.css' ));
 
 add_filter('pre_get_document_title', 'custom_title');
 function custom_title($title) {
@@ -51,181 +52,101 @@ $header = ob_get_clean();
 $header = preg_replace('#<title>(.*?)<\/title>#', "<title>$st_user_products->shop_name</title>", $header);
 echo $header;
 
-$user = get_user_by( 'login',$userName );
-if(!isset($user->ID))
-{
-  $user = get_user_by( 'email',$userName );
-}
 
-$cover=(empty($st_user_products->cover)) ? st_locate_file('images/shop-banner.jpg') : $st_user_products->cover ;
+$cover=(empty($mini_store->attributes->BG_img)) ? st_locate_file('images/shop-banner.jpg') : $mini_store->attributes->BG_img ;
 
-$user_name= $user->display_name;
-$shop_name=(empty($st_user_products->shop_name))? $user_name.' store' : $st_user_products->shop_name;
-$shop_bio = xprofile_get_field_data( 'st_shop_bio' , $user->id );
+$user_name= $mini_store->attributes->username;
 
 ?>
-  <div class='wrapper my-shop-wrapper' id='main'>
-    <div id="content-main">
-    <div class="st-myshop-head">
-  <div class="st-header-container">
-    <div class="st-store-grid st-store-header">
-      <div id="banner-wrap">
-        <div class="st-store-banner-wrap">
-          <img src='<?php echo $cover ?>' alt="" class="store-banner">
-        </div>
-        <div class="main-owner-container">
-        <div id="inner-element">
-          <div class="store-container">
-            <div class="store-brand-container">
-              <div class="store-icon">
-                <a href="/shop/<?php echo $st_user_products->shop_url ?>">
-                  <img src="<?php echo $st_user_products->avatar ?>" alt="" class="store-icon-image">
-                </a>
-              </div>
-            </div>
-            <div class="store-info-container">
-              <div class="store-info">
-                <h3 class="store-name"><?php echo $st_user_products->shop_name ?></h3>
-                <p class="store-bio"><?php echo $st_user_products->shop_bio ?></p>
-              </div>
-              <div class="show-owner-widget widget">
-                <div class="owner-info">
-                  <h3>Shop Owner</h3>
-                  <div class="inner-avatar-wrap owner-avatar author-follow">
-                    <a class="boss-avatar-container" href="/members/<?php echo $st_user_products->user_nicename ?>">
-                      <img alt="" src="<?php echo $st_user_products->user_avatar ?>" class="avatar avatar-90 photo" height="90" width="90" loading="lazy">
-                    </a>
-                  </div>
-                  <a href="/members/<?php echo $st_user_products->user_nicename ?>" class="owner-name"><?php echo $st_user_products->user_name ?></a>
-                  <div class="shop-rating"></div>
-                </div>
-                <div class="profile-buttons">
-                  <a href="/members/<?php echo $st_user_products->user_nicename ?>" class="visit-profile">Visit Profile</a>
-                  <div class="shop-rating"></div>
-					<?php if ( bp_is_active( 'messages' ) ){ ?>
-                	<a class="send-message" href="/members/me/messages/compose/?r=<?php echo $st_user_products->user_nicename ?>" data-next="" title="Send a private message to <?php echo $st_user_products->user_name ?>.">Ask a question</a>
-					<?php } ?>
-              </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="owner-content">
-      <div class="shop-main">
-      <div class="woocommerce-notices-wrapper"></div>
+ <div class='wrapper my-shop-wrapper' id='main'>
+  <div id="content-main">
+	  <div class="st-myshop-head">
+		  <div class="st-header-container">
+		    <div class="st-store-grid st-store-header">
+		      <div id="banner-wrap">
+		        <div class="st-store-banner-wrap">
+		          <img src='<?php echo $cover ?>' alt="" class="store-banner">
+		        </div>
+		        <div class="main-owner-container">
+			        <div id="inner-element">
+			          <div class="store-container">
+			            <div class="store-brand-container">
+			              <div class="store-icon">
+			                <a href="/shop/<?php echo $mini_store->domain ?>">
+			                  <img src="<?php echo $mini_store->attributes->profile_img ?>" alt="" class="store-icon-image">
+			                </a>
+			              </div>
+			            </div>
+			            <div class="store-info-container">
+			              <div class="store-info">
+			                <h3 class="store-name"><?php echo $mini_store->name ?></h3>
+			                <p class="store-bio"><?php echo $mini_store->attributes->bio ?></p>
+			              </div>
+			              <div class="show-owner-widget widget">
+			                <div class="owner-info">
+			                  <h3>Shop Owner</h3>
+			                  <div class="inner-avatar-wrap owner-avatar author-follow">
+			                    <a class="boss-avatar-container" href="/members/<?php echo $mini_store->attributes->username ?>">
+			                      <img alt="" src="<?php echo $mini_store->attributes->user_img ?>" class="avatar avatar-90 photo" height="90" width="90" loading="lazy">
+			                    </a>
+			                  </div>
+			                  <a href="/members/<?php echo $mini_store->attributes->user_nickname ?>" class="owner-name"><?php echo $mini_store->attributes->username ?></a>
+			                  <div class="shop-rating"></div>
+			                </div>
+			                <div class="profile-buttons">
+			                  <a href="/members/<?php echo $mini_store->attributes->user_nickname ?>" class="visit-profile">Visit Profile</a>
+			                  <div class="shop-rating"></div>
+												<?php if ( bp_is_active( 'messages' ) ){ ?>
+							          	<a class="send-message" href="/members/me/messages/compose/?r=<?php echo $mini_store->attributes->user_nickname ?>" data-next="" title="Send a private message to <?php echo $mini_store->attributes->username ?>.">Ask a question</a>
+												<?php } ?>
+			              </div>
+			              </div>
+			            </div>
+			          </div>
+			        </div>
+			        <div class="owner-content">
+					      <div class="shop-main">
+					      	<div class="woocommerce-notices-wrapper"></div>
+									<ul class="products columns-4">
+										<?php 
+										if(count($mini_store->product_details)==0){
+											echo '<div><h3>No product found on this store</h3></div>';
+										}
+									  foreach($mini_store->product_details as $key=>$value): ?>
+											<li class="product type-product">
+												<div class="st-product-outher">
+													<div class="st-product-inner">
+													<div class="loop-product-image">
+														<a class="image-link" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
+															<img width="297" height="330" src="<?php echo $value->primaryImageSrc->imageSrc ?>" class="attachment-st-product-archive size-st-product-archive wp-post-image" sizes="(max-width: 297px) 100vw, 297px">
+														</a>
+													</div>
+													<a class="product-details" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
+														<h2 class="st-loop-product__title"><?php echo $value->title ?></h2>
+														<span class="price"><span class="woocommerce-Price-amount amount"><bdi><span class="st-Price-currencySymbol"><?php echo "{$value->variants[0]->discountedPriceAsMoney->currency}" ?></span><?php echo "{$value->variants[0]->discountedPriceAsMoney->amount}" ?></bdi></span></span>
+													</a>
+													</div>
+												</div>
+											</li>
+										<?php endforeach; ?>
 
-		<div class="store-filters table">
-			<div>
-				<form id="search-shops" role="search" action="" method="get" class="table-cell page-search">
-				  <div class="search-container">
-					<input type="text" name="st_store_search" placeholder="Search in this shop" value="">
-					<button type="submit" aria-label="search">
-					  <img src="<?php echo $path ?>/images/search.svg">
-					</button>
-				  </div>
-				</form>
+									</ul>
+								</div>
+							</div>
+		      	</div>
+		    	</div>
+		  	</div>
 			</div>
-
-			<?php
-			if(isset($_GET['st_store_search']))
-			{
-			$searckey=$_GET['st_store_search'];
-			}
-			else
-			{
-			  $searckey='';
-			}
-
-			 if(empty($searckey))
-			{
-			?>
-			<div>
-				<p class="st-result-count">
-				Showing all <?php echo $st_user_products->count ?> results</p>
-			</div>
 		</div>
-
-		<ul class="products columns-4">
-		  <?php 
-		 if($st_user_products->count==0)
-			{
-				echo '<div><h3>No product found on this store</h3></div>';
-			}
-		  foreach($st_user_products->products as $key=>$value): ?>
-		<li class="product type-product">
-		<div class="st-product-outher">
-		<div class="st-product-inner">
-		<div class="loop-product-image">
-		 <a class="image-link" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
-		<img width="297" height="330" src="<?php echo $value->primaryImageSrc->imageSrc ?>" class="attachment-st-product-archive size-st-product-archive wp-post-image" sizes="(max-width: 297px) 100vw, 297px"> </a>
-
-		</div>
-
-		<a class="product-details" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
-		<h2 class="st-loop-product__title"><?php echo $value->title ?></h2>
-		<span class="price"><span class="woocommerce-Price-amount amount"><bdi><span class="st-Price-currencySymbol"><?php echo "{$value->variants[0]->discountedPriceAsMoney->currency}" ?></span><?php echo "{$value->variants[0]->discountedPriceAsMoney->amount}" ?></bdi></span></span>
-		</a>
-		</div>
-		</div>
-		</li>
-		<?php endforeach; ?>
-
-		</ul>
-		<?php }
-		else
-		{ ?>
-		  <div><p class="st-result-count">
-		Showing serch results for <?php echo $searckey ?></p></div>
-		</div>
-		<ul class="products columns-4">
-		  <?php foreach($st_user_products->products as $key=>$value): 
-				if($searckey && stripos($value->title,$searckey) === false){
-					continue;  
-				}
-			?>
-
-			<li class="product type-product">
-			<div class="st-product-outher">
-			<div class="st-product-inner">
-			<div class="loop-product-image">
-			 <a class="image-link" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
-			<img width="297" height="330" src="<?php echo $value->primaryImageSrc->imageSrc ?>" class="attachment-st-product-archive size-st-product-archive wp-post-image" sizes="(max-width: 297px) 100vw, 297px"> </a>
-
-			</div>
-
-			<a class="product-details" href="<?php echo "/products/{$value->id}/?tid={$value->tid}" ?>">
-			<h2 class="st-loop-product__title"><?php echo $value->title ?></h2>
-			<h3 class="st-myshop-prod-vendor"><?php echo $value->vendorName ?></h3>
-			<span class="price"><span class="woocommerce-Price-amount amount"><bdi><span class="st-Price-currencySymbol"><?php echo "{$value->variants[0]->discountedPriceAsMoney->currency}" ?></span><?php echo "{$value->variants[0]->discountedPriceAsMoney->amount}" ?></bdi></span></span>
-			</a>
-			</div>
-			</div>
-			</li>
-		<?php endforeach; ?>
-
-		</ul>
-		<?php } ?>
-		</div>
-
-		</div>
-
-
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-</div>
+	</div>
 </div>
 <script>
 	function changeSocial(){
-		document.querySelector("a.elementor-social-icon-facebook").href="<?php echo $st_user_products->facebook; ?>";
-		document.querySelector("a.elementor-social-icon-twitter").href="<?php echo $st_user_products->twitter; ?>";
-		document.querySelector("a.elementor-social-icon-youtube").href="<?php echo $st_user_products->youtube; ?>";
-		document.querySelector("a.elementor-social-icon-instagram").href="<?php echo $st_user_products->instagram; ?>";	
-		document.querySelector("a.elementor-social-icon-linkedin").style.display="none";	
+    document.querySelector("a.elementor-social-icon-facebook").href="<?php echo $st_user_products->facebook; ?>";
+    document.querySelector("a.elementor-social-icon-twitter").href="<?php echo $st_user_products->twitter; ?>";
+    document.querySelector("a.elementor-social-icon-youtube").href="<?php echo $st_user_products->youtube; ?>";
+    document.querySelector("a.elementor-social-icon-instagram").href="<?php echo $st_user_products->instagram; ?>"; 
+    document.querySelector("a.elementor-social-icon-linkedin").style.display="none";  
 	}
 	
 	window.addEventListener("DOMContentLoaded", (event) => {

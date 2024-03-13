@@ -36,12 +36,12 @@ function shoptype_header(){
 	$siteUrl = get_site_url();
 	$siteName = get_bloginfo('name');
 
-	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js');
-	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js?v=2');
-	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js?v=2');
-	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css');
-	wp_enqueue_style( 'awake-prod-style', ST__PLUGIN_URL . 'css/awake-prod-style.css?v=2' );
-	wp_enqueue_style( 'awake-prod-media-style', ST__PLUGIN_URL . 'css/awake-prod-media-style.css' );
+	wp_enqueue_script( 'shoptype_js', ST__PLUGIN_URL . 'js/shoptype.js?v=2.0');
+	wp_enqueue_script( 'shoptype_ui_js', ST__PLUGIN_URL . 'js/shoptype_ui.js?v=2.0');
+	wp_enqueue_script( 'awakeMarket_js', ST__PLUGIN_URL . 'js/AwakeMarket.js?v=2.0');
+	wp_enqueue_style( 'shoptype_css', ST__PLUGIN_URL . 'css/shoptype.css?v=2.0');
+	wp_enqueue_style( 'awake-prod-style', ST__PLUGIN_URL . 'css/awake-prod-style.css?v=2.0' );
+	wp_enqueue_style( 'awake-prod-media-style', ST__PLUGIN_URL . 'css/awake-prod-media-style.css?v=2.0' );
 	echo "<awakeMarket productpage='$productUrl' brandPage='$brandUrl'></awakeMarket>"; 
 	?>
 	<div class="st-cosell-btn">
@@ -206,6 +206,7 @@ add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'stwizard' ) == false || get_query_var( 'stwizard' ) == '' ) {
 		return $template;
 	}
+	wp_enqueue_style( 'my-shop-css', ST__PLUGIN_URL . '/css/st-my-shop.css?1df' );
 	return st_locate_template('myshop-wizard.php');
 } );
 
@@ -213,20 +214,8 @@ add_action( 'template_include', function( $template ) {
 	if ( get_query_var( 'shop' ) == false || get_query_var( 'shop' ) == '' ) {
 		return $template;
 	}
-	$user_id = getUserIdByUrl(get_query_var( 'shop' ));
-	if(!can_have_myshop($user_id)){
-		return st_locate_template("myshop_enable.php");
-	}
-	$field_id = xprofile_get_field_id_from_name( 'st_shop_url');
-	$shop_theme = xprofile_get_field_data( 'st_shop_theme' , $user_id );
-	
-	if( !$shop_theme ){
-		$shop_theme="page-myshop.php";
-	}else{
-		$shop_theme = "$shop_theme.php";
-	}
 
-	return st_locate_template($shop_theme);
+	return st_locate_template("theme-01.php");
 } );
 
 add_action( 'template_include', function( $template ) {
@@ -352,25 +341,6 @@ function bpgcp_save_metabox_fields( $group_id ) {
 	$channel_products = $_POST['channel_products'];
 	groups_update_groupmeta( $group_id, 'channel_products', $channel_products );
 }
-
-//Set width and height for cover images
-function your_theme_xprofile_cover_image( $settings = array() ) {
-    $settings['width']  = 2000;
-    $settings['height'] = 600;
- 
-    return $settings;
-}
-add_filter( 'bp_before_groups_cover_image_settings_parse_args', 'your_theme_xprofile_cover_image', 11, 1 );
-
-function bpex_hide_profile_menu_tabs() {
-	if( bp_is_active( 'xprofile' ) ) :
-		bp_core_remove_nav_item( 'settings' );
-		bp_core_remove_nav_item( 'activity' );
-		bp_core_remove_nav_item( 'groups' );
-	endif; 
-}
-add_action( 'bp_setup_nav', 'bpex_hide_profile_menu_tabs', 15 );
-
 
 //Initialise the market
 function awakenthemarket(){

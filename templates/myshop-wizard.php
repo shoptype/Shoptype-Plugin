@@ -11,50 +11,61 @@ global $stFilterJson;
 global $stDefaultCurrency;
 
 
-$wizard_type = urldecode(get_query_var( 'stwizard' ));
+$wizard_name = urldecode(get_query_var( 'stwizard' ));
 $path = dirname(plugin_dir_url( __FILE__ ));
 $user_id = get_current_user_id();
 $currentUser = get_userdata($user_id);
-$groupSlug = strtolower($currentUser->user_login."_coseller");
 
-$group_id = BP_Groups_Group::group_exists( $groupSlug );
-$shop_products = xprofile_get_field_data( 'st_products' , $currentUser->id );
-$shop_theme = xprofile_get_field_data( 'st_shop_theme' , $currentUser->id );
-$shop_url = xprofile_get_field_data( 'st_shop_url' , $currentUser->id );
-$shop_facebook = xprofile_get_field_data( 'myshop-facebook' , $currentUser->id );
-$shop_twitter = xprofile_get_field_data( 'myshop-twitter' , $currentUser->id );
-$shop_instagram = xprofile_get_field_data( 'myshop-instagram' , $currentUser->id );
-$shop_youtube = xprofile_get_field_data( 'myshop-youtube' , $currentUser->id );
-
-if(isset($shop_url)){
-	$encodedShopUrl = get_site_url()."/shop/".$shop_url;
-}else{
-	$encodedShopUrl = get_site_url()."/shop/".$currentUser->user_login;
+function findShopByName($array, $name){
+    foreach ( $array as $element ) {
+        if ( $name == $element->name ) {
+            return $element;
+        }
+    }
+    return null;
 }
 
-if($wizard_type=="open" && !($shop_products=="" || $shop_products=="{}")){
-	header("Location: {$encodedShopUrl}");
+if($wizard_name=="new"){
+	$this_store = new stdClass();
+	$this_store->name = $currentUser->display_name."s Store";
+	$this_store->domain = get_site_url()."/shop/".$this_store->name;
+	$this_store->status = "active";
+	$this_store->platform_id = $stPlatformId;
+}else{
+	$st_token = $_COOKIE["stToken"];
+	$args = array(
+		'headers'=> array(
+			"Authorization"=> $st_token
+		)
+	);
+	$result = wp_remote_get( "{$stBackendUrl}/cosellers/mini-stores/", $args );
+	if( ! is_wp_error( $result ) ) {
+		$body = wp_remote_retrieve_body( $result );
+		$user_mini_stores = json_decode($body);
+		$this_store = findShopByName($user_mini_stores->mini_stores,$wizard_name);
+	}
+}
+
+if(!isset($this_store->attributes)){
+	$this_store->attributes = new stdClass();
+}
+
+$this_store->attributes->username = $currentUser->display_name;
+$this_store->attributes->user_nickname = $currentUser->user_nicename;
+
+if(is_null($this_store)){
+	header("Location: {$shop_url}");
 	exit;
 }
 
-if(!isset($group_id)){
-		$group_id = groups_create_group(array(
-			'creator_id'=>$user_id,
-			'name'=> $currentUser->user_login,
-			'slug'=> $groupSlug,
-			'enable_forum'=>1
-		));
-		bp_groups_set_group_type( $group_id, array("coseller_shop") );
-		groups_accept_invite($user_id, $group_id);
-}
+$collectionId = "be770fd6-d783-1309-0ffc-0a64db3baa41";
+$response = wp_remote_get("{$stBackendUrl}/platforms/$stPlatformId/collections/$collectionId");
+$resultCollection     = wp_remote_retrieve_body( $response );
+$pluginUrl = plugin_dir_url(__FILE__);
 
-if(isset($group_id)){
-	$group = groups_get_group($group_id);
-	$group_cover = (empty(bp_get_group_cover_url($group))) ? st_locate_file("images/shop-banner.jpg") : bp_get_group_cover_url($group);
-	$group_img =(empty(bp_get_group_avatar_url($group))) ? st_locate_file("images/shop-profile.jpg") : bp_get_group_avatar_url($group);
+if (!empty($resultCollection)) {
+	$st_collections = json_decode($resultCollection);
 }
-$profileImage = get_avatar_url($user_id);
-
 
 get_header();
 
@@ -62,7 +73,6 @@ $theme_url = get_template_directory_uri();
 
 // Output the theme path
 ?>
-
 
 	<div id="filterContainer" class="menu-main" style="display:none">
 		<div class="menu-container" id="st-filter">
@@ -194,83 +204,67 @@ $theme_url = get_template_directory_uri();
 		</div>
 		<div class="st-myshop-details-div">
 			<div class="st-myshop-details-txt">Store Name</div>
-			<input class="st-myshop-name" id="myshop-name" value="<?php echo $group->name ?>"/>
+			<input class="st-myshop-name" id="myshop-name" onchange="checkUrlAvailable(this)" value="<?php echo $this_store->name ?>"/>
 		</div>
 		<div class="st-myshop-details-div">
 			<div class="st-myshop-details-txt">Store Bio</div>
-			<input class="st-myshop-bio" id="myshop-bio" value="<?php echo $group->description ?>"/>
+			<textarea class="st-myshop-bio" id="myshop-bio"><?php echo $this_store->attributes->bio ?></textarea>
 		</div>
 		<div class="st-myshop-details-div">
 			<div class="st-myshop-details-txt">Store URL</div>
-			<input class="st-myshop-bio" id="myshop-url" onchange="checkUrlAvailable(this)" value="<?php echo $shop_url ?>"/>
+			<input readonly class="st-myshop-bio" id="myshop-url" value="<?php echo $this_store->domain ?>"/>
 		</div>
 		<div class="st-myshop-details-div">
 			<div class="st-myshop-details-txt">Social Links</div>
 			<div class="st-myshop-social-links">
 				<div class="st-myshop-social-link">
 					<div class="st-myshop-details-txt">Facebook</div>
-					<input class="st-myshop-bio" id="myshop-facebook" value="<?php echo $shop_facebook ?>"/>
+					<input class="st-myshop-bio" id="myshop-facebook" value="<?php echo $this_store->attributes->fb_url ?>"/>
 				</div>
 				<div class="st-myshop-social-link">
 					<div class="st-myshop-details-txt">Twitter</div>
-					<input class="st-myshop-bio" id="myshop-twitter" value="<?php echo $shop_twitter ?>"/>
+					<input class="st-myshop-bio" id="myshop-twitter" value="<?php echo $this_store->attributes->twitter_url ?>"/>
 				</div>
 				<div class="st-myshop-social-link">
 					<div class="st-myshop-details-txt">Instagram</div>
-					<input class="st-myshop-bio" id="myshop-instagram" value="<?php echo $shop_instagram ?>"/>
+					<input class="st-myshop-bio" id="myshop-instagram" value="<?php echo $this_store->attributes->instagram_url ?>"/>
 				</div>
 				<div class="st-myshop-social-link">
 					<div class="st-myshop-details-txt">Youtube</div>
-					<input class="st-myshop-bio" id="myshop-youtube" value="<?php echo $shop_youtube ?>"/>
+					<input class="st-myshop-bio" id="myshop-youtube" value="<?php echo $this_store->attributes->youtube_url ?>"/>
 				</div>
 				
 			</div>
 		</div>
 		<div class="st-myshop-details-div">
 			<div class="st-myshop-details-txt">Store Logo</div>
-			<a href="#" onclick="document.getElementById('profileImageFile').click()" class="st-myshop-img-select" ><img id="store-icon" src="<?php echo $group_img ?>" loading="lazy" alt="" class="st-myshop-store-img">
-				<div class="div-block-11">
-<div class="st-myshop-img-txt-main">
-
-					<div class="st-myshop-img-txt">To upload you file<br><div class="st-myshop-img-txt-type">
-						File format: JPG / PNG
-						</div></div>
-					<div class="st-myshop-img-lnk">Click here</div>
-</div>
-								<input type="file" id="profileImageFile" onchange="updateShopImg()" style="display: none;">
+			<a href="#" onclick="document.getElementById('profileImageFile').click()" class="st-myshop-img-select" ><img id="store-icon" src="<?php echo $this_store->attributes->profile_img?? st_locate_file("/images/image-plus.png") ?>" loading="lazy" alt="" class="st-myshop-store-img">
+				<div class="st-myshop-img-txt-main">
+					<div class="st-myshop-img-lnk">UPLOAD IMAGE</div>
 				</div>
+				<input type="file" id="profileImageFile" onchange="updateShopImg()" style="display: none;">
 			</a>
+			<div class="st-myshop-img-txt">File Format: JPG / PNG | Ideal Image Ratio: 1:1 <br/> Image should not exceed 1000px or 1mb in size</div>
 		</div>
 		<div class="st-myshop-details-div">
 			<div class="st-myshop-details-txt">Store Banner Image</div>
-			<a href="#" onclick="document.getElementById('profileBGFile').click()" class="st-myshop-img-select"><img id="store-banner" src="<?php echo $group_cover ?>" loading="lazy" alt="" class="st-myshop-store-banner">
-				<div class="div-block-11">
-<div class="st-myshop-img-txt-main">
-					<div class="st-myshop-img-txt">To upload you file<br><div class="st-myshop-img-txt-type">
-						File format: JPG / PNG
-<br>
-Min. image size: 1300px x 225px
-						</div></div>
-					<div class="st-myshop-img-lnk">Click here</div>
-</div>
-								<input type="file" id="profileBGFile" onchange="updateBgImg()" style="display: none;">
+			<a href="#" onclick="document.getElementById('profileBGFile').click()" class="st-myshop-img-select"><img id="store-banner" src="<?php echo $this_store->attributes->BG_img?? st_locate_file("/images/image-plus.png") ?>" loading="lazy" alt="" class="st-myshop-store-banner">
+				<div class="st-myshop-img-txt-main">
+					<div class="st-myshop-img-lnk">UPLOAD IMAGE</div>
 				</div>
+				<input type="file" id="profileBGFile" onchange="updateBgImg()" style="display: none;">
 			</a>
+			<div class="st-myshop-img-txt">File Format: JPG / PNG | Ideal Image Ratio: 20:9 <br/> Image should not exceed 2000px or 1mb in size</div>
 		</div>
 	<div class="st-myshop-details-div">
 			<div class="st-myshop-details-txt">Profile Image</div>
-			<a href="#" onclick="document.getElementById('profileImgFile').click()" class="st-myshop-img-select"><img id="profile-img" src="<?php echo $profileImage ?>" loading="lazy" alt="" class="st-myshop-store-img">
-				<div class="div-block-11">
-<div class="st-myshop-img-txt-main">
-
-					<div class="st-myshop-img-txt">To upload you file<br><div class="st-myshop-img-txt-type">
-						File format: JPG / PNG
-						</div></div>
-					<div class="st-myshop-img-lnk">Click here</div>
-					</div>
-					<input type="file" id="profileImgFile" onchange="updateProfileImg()" style="display: none;">
+			<a href="#" onclick="document.getElementById('profileImgFile').click()" class="st-myshop-img-select"><img id="profile-img" src="<?php echo $this_store->attributes->user_img?? st_locate_file("/images/image-plus.png") ?>" loading="lazy" alt="" class="st-myshop-store-img">
+				<div class="st-myshop-img-txt-main">
+					<div class="st-myshop-img-lnk">UPLOAD IMAGE</div>
 				</div>
+				<input type="file" id="profileImgFile" onchange="updateProfileImg()" style="display: none;">
 			</a>
+			<div class="st-myshop-img-txt">File Format: JPG / PNG | Ideal Image Ratio: 1:1 <br/> Image should not exceed 1000px or 1mb in size</div>
 		</div>
 	</div>
 	<div class="st-myshop-style" style="display:none">
@@ -279,23 +273,50 @@ Min. image size: 1300px x 225px
 		</div>
 		<div class="st-myshop-theme-list">
 			<div class="st-myshop-theme">
-				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-01" name="theme_select" value="theme-01" <?php echo ($shop_theme=="theme-01")?"checked":"" ?>></div>
-				<div class="div-block-9"><img src="<?php echo $path; ?>/images/theme-01.png" loading="lazy" alt="<?php echo $shop_theme ?>" class="st-myshop-theme-img">
-					<div class="st-myshop-theme-name">design 1</div>
+				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-01" name="theme_select" value="theme-01" <?php echo ($this_store->design_attributes->template=="theme-01")?"checked":"" ?>></div>
+				<div class="div-block-9">
+					<div class="st-myshop-theme-name">DESIGN 1</div>
+					<img src="<?php echo st_locate_file("/images/theme-01.png"); ?>" loading="lazy" alt="<?php echo $shop_theme ?>" class="st-myshop-theme-img">
 				</div>
 			</div>
 			<div class="st-myshop-theme">
-				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-02" name="theme_select" value="theme-02" <?php echo $shop_theme=="theme-02"?"checked":"" ?>></div>
-				<div class="div-block-9"><img src="<?php echo $path; ?>/images/theme-02.png" loading="lazy" alt="" class="st-myshop-theme-img">
-					<div class="st-myshop-theme-name">design 2</div>
+				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-02" name="theme_select" value="theme-02" <?php echo $this_store->design_attributes->template=="theme-02"?"checked":"" ?>></div>
+				<div class="div-block-9">
+					<div class="st-myshop-theme-name">DESIGN 2</div>
+					<img src="<?php echo st_locate_file("/images/theme-02.png"); ?>" loading="lazy" alt="" class="st-myshop-theme-img">
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="st-myshop-products"	style="display:none">
+		<div class="st-myshop-collections">
+		<?php if(isset($st_collections) && isset($st_collections->collections)) { ?>
+			<div class="st-myshop-collections-title">Add Products Collections</div>
+			<div class="st-myshop-collections-top">
+				<?php foreach ($st_collections->collections as $collection) { ?>
+					<div>
+						<div class="st-myshop-collection" style="display:flex;">
+							<div class="st-myshop-collection-img">
+								<img src="<?php echo $collection->preview_image_src; ?>" />
+							</div>
+							<div class="st-myshop-collection-col">
+								<?php echo $collection->name." (".count($collection->product_metas).")"; ?>
+							</div>
+							<?php $output = array_map(function ($object) { return $object->product_id; }, $collection->product_metas); ?>
+							<div class="st-myshop-collection-btn">
+								<button productIds="<?php echo implode(', ', $output); ?>" onclick="addCollection(this)" >
+								Add
+								</button>
+							</div>
+								
+						</div>
+					</div>
+				<?php } ?>
+			</div>
+		<?php } ?>	
+		</div>
 		<h2 class="st-myshop-header">Choose products to add to the store</h2>
-		
-		<div>
+		<div class="st-myshop-collections">
 			<div class="st-myshop-search">
 				<input class="st-myshop-search-box" id="st-search-box" name="Search" >
 				<div class="st-product-search-title" onclick="searchProducts()"><img src="<?php echo $theme_url ?>/img/search-icon.png" loading="lazy" alt="" class="st-product-search-img"></div>
@@ -336,76 +357,45 @@ Min. image size: 1300px x 225px
 	</div>
 </div>
 <script type="text/javascript">
-	function callBpApi(dataUri, callBack, type, data){
-		wp.apiRequest( {
-			path: "buddypress/v1/"+dataUri,
-			type: type,
-			data: data,
-		} ).done( function( data ) {
-			callBack(data);
-		} ).fail( function( error ) {
-			ShoptypeUI.showError(error.responseJSON.message);
-			return error;
-		} );
-	}
-
-	function pushBpApi(dataUri, callBack, type, data){
-		wp.apiRequest( {
-			path: "buddypress/v1/"+dataUri,
-			type: type,
-			data: data,
-			contentType: false,
-			processData: false
-		} ).done( function( data ) {
-			callBack(data);
-		} ).fail( function( error ) {
-			ShoptypeUI.showError(error.responseJSON.message);
-			return error;
-		} );
-	}
-
-	function addUserDetails(userData){
-		currentBpUser = userData;
-	}
+	var mini_store=<?php echo json_encode($this_store) ?>;
+	if(mini_store.attributes==null){mini_store.attributes={}}
 	
-	function hideResults(){
-		document.getElementById("st-product-search-results").style.display = "none";
-	}
-
-	function showResults(){
-		document.getElementById("st-product-search-results").style.display = "";
-	}
-
-	function addToShop(shopProducts){
-		let selectorNodes = document.getElementsByClassName("st-myshop-select");
-		let products = shopProducts[0].value.unserialized[0]??"";
-		let newProducts = {};
-		for (var i = 0; i < selectorNodes.length; i++) {
-			if(selectorNodes[i].checked && !products.includes(selectorNodes[i].value)){
-				newProducts[selectorNodes[i].value] = shoptype_UI.getUserTracker();
+	function addCollection(addBtn){
+		st_productsCsv = addBtn.getAttribute("productIds");
+		var collection_products = st_productsCsv.split(",");
+		var existing_products = [...mini_store.product_ids];
+		collection_products.forEach(x=>{
+			var pid=x.trim();
+			if(!mini_store.product_ids.includes(pid)){
+				mini_store.product_ids.push(pid);
 			}
-		}
-		hideResults();
-		callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,x=>addProductByIdToShop(x, newProducts,x=>loadShopProducts(currentBpUser.user_login)),'get');
-	}
-
-	function loadShopProducts(userName) {
-		let productTemplate = document.getElementById("st-product-template");
-		let productsContainer = document.getElementById("st-myshop-main");
-		hideResults();
-		removeChildren(productsContainer, productTemplate)
-		fetch('/wp-json/shoptype/v1/shop/' + userName + '?count=1000')
-			.then(response => response.json())
-			.then(productsJson => {
-				for (var i = 0; i < productsJson.products.length; i++) {
-					let newProduct = productTemplate.cloneNode(true);
-					addProductDetails(newProduct, productsJson.products[i],".st-product-img",".st-product-cost");
-					newProduct.querySelector(".st-product-link").href= "/products/"+productsJson.products[i].id+"/?tid="+productsJson.products[i].tid;
-					newProduct.id = productsJson.products[i].id;
-					newProduct.querySelector(".st-remove-product").setAttribute("onclick",`event.stopPropagation(); removeProductFromShop("${productsJson.products[i].id}")`);
-					productsContainer.appendChild(newProduct);
+		});
+		if(existing_products.length == mini_store.product_ids.length){
+			ShoptypeUI.showWarning("Collection already Added");
+		}else{
+			shoptype_UI.user.miniStore.updateUserStore(mini_store.id, mini_store).then(x=>{
+				if(x.id){
+					mini_store=x;
+					var added_count = mini_store.product_ids.length - existing_products.length;
+					ShoptypeUI.showSuccess( added_count + " new products added to you store");
+				}else{
+					ShoptypeUI.showInnerError(x);
+					mini_store.product_ids = existing_products;
 				}
 			});
+		}
+
+	}
+
+	function addToShop(shop){
+		let selectorNodes = document.getElementsByClassName("st-myshop-select");
+		if(!shop.product_ids){shop.product_ids=[];}
+		for (var i = 0; i < selectorNodes.length; i++) {
+			if(selectorNodes[i].checked && !shop.product_ids.includes(selectorNodes[i].value)){
+				shop.product_ids.push(selectorNodes[i].value);
+			}
+		}
+		saveStore();
 	}
 	
 	function moveState(){
@@ -434,106 +424,148 @@ Min. image size: 1300px x 225px
 					ShoptypeUI.showError("You must select a theme.");
 					return;
 				}
-				callBpApi(`xprofile/${themesId}/data/${currentBpUser.id}`, x=>{}, 'post',{context: 'edit', value:selectedTheme});
+				if(!mini_store.design_attributes){mini_store.design_attributes={};}
+				mini_store.design_attributes.template=selectedTheme;
 				moveToProducts();
 			break;
 			case 3:
-				callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,addToShop,'get');
+				addToShop(mini_store);
 				moveToComplete();
 			break;
 		}
-		st_shop_state++;
+	}
+	
+	function saveStore(){
+		if(mini_store.id){
+			shoptype_UI.user.miniStore.updateUserStore(mini_store.id, mini_store).then(x=>{
+				if(x.id){
+					mini_store=x;
+				}else{
+					ShoptypeUI.showInnerError(x);
+					st_shop_state--;
+					moveState();
+				}
+			});
+		}else{
+			addStoreCollection();
+		}
+	}
+	
+	function addStoreCollection(){
+		if(!mini_store.collection_ids || mini_store.collection_ids.length==0){
+			var product = st_platform.products({count:1}).then(x=>{
+				var newCollection = {
+						"name":STUtils.uuidv4(),
+						"platform_id":"f4bf32b7-e58b-4226-4681-c1d3870bb580",
+						"type":"product",
+						"status":"published",
+						"product_metas":
+						[
+							{
+								"product_id":x.products[0].id,
+								"sequence_id":1
+							}
+						],
+						"dynamic":false
+					};
+				shoptype_UI.user.miniStore.createCosellerCollection(newCollection).then(collection=>{
+					if(collection.id){
+						mini_store.collection_ids=[];
+						mini_store.collection_ids.push(collection.id);
+						shoptype_UI.user.miniStore.createUserStore(mini_store).then(x=>{
+							if(x.id){
+								mini_store=x;
+							}else{
+								ShoptypeUI.showInnerError(x);
+								moveToDetails();
+							}
+						});
+					}else{
+						ShoptypeUI.showError(collection.message);
+					}
+				});
+			});
+		}else{
+			shoptype_UI.user.miniStore.createUserStore(mini_store).then(x=>{mini_store=x;});
+		}
+	}
+	
+	var wizard_tabs = [".st-my-shop-details", ".st-myshop-style",".st-myshop-products", ".st-myshop-complete"];
+	function showTab(tabselect){
+		var tabState = "st-myshop-state-done";
+		wizard_tabs.forEach((tab,index)=>{
+			var tabindex = index+1;
+			if(tab == tabselect){
+				document.querySelector(tab).style.display="";
+				document.getElementById("state-"+tabindex).classList.add("st-myshop-state-selected");
+				st_shop_state=index;
+				tabState="";
+			}else{
+				document.querySelector(tab).style.display="none";
+				document.getElementById("state-"+tabindex).classList.remove("st-myshop-state-selected");
+				if(tabState!=""){
+					document.getElementById("state-"+tabindex).classList.add(tabState);	
+				}
+			}
+		});
+		document.querySelector("#filterContainer").style.display="none";
+		document.querySelector("#st-next-button").style.display="";
 	}
 	
 	function moveToDetails(){
-		document.querySelector(".st-my-shop-details").style.display="";
-		document.querySelector(".st-myshop-style").style.display="none";
-		document.querySelector(".st-myshop-products").style.display="none";
-		document.querySelector(".st-myshop-complete").style.display="none";
-		document.querySelector("#st-next-button").style.display="";
-		document.querySelector("#st-next-button").style.position="";	
-		document.getElementById("state-1").classList.add("st-myshop-state-selected");
-		document.getElementById("state-2").classList.remove("st-myshop-state-selected");
-		document.getElementById("state-3").classList.remove("st-myshop-state-selected");
-		document.getElementById("state-4").classList.remove("st-myshop-state-selected");
+		showTab(".st-my-shop-details");
 	}
 	
 	function moveToTheme(){
 		clearTimeout(debounce_timer);
-		var data = {
-			context: 'edit',
-			name: document.getElementById("myshop-name").value,
-			description: document.getElementById("myshop-bio").value,
-		}
-		callBpApi("groups/"+groupId,(d)=>{showThemeSelect();},"put",data);
-		var shopUrl = document.getElementById("myshop-url").value;
-		shopUrl = encodeURI(shopUrl);
-		callBpApi(`xprofile/${myshopUrlId}/data/${currentBpUser.id}`,(d)=>{},"post",{context: 'edit', value:shopUrl});
-		callBpApi(`xprofile/${myshopFacebookId}/data/${currentBpUser.id}`,(d)=>{},"post",{context: 'edit', value:document.getElementById("myshop-facebook").value});
-		callBpApi(`xprofile/${myshopTwitterId}/data/${currentBpUser.id}`,(d)=>{},"post",{context: 'edit', value:document.getElementById("myshop-twitter").value});
-		callBpApi(`xprofile/${myshopInstagramId}/data/${currentBpUser.id}`,(d)=>{},"post",{context: 'edit', value:document.getElementById("myshop-instagram").value});
-		callBpApi(`xprofile/${myshopYoutubeId}/data/${currentBpUser.id}`,(d)=>{},"post",{context: 'edit', value:document.getElementById("myshop-youtube").value});
+		mini_store.name = document.getElementById("myshop-name").value;
+		mini_store.attributes.bio = document.getElementById("myshop-bio").value;
+		mini_store.domain = document.getElementById("myshop-url").value;
+		
+		mini_store.attributes.fb_url = document.getElementById("myshop-facebook").value;
+		mini_store.attributes.twitter_url = document.getElementById("myshop-twitter").value;
+		mini_store.attributes.instagram_url = document.getElementById("myshop-instagram").value;
+		mini_store.attributes.youtube_url = document.getElementById("myshop-youtube").value;
+		saveStore();
+		showTab(".st-myshop-style");
 	}
+
 	function moveToProducts(){
 		searchProducts();
-		document.querySelector(".st-my-shop-details").style.display="none";
-		document.querySelector(".st-myshop-style").style.display="none";
-		document.querySelector(".st-myshop-products").style.display="";
-		document.querySelector("#filterContainer").style.display="";	
-		document.querySelector(".st-myshop-complete").style.display="none";
-		document.querySelector("#st-next-button").style.display="";
-		document.querySelector("#st-next-button").style.position="fixed";
-		document.getElementById("state-3").classList.add("st-myshop-state-selected");
-		document.getElementById("state-2").classList.remove("st-myshop-state-selected");
-		document.getElementById("state-2").classList.add("st-myshop-state-done");
+		saveStore();
+		showTab(".st-myshop-products");
 	}
 	
 	function moveToComplete(){
-		document.querySelector(".st-my-shop-details").style.display="none";
-		document.querySelector(".st-myshop-style").style.display="none";
-		document.querySelector(".st-myshop-products").style.display="none";
-    	document.querySelector("#filterContainer").style.display="none";
-		document.querySelector(".st-myshop-complete").style.display="";
+		setShopUrl(mini_store.domain);
+		showTab(".st-myshop-complete");
 		document.querySelector("#st-next-button").style.display="none";
-		document.querySelector("#st-next-button").style.position="";
-		document.getElementById("state-4").classList.add("st-myshop-state-selected");
-		document.getElementById("state-3").classList.remove("st-myshop-state-selected");
-		document.getElementById("state-3").classList.add("st-myshop-state-done");
 	}
 	
-	function showThemeSelect(){
-		document.querySelector(".st-my-shop-details").style.display="none";
-		document.querySelector(".st-myshop-style").style.display="";
-		document.querySelector(".st-myshop-products").style.display="none";
-		document.querySelector(".st-myshop-complete").style.display="none";
-		document.querySelector("#st-next-button").style.display="";
-		document.querySelector("#st-next-button").style.position="";
-		document.getElementById("state-1").classList.remove("st-myshop-state-selected");
-		document.getElementById("state-1").classList.add("st-myshop-state-done");
-		document.getElementById("state-2").classList.add("st-myshop-state-selected");
-	}
-	 
 	function updateShopImg(){
 		var fileSelect = document.getElementById("profileImageFile");
 		if ( ! fileSelect.files || ! fileSelect.files[0] ) {
 			return;
 		}
+		
 		var img = new Image;
 		img.onload = function() {
-			getImageScaled(img,(blob)=>{
-				var formData = new FormData();
-				formData.append( 'action', 'bp_avatar_upload' );
-				formData.append( 'file', blob, "shop_profile.jpg" );
-				pushBpApi(`groups/${groupId}/avatar`, (d)=>{document.getElementById("store-icon").src = d[0].full}, "post", formData);
+			var canvas = scaleImage(img, 600, 600);
+			canvas.toBlob((blob)=>{
+				shoptype_UI.user.miniStore.addStoreImage(mini_store.name+" store_img.jpg", blob).then(loaded_img=>{
+					mini_store.attributes.profile_img = loaded_img[mini_store.name+" store_img.jpg"];
+					document.querySelector("#store-icon").src = mini_store.attributes.profile_img+"?"+STUtils.uuidv4();
+				});
 			});
 		}
 		img.src = URL.createObjectURL(fileSelect.files[0]);
 	}
-	function scaleImage(img){
+	
+	function scaleImage(img, width, height){
 		const canvas = document.createElement("canvas");
 		const ctx = canvas.getContext("2d");
-		canvas.width = 600;
-		canvas.height = 600;
+		canvas.width = width;
+		canvas.height = height;
 		var hRatio = canvas.width  / img.width    ;
 		var vRatio =  canvas.height / img.height  ;
 		var ratio  = Math.min ( hRatio, vRatio );
@@ -549,20 +581,22 @@ Min. image size: 1300px x 225px
 		canvas.toBlob(callBack, 'image/png');
 	}
 	
-	function getImageScaledBase64(img){
-		var canvas = scaleImage(img);
-		return canvas.toDataURL();
-	}
-	
 	function updateBgImg(){
 		var fileSelect = document.getElementById("profileBGFile");
 		if ( ! fileSelect.files || ! fileSelect.files[0] ) {
 			return;
 		}
-		var formData = new FormData();
-		formData.append( 'action', 'bp_cover_image_upload' );
-		formData.append( 'file', fileSelect.files[0] );
-		pushBpApi(`groups/${groupId}/cover`, (d)=>{document.getElementById("store-banner").src = d[0].image}, "post", formData);
+		var img = new Image;
+		img.onload = function() {
+			var canvas = scaleImage(img, 1300, 225);
+			canvas.toBlob((blob)=>{
+				shoptype_UI.user.miniStore.addStoreImage(mini_store.name+" store_bg_img.jpg", blob).then(loaded_img=>{
+					mini_store.attributes.BG_img = loaded_img[mini_store.name+" store_bg_img.jpg"];
+					document.querySelector("#store-banner").src = mini_store.attributes.BG_img+"?"+STUtils.uuidv4();
+				});
+			});
+		}
+		img.src = URL.createObjectURL(fileSelect.files[0]);
 	}
 	
 	function updateProfileImg(){
@@ -570,15 +604,14 @@ Min. image size: 1300px x 225px
 		if ( ! fileSelect.files || ! fileSelect.files[0] ) {
 			return;
 		}
-
 		var img = new Image;
 		img.onload = function() {
-			var canvas = scaleImage(img);
+			var canvas = scaleImage(img, 600, 600);
 			canvas.toBlob((blob)=>{
-				var formData = new FormData();
-				formData.append( 'action', 'bp_avatar_upload' );
-				formData.append( 'file', blob, "user_profile_img.jpg" );
-				pushBpApi(`members/${profileUser}/avatar`, (d)=>{document.getElementById("profile-img").src = d[0].image}, "post", formData);
+				shoptype_UI.user.miniStore.addStoreImage("profile_img.jpg", blob).then(loaded_img=>{
+					mini_store.attributes.user_img = loaded_img["profile_img.jpg"];
+					document.querySelector("#store-banner").src = mini_store.attributes.BG_img+"?"+STUtils.uuidv4();
+				});
 			});
 		}
 		img.src = URL.createObjectURL(fileSelect.files[0]);
@@ -604,14 +637,13 @@ Min. image size: 1300px x 225px
 		let productTemplate = document.getElementById("st-product-select-template");
 		let productsContainer = document.getElementById("st-product-search-results");
 		if(remove){
-		removeChildren(productsContainer,productTemplate);
-		myshop_offset=1;
+			removeChildren(productsContainer,productTemplate);
+			myshop_offset=1;
 		}
  
 		options['text'] = document.getElementById('st-search-box').value;
 		options['offset'] = myshop_offset;
-		
-		showResults();
+
 		st_platform.products(options)
 			.then(productsJson => {
 				myshop_offset+=productsJson.products.length;
@@ -637,49 +669,20 @@ Min. image size: 1300px x 225px
 	}
 
 	function productSelect(selectBox){
-		let productId = selectBox.value;
-		st_selectedProducts[productId]=shoptype_UI.getUserTracker();
-	}
 
-	function removeProductFromShop(productId){
-		let products = {};
-		products[productId]='';
-		callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`,x=>addProductByIdToShop(x,products,x=>loadShopProducts(currentBpUser.user_login),true),'get');
-	}
-
-	function addProductByIdToShop(shopProducts, newProducts, callBack, removeProduct=false){
-		let productsJson = shopProducts[0].value.unserialized[0]??'{}';
-		productsJson = productsJson.replace(/ /g, ',');
-		let products = JSON.parse(productsJson);
-		for (const [key, value] of Object.entries(newProducts)) {
-			if(removeProduct){
-				delete products[key];
-			}else{
-				products[key] = value;
-			}
-		}
-
-		productsJson = JSON.stringify(products);
-		callBpApi(`xprofile/${productsDataId}/data/${currentBpUser.id}`, callBack, 'post',{context: 'edit', value:productsJson});
 	}
 	
 	function checkUrlAvailable(element){
 		var testUrl = element.value;
-		testUrl= testUrl.trim();
-		testUrl = testUrl.replace(/[&\/\\#, +()$~%.':*?<>{}]/g, '-');
-		element.value = testUrl;
-		fetch("/wp-json/shoptype/v1/shop-url-check/"+testUrl)
-			.then((response) => response.json())
-			.then(data=>{
-			if(data.status === "taken"){
-				element.value = currentShopUrl;
-				if(testUrl != currentShopUrl){
-					ShoptypeUI.showError(`the url ${testUrl} is already in use please choose another one.`);
-				}
+		STMiniStore.getUserStoreByName("",testUrl).then(result => {
+			if(result.count>0){
+				ShoptypeUI.showError(`the url ${testUrl} is already in use please choose another one.`);
+				mini_store.domain = "";
 			}else{
-				setShopUrl("/shop/"+testUrl);
+				mini_store.domain = location.protocol + '//' + location.host + "/shop/"+testUrl;
 			}
-			});
+			document.getElementById("myshop-url").value=mini_store.domain;
+		});
 	}
 	
 	function setShopUrl(shopUrl){
@@ -697,54 +700,24 @@ Min. image size: 1300px x 225px
 	var currentShopUrl = "<?php echo $shop_url ?>";
 	var currentBpUser = null;
 	let st_selectedProducts = {};
-	let productsDataId = null;
-	let myshopUrlId = null;
-	let myshopFacebookId = null;
-	let myshopTwitterId = null;
-	let myshopInstagramId = null;
-	let myshopYoutubeId = null;
-	let themesId = null;
 	let debounce_timer;
-	let groupId = <?php echo $group_id ?>;
 	let st_shop_state = 0;
 	let myshop_offset = 1;
 	let scrollLoading = false;
 	let options={};
-	function initMyShop(){
-		if (typeof wp !== "undefined") { 
-			callBpApi("members/"+profileUser, addUserDetails, 'get',{populate_extras:true});
-			callBpApi("xprofile/fields", setFieldId, 'get',{populate_extras:true});
-		}else{
-			setTimeout(initMyShop,200);
-		}
-	}
-
-	function setFieldId(data){
-		themesId = data.find(field=>field.name=="st_shop_theme").id;
-		myshopUrlId = data.find(field=>field.name=="st_shop_url").id;
-		myshopFacebookId = data.find(field=>field.name=="myshop-facebook").id;
-		myshopTwitterId = data.find(field=>field.name=="myshop-twitter").id;
-		myshopInstagramId = data.find(field=>field.name=="myshop-instagram").id;
-		myshopYoutubeId = data.find(field=>field.name=="myshop-youtube").id;
-		productsDataId = data.find(field=>field.name=="st_products").id;
-	}
 	
 	scrollContainer = document.getElementById("st-product-search-results");
-	window.addEventListener('scroll',()=>{
-		const {scrollHeight,scrollTop,clientHeight} = document.documentElement;
+	scrollContainer.addEventListener('scroll',(event)=>{
+		const {scrollHeight,scrollTop,clientHeight} = event.srcElement;
 		if((scrollTop + clientHeight > scrollHeight - 5) && (!scrollLoading)){
 		scrollLoading = true;
 			searchProducts(false);
 		}
 	});
-
-	initMyShop();
-	document.getElementById("store_title").addEventListener("input", (e) => updateStoreName(e.currentTarget.textContent), false);
-	document.getElementById("store_bio").addEventListener("input", (e) => updateStoreBio(e.currentTarget.textContent), false);
 </script>
 <style>
-.st-myshop-social-links {display: flex; flex-wrap: wrap; background: #eee; padding: 10px 5px 20px;}
-.st-myshop-social-link { margin-right: 5px; margin-left: 5px; width: calc(50% - 10px);}
+.st-myshop-social-links {display: flex; flex-wrap: wrap; background: #eee; padding: 10px 5px 20px;border-radius:20px;}
+.st-myshop-social-link { margin: 5px; width: calc(50% - 20px);}
 .st-filter-btn { margin-top: 21px; width: 40px !important; height: 40px !important; padding: 5px 0px; margin-left: -1px; border-radius: 0px 10px 10px 0px; border: solid 1px #ccc;}
 #filterContainer { position: fixed !important; margin-left: 0px !important; top: 150px !important; z-index:99999;left: -300px;}
 .menu-apply-div { background: #F8F5EC; margin-top: 20px; border-radius: 0px 20px 20px 0px; height: 65px !important; border-radius: 19px !important;}	
@@ -753,50 +726,124 @@ img.st-filter-img { width: 20px !important; height: 20px !important; margin-left
 .st-myshop-details-div input,.st-myshop-details-txt,.st-myshop-state,input#myshop-name{color:#1e1e1e;font-family:Poppins,Arial,sans-serif}
 .st-myshop-connector,.st-myshop-state{border:1px solid #1e1e1e;opacity:.2}
 footer{margin-top:80px}
-.st-myshop-state.st-myshop-state-selected{border-color:#075ade;background-color:#075ade;font-style:normal;font-weight:500;font-size:18px;line-height:20px;display:flex;align-items:center;text-align:center;color:#fff;font-family:Poppins,Arial,sans-serif;opacity:1}
-.st-myshop-state{display:flex;justify-content:center;align-items:center}
-.st-myshop-details-txt{font-style:normal;font-weight:400;font-size:16px;line-height:160%;display:flex;align-items:center}
-.st-myshop-details-div input,input#myshop-name{font-weight:400;font-size:16px;line-height:160%;padding-left:12px}
-h2.st-myshop-header{font-style:normal;font-weight:700;font-size:32px;line-height:110%;text-align:center;color:#1e1e1e;padding-top:50px;padding-bottom:50px}
+.st-myshop-state.st-myshop-state-selected{border-color: #00317F;background-color: #00317F;display: flex;color: #93EAE5;opacity: 1;}
+.st-myshop-state{display:flex;justify-content:center;align-items:center;border-radius:20px}
+.st-myshop-details-txt{display:flex;align-items:center;text-transform: uppercase;font: 500 16px/24px Poppins;color: #00317F;}
+.st-myshop-details-div input,.st-myshop-details-div textarea,input#myshop-name{font-weight:400;font-size:16px;line-height:160%;padding-left:12px;border: 1px solid #B5C5DE;border-radius: 20px;width:100%}
+.st-myshop-details-div textarea{resize:none; height: 150px}
 .st-myshop-state{font-style:normal;font-weight:400;font-size:18px;line-height:20px;display:flex;align-items:center;text-align:center}
-.menu-apply-button,a#goto_shop_btn,a#st-next-button{padding:14px 24px;background:#f99a42;border-radius:50px;font-style:normal;font-weight:700;font-size:16px;line-height:20px;text-align:center;color:#fff}
+.menu-apply-button,a#goto_shop_btn,a#st-next-button{padding: 14px 24px;background: #00317F;border-radius: 50px;color: #fff;font: 500 17px/20px Poppins;}
 .st-product-cost-select,.st-product-name{font-weight:400;font-size:18px;line-height:120%;font-style:normal;display:flex;font-family:Poppins,Arial,sans-serif}
-.st-myshop-state.st-myshop-state-done{opacity:1;background-color:#f99a42;border-color:#f99a42;color:#f99a42}
+.st-myshop-state.st-myshop-state-done{opacity: 1;background-color: #00317F;border-color: #00317F;color: #00317F;}
 .st-myshop-state-done::after{content:"✓";color:#ffff;margin-left:-7px}
 .st-myshop-search{background:#fff;margin-bottom:50px}
-input#st-search-box{border:1px solid rgba(0,0,0,.1);width:100%;border-radius:4px;border-right:none}
-.st-product-select-main{padding:20px}
-.st-product-img-select{max-height:80px}
+input#st-search-box{border: 1px solid rgba(0,0,0,.1);width: 100%;border-radius: 20px;border-right: none;padding: 0px 20px;}
+.st-product-select-main{padding:20px;flex-direction:column;}
+.st-product-img-select{object-fit:contain;width:100%;}
+	.st-myshop-store-img{position:relative}
 .st-product-name{color:#1e1e1e;height:auto}
 .st-product-cost-select{margin-top:8px;color:#075ade}
-.st-myshop-product-select{margin-top:25px}
-.st-myshop-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;outline:0;cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;position:relative;width:18px;height:18px;background:#fff;border:1px solid #1e1e1e}
+.st-myshop-product-select{width: calc(50% - 10px);}
+.st-myshop-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;outline:0;cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;position:absolute;width:18px;height:18px;background:#fff;border:1px solid #1e1e1e;right:5px;top:10px;}
 .st-myshop-select::before{font-weight:700;font-size:12px;content:"";position:absolute;top:45%;left:60%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:3px}
 .st-myshop-select:checked::before{content:"\2713";color:#fff}
 .st-myshop-select:checked{background-color:orange;border-color:orange}
 .st-myshop-complete .text-block-3,.st-myshop-txt{color:#1e1e1e;font-style:normal;font-weight:400;font-size:20px;line-height:110%;font-family:Poppins,Arial,sans-serif}
-a.st-myshop-img-select{min-height:170px}
-.st-myshop-img-txt-main{display:flex;justify-content:flex-start;align-items:baseline}
-.st-myshop-img-txt{font-family:Poppins,Arial,sans-serif;flex-direction:column;font-style:normal;font-weight:500;font-size:16px;line-height:160%;display:flex;align-items:center;text-align:center;color:#1e1e1e}
+a.st-myshop-img-select{min-height:170px;border-radius:20px;flex-direction:row-reverse;justify-content:space-around;}
+.st-myshop-img-txt-main{display: flex;background: #00317F;border-radius: 20px;padding: 0px 20px;margin-left:10px}
+.st-myshop-img-txt{display: flex; align-items: center; text-align: left; color: #00317F; font: 300 11px/16px Poppins;}
 .st-myshop-img-lnk,.st-myshop-img-txt-type{line-height:160%;align-items:center;font-style:normal;font-weight:500;display:flex;text-align:center}
 .st-myshop-img-txt-type{font-size:14px;color:#1e1e1e;opacity:.3}
 .div-block-11{border-radius:8px;padding:10px;background-color:rgba(240,240,240,.8)}
-.st-myshop-img-lnk{font-size:16px;background:0 0;font-family:Poppins,Arial,sans-serif;color:orange;text-decoration:none}
-.st-myshop-store-banner{width:auto}
+.st-myshop-img-lnk{background:0 0;color: #93EAE5;text-decoration: none;font: 500 13px/20px Poppins;}
+.st-myshop-store-banner{position:relative;width:calc(100% - 168px);object-fit:contain;}
 img.st-product-search-img{filter:invert(0)}
-.st-product-search-title{border:1px solid rgba(0,0,0,.1);border-radius:4px;border-left:none}
-.st-myshop-theme-name{font-style:normal;font-weight:500;font-size:20px;line-height:110%;align-items:center;text-align:center;color:#1e1e1e;margin-top:25px;margin-bottom:10px}
+.st-myshop-theme-name {text-align: left;margin-bottom: 10px;font: 300 15px/15px Poppins;color: #00317F;}
 .st-myshop-theme-list{margin-bottom:70px;border:none}
-.st-myshop-theme{flex-direction:column;border:none;align-content:center;justify-content:center;align-content:center;margin:auto}
+.st-myshop-theme{flex:auto; flex-direction:column;justify-content:center;flex-direction: row-reverse;padding:20px;border-radius:20px}
 .st-shop-select{width:25px;height:25px;display:flex;text-align:center;margin:auto auto 20px;align-items:center;margin-right:auto!important}
 .st-myshop-theme .div-block-9{flex:auto;min-width:400px}
-.st-myshop-theme{flex:auto}
 .st-myshop-theme-list{flex-wrap:nowrap;gap:50px}
-.st-myshop-theme-select{padding:0;width:auto}
+.st-myshop-theme-select{width:auto;display: flex;align-content: center;flex-wrap: wrap;padding: 15px;}
 .st-myshop-social .image{max-width:25px;width:auto!important;height:auto}
-.st-product-search-title{background:0 0!important;border-bottom-left-radius:0!important}
+.st-product-search-title{background:0 0 !important;margin-left: -42px !important;}
 .st-myshop-social{gap:10px}
 .menu-apply-div{background:#f8f5ec;margin-top:20px;border-radius:25px}
+.st-myshop-theme-img {border: solid 1px #B5C5DE;padding: 10px;width:300px;border-radius:10px}
+
+.st-myshop-search {
+    padding: 20px;
+    background: #EFF0FA;
+	border-bottom: solid 1px #B5C5DE;
+}
+div#st-product-search-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+	padding: 10px;
+	height: 700px;
+    overflow-y: auto;
+}
+
+	
+	
+.st-myshop-collections {
+    border-radius: 20px;
+    border: solid 1px #B5C5DE;
+    overflow: hidden;
+	padding-bottom: 10px;
+    margin-bottom: 40px;
+}
+h2.st-myshop-header, .st-myshop-collections-title {
+    text-align: center;
+    font: 500 20px/24px Poppins;
+    color: #00317F;
+    padding: 15px;
+	text-transform: uppercase;
+}
+.st-myshop-collections-title {
+	background: #EFF0FA;
+    padding: 15px;
+    border-bottom: solid 1px #B5C5DE;
+}
+.st-myshop-collection {
+    display: flex;
+    padding: 10px;
+    border-bottom: solid 1px #ccc;
+}
+.st-myshop-collection-img {
+    margin-right: 20px;
+	min-width: 80px;
+}
+.st-myshop-collection-img img {
+    object-fit: cover;
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+}
+.st-myshop-collection-col {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.st-myshop-collections-top {
+    overflow-y: auto;
+    max-height: 400px;
+}
+.st-myshop-collection-btn button {
+    padding: 0px 15px;
+    font: 400 16px/24px Poppins;
+    border-radius: 20px;
+    border: solid 1px #00317F;
+    background: #00317F;
+    color: #93EAE5;
+}
+.st-myshop-collection-btn {
+    border-left: solid 1px #ccc;
+    display: flex;
+    align-items: center;
+    padding: 10px 0px 10px 10px;
+}
 @media only screen and (max-width:900px){
 	.st-myshop-theme-list{flex-wrap:wrap!important;gap:50px}
 	.st-myshop-theme .div-block-9{flex:auto;min-width:auto}
@@ -804,10 +851,5 @@ img.st-product-search-img{filter:invert(0)}
 }
 </style>
 <?php
-function pagemyshop_enqueue_style() {
-		wp_enqueue_style( 'my-shop-css', plugin_dir_url( __FILE__ ) . '/css/st-my-shop.css' );
-}
-
-add_action( 'wp_enqueue_scripts', 'pagemyshop_enqueue_style' );
 
 get_footer();

@@ -5,31 +5,10 @@
  * @package shoptype
  */
 
-global $stApiKey;
-global $stPlatformId;
-global $stRefcode;
 global $stCurrency;
-global $brandUrl;
 
-$shop_name = urldecode(get_query_var( 'shop' ));
 
-$result = wp_remote_get( "{$stBackendUrl}/cosellers/fetch-mini-stores?name=$shop_name" );
-if( ! is_wp_error( $result ) ) {
-  $body = wp_remote_retrieve_body( $result );
-  $user_mini_stores = json_decode($body);
-  if($user_mini_stores->count==0){
-    
-  }else{
-    $result = wp_remote_get( "{$stBackendUrl}/cosellers/mini-stores/".$user_mini_stores->mini_stores[0]->id );
-    $body = wp_remote_retrieve_body( $result );
-    $mini_store = json_decode($body);
-  }
-}
-ob_start();
-get_header('shop');
-$header = ob_get_clean();
-$header = preg_replace('#<title>(.*?)<\/title>#', "<title>$mini_store->name</title>", $header);
-echo $header;
+$mini_store = $args['mini_store'];
 
 add_action('wp_head', function () use ($st_user_products) {
       $description = substr($st_user_products->shop_bio, 0, 160);
@@ -96,51 +75,51 @@ $user_name= $mini_store->attributes->username;
   </div>
 </div>
 <div class="owner-content">
-  <div class="shop-main">
+	<div class="shop-main">
       <div class="woocommerce-notices-wrapper"></div>
-    <ul class="products columns-4">
-      <?php 
-      if(count($mini_store->product_details)==0){
-        echo '<div><h3>No product found on this store</h3></div>';
-      }
-      foreach($mini_store->product_details as $value): ?>
-      <li class="product type-product">
-        <div class="st-product-outher">
-        <div class="st-product-inner">
-          <div class="loop-product-image">
-             <a class="image-link" href="<?php echo "/products/{$value->id}/?tid={$mini_store->tid}" ?>">
-              <img width="297" height="330" src="<?php echo $value->primaryImageSrc->imageSrc ?>" class="attachment-st-product-archive size-st-product-archive wp-post-image" sizes="(max-width: 297px) 100vw, 297px"> 
-            </a>
-          </div>
+		<ul class="products columns-4">
+		  <?php 
+			if(count($mini_store->product_details)==0){
+				echo '<div><h3>No product found on this store</h3></div>';
+			}
+			foreach($mini_store->product_details as $value): ?>
+			<li class="product type-product">
+				<div class="st-product-outher">
+				<div class="st-product-inner">
+					<div class="loop-product-image">
+						 <a class="image-link" href="<?php echo "/products/{$value->id}/?tid={$mini_store->tid}" ?>">
+							<img width="297" height="330" src="<?php echo $value->primaryImageSrc->imageSrc ?>" class="attachment-st-product-archive size-st-product-archive wp-post-image" sizes="(max-width: 297px) 100vw, 297px"> 
+						</a>
+					</div>
 
-          <a class="product-details" href="<?php echo "/products/{$value->id}/?tid={$mini_store->tid}" ?>">
-            <h2 class="st-loop-product__title"><?php echo $value->title ?></h2>
-            <span class="price">
-              <span class="woocommerce-Price-amount amount">
-                <bdi><span class="st-Price-currencySymbol"><?php echo "{$value->variants[0]->discountedPriceAsMoney->currency}" ?></span><?php echo "{$value->variants[0]->discountedPriceAsMoney->amount}" ?></bdi>
-              </span>
-            </span>
-          </a>
-        </div>
-        </div>
-      </li>
-      <?php endforeach; ?>
-    </ul>
-  </div>
+					<a class="product-details" href="<?php echo "/products/{$value->id}/?tid={$mini_store->tid}" ?>">
+						<h2 class="st-loop-product__title"><?php echo $value->title ?></h2>
+						<span class="price">
+							<span class="woocommerce-Price-amount amount">
+								<bdi><span class="st-Price-currencySymbol"><?php echo "{$value->variants[0]->discountedPriceAsMoney->currency}" ?></span><?php echo "{$value->variants[0]->discountedPriceAsMoney->amount}" ?></bdi>
+							</span>
+						</span>
+					</a>
+				</div>
+				</div>
+			</li>
+			<?php endforeach; ?>
+		</ul>
+	</div>
 </div>
 </div>
 <script>
-  function changeSocial(){
-    document.querySelector("a.elementor-social-icon-facebook").href="<?php echo $st_user_products->facebook; ?>";
-    document.querySelector("a.elementor-social-icon-twitter").href="<?php echo $st_user_products->twitter; ?>";
-    document.querySelector("a.elementor-social-icon-youtube").href="<?php echo $st_user_products->youtube; ?>";
-    document.querySelector("a.elementor-social-icon-instagram").href="<?php echo $st_user_products->instagram; ?>"; 
-    document.querySelector("a.elementor-social-icon-linkedin").style.display="none";  
-  }
-  
-  window.addEventListener("DOMContentLoaded", (event) => {
-    changeSocial();
-  });
+	function changeSocial(){
+		document.querySelector("a.elementor-social-icon-facebook").href="<?php echo $st_user_products->facebook; ?>";
+		document.querySelector("a.elementor-social-icon-twitter").href="<?php echo $st_user_products->twitter; ?>";
+		document.querySelector("a.elementor-social-icon-youtube").href="<?php echo $st_user_products->youtube; ?>";
+		document.querySelector("a.elementor-social-icon-instagram").href="<?php echo $st_user_products->instagram; ?>";	
+		document.querySelector("a.elementor-social-icon-linkedin").style.display="none";	
+	}
+	
+	window.addEventListener("DOMContentLoaded", (event) => {
+		changeSocial();
+	});
 </script>
 <style>
 img.store-banner{height: 348px;border-radius: 8px;position: unset}
@@ -176,24 +155,22 @@ bdi{margin-top: 15px;font-style: normal;font-weight: 500;font-size: 16px;line-he
 .loop-product-image{align-content: center;display: flex;width: 100%;height: 219px;background: #fff;border-radius: 8px;justify-content: center;align-items: center;max-height: 219px !important}
 img.attachment-st-product-archive.size-st-product-archive.wp-post-image{align-items: center;width: auto !important;height: 176px;margin: auto;text-align: center;display: flex;align-content: center}
 @media only screen and (max-width: 767px){
-  .store-container{display: flex;flex-direction: column;align-items: center}
-  .store-icon{margin-bottom: 20px}
-  .store-info-container{margin-left: 0;display: flex;flex-direction: column;align-items: center}
-  .show-owner-widget{margin-top: 20px}
-  .show-owner-widget.widget{flex-direction: column}
-  .st-header-container #inner-element .store-info{display: flex;flex-direction: column;justify-content: center;text-align: center;width: 100%;align-items: center}
-  .owner-content{display: flex;flex-direction: column;align-items: center;padding: 20px;gap: 32px;background: #f8f5ec;max-width: 100%}
-  form#search-shops{max-width: 70%}
-  .search-container{max-width: 85%}
-  ul.products.columns-4{justify-content: center}
+	.store-container{display: flex;flex-direction: column;align-items: center}
+	.store-icon{margin-bottom: 20px}
+	.store-info-container{margin-left: 0;display: flex;flex-direction: column;align-items: center}
+	.show-owner-widget{margin-top: 20px}
+	.show-owner-widget.widget{flex-direction: column}
+	.st-header-container #inner-element .store-info{display: flex;flex-direction: column;justify-content: center;text-align: center;width: 100%;align-items: center}
+	.owner-content{display: flex;flex-direction: column;align-items: center;padding: 20px;gap: 32px;background: #f8f5ec;max-width: 100%}
+	form#search-shops{max-width: 70%}
+	.search-container{max-width: 85%}
+	ul.products.columns-4{justify-content: center}
 }
 @media screen and (max-width: 1300px) and (min-width: 770px){
-  .shop-main{padding-right: 30px;padding-left: 30px}
+	.shop-main{padding-right: 30px;padding-left: 30px}
 }
 @media only screen and (max-width: 767px){
-  h3.store-name{display: block;white-space: normal;white-space: wrap;text-align: center;word-break: break-all}
+	h3.store-name{display: block;white-space: normal;white-space: wrap;text-align: center;word-break: break-all}
 }
- </style>
 
-<?php
-get_footer('shop');
+ </style>

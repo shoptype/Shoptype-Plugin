@@ -325,9 +325,11 @@ class STUser {
   #token = null;
   #platformId = null;
   #sessionCTid = null;
+  miniStore = null;
 
   constructor(token) {
     this.#token = token;
+    this.miniStore = new STMiniStore(token);
     this.endpoints = {
       user: {
         me: () => {
@@ -377,6 +379,7 @@ class STUser {
 
   setPlatform(platformId){
     this.#platformId = platformId;
+    this.miniStore.setPlatform(platformId);
   }
 
   getTracket(productId){
@@ -426,19 +429,172 @@ class STUser {
   }
 }
 
+class STMiniStore {
+  #token = null;
+  #platformId = null;
+
+  constructor(token) {
+    this.#token = token;
+    this.endpoints = {
+      miniStore: {
+        allStores: () => {
+          var endpoint = {
+            resource: '/cosellers/mini-stores',
+            header: {'authorization':this.#token},
+            method: 'get' 
+          };
+          return endpoint;
+        },
+        getStore: (storeId) =>{
+          var endpoint = {
+            resource: `/cosellers/mini-stores/${storeId}`,
+            method: 'get' 
+          };
+          return endpoint;
+        },
+        create:(store)=>{
+          var endpoint = {
+            resource: '/cosellers/mini-stores',
+            header: {'authorization':this.#token},
+            body: store,
+            method: 'POST' 
+          };
+          return endpoint;
+        },
+        update:(storeId, store)=>{
+          var endpoint = {
+            resource: `/cosellers/mini-stores/${storeId}`,
+            header: {'authorization':this.#token},
+            body: store,
+            method: 'PUT' 
+          };
+          return endpoint;
+        },
+        createCollection:(collection)=>{
+            var endpoint = {
+            resource: '/cosellers/collections',
+            header: {'authorization':this.#token},
+            body: collection,
+            method: 'POST' 
+          };
+          return endpoint;
+        },
+        updateCollection:(collectionId, collection)=>{
+            var endpoint = {
+            resource: `/cosellers/collections/${collectionId}`,
+            header: {'authorization':this.#token},
+            body: collection,
+            method: 'PUT' 
+          };
+          return endpoint;
+        },
+        addImage:(name, blob)=>{
+          var formData = new FormData();
+          formData.append( 'fileNames', "[\""+name+"\"]");
+          formData.append( name, blob, name);
+          
+          var endpoint = {
+            resource: '/command?type=addMedia',
+            header: {'authorization':this.#token},
+            body: formData,
+            method: 'POST' 
+          };
+          return endpoint;
+        },
+      }
+    }
+  }
+
+  setPlatform(platformId){a
+    this.#platformId = platformId;
+  }
+
+  getUserStores(){
+    return STUtils.request(this.endpoints.miniStore.allStores());
+  }
+
+  static getUserStore(storeId){
+    var endpoint = {
+          resource: `/cosellers/mini-stores/${storeId}`,
+          method: 'get'  
+        };
+    return STUtils.request(endpoint);
+  }
+
+  static getAllUserStores(platformId){
+    var endpoint = {
+          resource: `/cosellers/fetch-mini-stores?platformId=${platformId}`,
+          method: 'get'  
+        };
+    return STUtils.request(endpoint);
+  }
+
+  static getUserStoreByName(platformId, name){
+    var endpoint = {
+          resource: `/cosellers/fetch-mini-stores?platformId=${platformId}&name=${name}`,
+          method: 'get'
+        };
+    return STUtils.request(endpoint);
+  }
+
+  createUserStore(store){
+    return STUtils.request(this.endpoints.miniStore.create(store));
+  }
+
+  updateUserStore(storeId, store){
+    return STUtils.request(this.endpoints.miniStore.update(storeId, store));
+  }
+
+  addStoreImage(name, blob){
+    return STUtils.mpfRequest(this.endpoints.miniStore.addImage(name, blob));
+  }
+
+  createCosellerCollection(collection){
+    return STUtils.request(this.endpoints.miniStore.createCollection(collection));
+  }
+
+  updateCosellerCollection(collectionId, collection){
+    return STUtils.request(this.endpoints.miniStore.updateCollection(collectionId, collection));
+  }
+
+  static getCosellerCollection(collectionId){
+    
+  }
+
+
+
+}
+
 class STUtils{
   static backendUrl ='https://backend.shoptype.com';
   
   static request(endpoint = {},callback=null) {
-    if(endpoint.header){
-      endpoint.header['Content-Type'] = 'application/json';
-    }else{
-      endpoint.header={'Content-Type':'application/json'};
+    if(endpoint.method && endpoint.method.toLowerCase()!="get"){
+      if(endpoint.header){
+        endpoint.header['Content-Type'] = 'application/json';
+      }else{
+        endpoint.header={'Content-Type':'application/json'};
+      }
     }
+
     return fetch(`https://backend.shoptype.com${endpoint.resource}`, {
       method: endpoint?.method,
       headers: endpoint?.header,
       body: endpoint?.body ? JSON.stringify(endpoint.body) : null,
+    }).then(async (response) => {
+      const data = await response.json();
+      if (callback){callback(data)}
+      return data;
+    }).catch((error) => {
+      return error;
+    });
+  }
+
+  static mpfRequest(endpoint = {},callback=null) {
+    return fetch(`https://backend.shoptype.com${endpoint.resource}`, {
+      method: endpoint?.method,
+      headers: endpoint?.header,
+      body: endpoint?.body ? endpoint.body : null,
     }).then(async (response) => {
       const data = await response.json();
       if (callback){callback(data)}
@@ -508,6 +664,12 @@ class STUtils{
   static sendEvent(eventName, value){
     const event = new CustomEvent(eventName, { detail: value });
     document.dispatchEvent(event);
+  }
+
+  static uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
   }
 }
 

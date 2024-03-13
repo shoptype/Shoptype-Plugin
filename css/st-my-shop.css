@@ -186,6 +186,10 @@ input[type="checkbox"] .st-shop-select:checked + div{
     background-color: #bbb;
 }
 
+input.st-shop-select {
+	accent-color: #93EAE5;
+}
+
 input.st-product-search-results {
     position: absolute;
     top: 2px;
@@ -807,13 +811,15 @@ li.product:hover{
 .st-myshop-state {
   width: 40px;
   height: 40px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: #ccc;
+  border:1px solid #1e1e1e;
+  opacity:.2
   border-radius: 50%;
   font-size: 18px;
   line-height: 40px;
   text-align: center;
+  display:flex;
+  justify-content:center;
+  align-items:center
 }
 
 .st-myshop-state.st-myshop-state-done {
@@ -821,17 +827,32 @@ li.product:hover{
 }
 
 .st-myshop-state.st-myshop-state-selected {
-  background-color: #6797f7;
-  color: #fff;
+  border-color:#075ade;
+  background-color:#075ade;
+  font-weight:500;
+  font-size:18px;
+  line-height:20px;
+  text-align:center;
+  color:#fff;
+  opacity:1
 }
 
 .st-myshop-connector {
   width: 60px;
   height: 0px;
   margin-top: 20px;
-  border-style: solid none none;
-  border-width: 4px 2px 2px 4px;
+  border:1px solid #1e1e1e;
+  opacity:.2;
   border-color: #ccc;
+}
+
+.st-myshop-social-links{
+	display:flex;
+	flex-wrap:wrap;
+	background:#eee;
+	padding: 20px;
+	border-radius: 20px;
+	gap: 20px;
 }
 
 .st-myshop-header {
@@ -850,7 +871,8 @@ li.product:hover{
 
 .st-myshop-details-txt {
   margin-bottom: 5px;
-  font-size: 18px;
+  font:500 16px/24px sans-serif;
+  color:#00317F
 }
 
 .st-myshop-bottom {
@@ -867,24 +889,21 @@ li.product:hover{
 .st-myshop-img-select {
   position: relative;
   display: flex;
-  height: 120px;
-  flex-direction: column;
+  height: 170px;
+  flex-direction: row-reverse;
   justify-content: center;
   align-items: center;
-  border-style: dashed;
-  border-width: 1px;
-  border-color: #bbb;
-  border-radius: 5px;
+  border: 1px solid #B5C5DE;
+  border-radius: 20px;
   text-decoration: none;
 }
 
-.st-myshop-bio {
-  height: 40px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #bbb;
-  border-radius: 20px;
-  width: 100%;
+.st-myshop-details-div textarea.st-myshop-bio {
+	height: 120px;
+	border-radius: 20px;
+	border: solid 1px #B5C5DE;
+	padding: 10px;
+	font: 400 14px/24px Poppins;
 }
 
 .st-myshop-collection-img {
@@ -925,7 +944,10 @@ li.product:hover{
 }
 
 .st-myshop-theme-img {
-  width: 100%;
+  width: 320px;
+  border: solid 1px #B5C5DE;
+  border-radius: 10px;
+  padding: 5px;
 }
 
 .st-myshop-button {
@@ -1005,14 +1027,12 @@ li.product:hover{
 }
 
 .st-myshop-store-img {
-  position: absolute;
   width: 120px;
   height: 120px;
   object-fit: contain;
 }
 
 .st-myshop-store-banner {
-  position: absolute;
   width: 100%;
   height: 120px;
   object-fit: cover;
