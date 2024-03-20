@@ -648,12 +648,14 @@ $theme_url = get_template_directory_uri();
 			.then(productsJson => {
 				myshop_offset+=productsJson.products.length;
 				for (var i = 0; i < productsJson.products.length; i++) {
-					let newProduct = productTemplate.cloneNode(true);
-					addProductDetails(newProduct, productsJson.products[i],".st-product-img-select",".st-product-cost-select");
-					newProduct.id = "search-" + productsJson.products[i].id;
-					newProduct.querySelector("input").id = "select-" + productsJson.products[i].id;
-					newProduct.querySelector("input").value = productsJson.products[i].id;
-					productsContainer.appendChild(newProduct);
+					if(productsJson.products[i].variants && productsJson.products[i].variants.length>0){
+						let newProduct = productTemplate.cloneNode(true);
+						addProductDetails(newProduct, productsJson.products[i],".st-product-img-select",".st-product-cost-select");
+						newProduct.id = "search-" + productsJson.products[i].id;
+						newProduct.querySelector("input").id = "select-" + productsJson.products[i].id;
+						newProduct.querySelector("input").value = productsJson.products[i].id;
+						productsContainer.appendChild(newProduct);
+					}
 				}
 			scrollLoading = false;
 			});
@@ -695,11 +697,6 @@ $theme_url = get_template_directory_uri();
 		document.getElementById("goto_shop_btn").href = shopUrl;
 	}
 
-	var myUrl = new URL(window.location);
-	var profileUser = <?php echo get_current_user_id() ?>;
-	var currentShopUrl = "<?php echo $shop_url ?>";
-	var currentBpUser = null;
-	let st_selectedProducts = {};
 	let debounce_timer;
 	let st_shop_state = 0;
 	let myshop_offset = 1;
