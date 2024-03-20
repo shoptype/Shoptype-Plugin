@@ -195,7 +195,6 @@
 <script type="text/javascript">
 	var mini_store=<?php echo json_encode($mini_store) ?>;
 	var mini_store_id= "<?php echo $mini_store->id ?>";
-	let st_selectedProducts = {};
 	
 	function changeShop(select){
 		var shop_id = select.options[select.selectedIndex].value;
@@ -337,26 +336,35 @@
 		productNode.style.display="";
 	}
 
-	function searchProducts() {
-		let options = {
-			text: document.getElementById('st-search-box').value,
-			offset:0
-		};
-		
+	function searchProducts(remove=true) {
 		let productTemplate = document.getElementById("st-product-select-template");
 		let productsContainer = document.getElementById("st-product-search-results");
-		removeChildren(productsContainer,productTemplate);
+		if(remove){
+			removeChildren(productsContainer,productTemplate);
+			myshop_offset=0;
+		}
+
+		let options = {
+			text: document.getElementById('st-search-box').value,
+			offset:myshop_offset
+		};
+
+		options.count=40;
 		showResults();
 		st_platform.products(options)
 			.then(productsJson => {
+				myshop_offset += productsJson.products.length;
 				for (var i = 0; i < productsJson.products.length; i++) {
 					let newProduct = productTemplate.cloneNode(true);
+					if(productsJson.products[i].variants && productsJson.products[i].variants.length>0){
 					addProductDetails(newProduct, productsJson.products[i],".st-product-img-select",".st-product-cost-select");
-					newProduct.id = "search-" + productsJson.products[i].id;
-					newProduct.querySelector("input").id = "select-" + productsJson.products[i].id;
-					newProduct.querySelector("input").value = productsJson.products[i].id;
-					productsContainer.appendChild(newProduct);
+						newProduct.id = "search-" + productsJson.products[i].id;
+						newProduct.querySelector("input").id = "select-" + productsJson.products[i].id;
+						newProduct.querySelector("input").value = productsJson.products[i].id;
+						productsContainer.appendChild(newProduct);
+					}
 				}
+				scrollLoading = false;
 			});
 	}
 
@@ -382,6 +390,9 @@
 		productElem.remove();
 	}
 
+	let st_selectedProducts = {};
+	let myshop_offset = 0;
+	let scrollLoading = false;
 
 	var searchInput = document.getElementById("st-search-box");
 	searchInput.addEventListener("keyup", function(event) {
@@ -390,7 +401,14 @@
 			searchProducts();
 		}
 	});
-
+	scrollContainer = document.getElementById("st-product-search-results");
+	scrollContainer.addEventListener('scroll',(event)=>{
+		const {scrollHeight,scrollTop,clientHeight} = event.srcElement;
+		if((scrollTop + clientHeight > scrollHeight - 5) && (!scrollLoading)){
+			scrollLoading = true;
+			searchProducts(false);
+		}
+	});
 </script>
 <style>
 	.st-shop-buttons {width: 150px;}
