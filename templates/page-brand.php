@@ -26,7 +26,9 @@ try {
 			  $meta_fields[$meta_data->key] = $meta_data->value;
 			}
 		}
-		$productCategories = join(", ",$st_brand->productCategories);
+		if(isset($st_brand->productCategories)){
+			$productCategories = join(", ",$st_brand->productCategories);
+		}
 		$store = $st_brand->store;
 		if( function_exists('groups_get_id')) {
 			$groupSlug = preg_replace('~[^\pL\d]+~u', '-', $st_brand->name);
