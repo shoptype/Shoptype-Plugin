@@ -74,11 +74,17 @@ class STPlatform {
           };
           return endpoint;
         },
-        addProduct: (cartId, productId, variantId, variantName, quantity) => {
+        addProduct: (cartId, productId, variantId, variantName, quantity, metadata) => {
           var endpoint = {
             resource: `/cart/${cartId}/add`,
             header: {'X-Shoptype-Api-Key': this.apiKey, 'X-Shoptype-PlatformId': this.platformId},
-            body: {'product_id':productId, 'product_variant_id':variantId, 'variant_name_value':variantName,'quantity': quantity},
+            body: {
+              'product_id':productId, 
+              'product_variant_id':variantId, 
+              'variant_name_value':variantName,
+              'quantity': quantity,
+              'metadata': metadata
+            },
             method: 'post' 
           };
           return endpoint;          
@@ -240,13 +246,13 @@ class STPlatform {
     return STUtils.request(this.endpoints.carts.cart(cartId));
   }
 
-  addToCart(productId, variantId, variantName, quantity, cartId = this.cartId){
+  addToCart(productId, variantId, variantName, quantity, metadata, cartId = this.cartId){
     var callback = data=>{
       if(data.total_quantity){
         STUtils.sendEvent('cartQuantityChanged', {count: data.total_quantity} );
       }
     };
-    return STUtils.request(this.endpoints.carts.addProduct(cartId, productId, variantId, variantName, quantity), callback);
+    return STUtils.request(this.endpoints.carts.addProduct(cartId, productId, variantId, variantName, quantity, metadata), callback);
   }
 
   updateCart(productId, variantId, variantName, quantity, cartId=this.cartId){
@@ -505,7 +511,7 @@ class STMiniStore {
     }
   }
 
-  setPlatform(platformId){a
+  setPlatform(platformId){
     this.#platformId = platformId;
   }
 

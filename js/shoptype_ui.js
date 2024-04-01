@@ -134,6 +134,7 @@ class ShoptypeUI{
 		let variantName = JSON.parse(button.getAttribute("variantName"));
 		let productId = button.getAttribute("productid");
 		let thisVendorId = button.getAttribute("vendorid");
+		let metadata = JSON.parse(button.getAttribute("meta_data"));
 
 		let quantity = 1;
 		let quantSelect = button.getAttribute("quantitySelect");
@@ -151,7 +152,7 @@ class ShoptypeUI{
 		if(quantity==0){
 			return;
 		}
-		st_platform.addToCart(productId, variantId, variantName, quantity)
+		st_platform.addToCart(productId, variantId, variantName, quantity, metadata)
 			.then(cartJson=>{
 				this.stHideLoader();
 				if(cartJson.cart_lines){
