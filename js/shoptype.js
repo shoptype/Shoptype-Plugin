@@ -476,6 +476,15 @@ class STMiniStore {
           };
           return endpoint;
         },
+        delete:(storeId)=>{
+          var endpoint = {
+            resource: `/cosellers/mini-stores/${storeId}`,
+            header: {'authorization':this.#token},
+            body: store,
+            method: 'DELETE' 
+          };
+          return endpoint;
+        },
         createCollection:(collection)=>{
             var endpoint = {
             resource: '/cosellers/collections',
@@ -549,6 +558,10 @@ class STMiniStore {
 
   updateUserStore(storeId, store){
     return STUtils.request(this.endpoints.miniStore.update(storeId, store));
+  }
+
+  updateUserStore(storeId){
+    return STUtils.request(this.endpoints.miniStore.delete(storeId));
   }
 
   addStoreImage(name, blob){
