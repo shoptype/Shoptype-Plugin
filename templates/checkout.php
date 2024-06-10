@@ -29,6 +29,8 @@ get_header();
 if($checkoutId == "new"){
 	$productId = $_GET["productid"];
 	$variantId = $_GET["variantid"];
+	$quantity = $_GET["quantity"]??1;
+	$metadata = $_GET["metadata"];
 	$args = array(
 		'body'        => '{}',
 		'headers'     => array(
@@ -49,8 +51,9 @@ if($checkoutId == "new"){
 		$st_cart = json_decode($body);
 		$data = array(
 			"product_id" => $productId,
+			"metadata" => $metadata,
 			"product_variant_id" => $variantId,
-			"quantity" => 1
+			"quantity" => $quantity
 		);
 		$args = array(
 			"body"        => json_encode($data),
@@ -274,9 +277,16 @@ if(isset($st_checkout)){
 								<?php if(isset($product->variant_name_value) && !(count((array)$product->variant_name_value)<=1 && reset($product->variant_name_value)=="Default Title")){ ?>
 									<?php echo " - "; ?>
 									<?php foreach($product->variant_name_value as $varKey=>$varValue){
-											echo "{$varKey}:{$varValue}, ";
+										echo "{$varKey}:{$varValue}, ";
 									} ?>
 								<?php } ?>
+								<?php
+									if(isset($product->metadata)){
+										foreach($product->metadata as $key=>$value){
+											echo "<br/><span style='font-weight: bold;'>{$key}</span>: {$value}, ";
+										}
+									}
+								?>
 								<span class="st-chkout-product-qty"> x <?php echo $product->quantity ?></span></div>
 							</div>
 							<div class="st-chkout-product-tot"><?php echo $prodCurrency.number_format((float)($product->quantity*$product->price->amount), 2, '.', '')?></div>
@@ -286,8 +296,6 @@ if(isset($st_checkout)){
 					<?php endforeach; ?>
 				</div>
 			</div>
-
-
 
 			<div class="st-chkout-details">
 				<div class="st-chkout-tot-row">

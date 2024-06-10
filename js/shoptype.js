@@ -331,6 +331,7 @@ class STUser {
   #token = null;
   #platformId = null;
   #sessionCTid = null;
+  #vendor_token = null;
   miniStore = null;
 
   constructor(token) {
@@ -342,6 +343,23 @@ class STUser {
           var endpoint = {
             resource: '/me',
             header: {'authorization':this.#token},
+            method: 'get' 
+          };
+          return endpoint;
+        },
+        vendorToken: () => {
+          var endpoint = {
+            resource: '/authenticate',
+            header: {'authorization':this.#token},
+            body:{userType: "vendor"},
+            method: 'post' 
+          };
+          return endpoint;
+        },
+        vendorMe: (_token) => {
+          var endpoint = {
+            resource: '/me',
+            header: {'authorization':_token},
             method: 'get' 
           };
           return endpoint;
@@ -374,8 +392,19 @@ class STUser {
           var endpoint = {
             resource: `/invites`,
             header: {'authorization':this.#token},
-            body:{"type": "referrer"},
+            body:{
+              "type": "referrer",
+              "platformId": this.#platformId
+            },
             method: 'post' 
+          };
+          return endpoint;
+        },
+        referralTree: () => {
+          var endpoint = {
+            resource: `/referrals`,
+            header: {'authorization':this.#token},
+            method: 'get' 
           };
           return endpoint;
         },
@@ -406,6 +435,19 @@ class STUser {
 
   referralId(){
     return STUtils.request(this.endpoints.user.referral());
+  }
+
+  getReferralTree(){
+    return STUtils.request(this.endpoints.user.referralTree());
+  }
+
+  getVendorToken(){
+    return STUtils.request(this.endpoints.user.vendorToken(), token=>{this.#vendor_token = token;});
+  }
+
+  getVendorDetails(token, callback){
+    var my_token = token??this.#vendor_token;
+    return STUtils.request(this.endpoints.user.vendorMe(my_token),callback);
   }
 
   static sendUserEvent(tid, platformId = null){
@@ -480,8 +522,14 @@ class STMiniStore {
           var endpoint = {
             resource: `/cosellers/mini-stores/${storeId}`,
             header: {'authorization':this.#token},
-            body: store,
             method: 'DELETE' 
+          };
+          return endpoint;
+        },
+        getCollection:(collectionId)=>{
+            var endpoint = {
+            resource: '/cosellers/collections',
+            method: 'GET' 
           };
           return endpoint;
         },
@@ -560,7 +608,7 @@ class STMiniStore {
     return STUtils.request(this.endpoints.miniStore.update(storeId, store));
   }
 
-  updateUserStore(storeId){
+  deleteUserStore(storeId){
     return STUtils.request(this.endpoints.miniStore.delete(storeId));
   }
 
@@ -577,10 +625,8 @@ class STMiniStore {
   }
 
   static getCosellerCollection(collectionId){
-    
+    return STUtils.request(this.endpoints.miniStore.getCollection(collectionId));
   }
-
-
 
 }
 

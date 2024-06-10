@@ -10,6 +10,11 @@ global $stBackendUrl;
 wp_enqueue_style( 'cartCss', st_locate_file('css/st-myaccount.css') );
 
 $st_token = $_COOKIE["stToken"];
+$args = array( 
+			'headers' => array( 
+				'Authorization' => $st_token,
+			) 
+		);
 
 $st_profile = st_ensure_user_loggedin();
 if(!isset($st_profile->profilePicture) || $st_profile->profilePicture==null){

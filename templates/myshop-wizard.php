@@ -10,7 +10,7 @@ global $stPlatformId;
 global $stFilterJson;
 global $stDefaultCurrency;
 
-
+$sharetxt = "Hey, have a look at this store I curated for you";
 $wizard_name = urldecode(get_query_var( 'stwizard' ));
 $path = dirname(plugin_dir_url( __FILE__ ));
 $user_id = get_current_user_id();
@@ -273,14 +273,14 @@ $theme_url = get_template_directory_uri();
 		</div>
 		<div class="st-myshop-theme-list">
 			<div class="st-myshop-theme">
-				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-01" name="theme_select" value="theme-01" <?php echo ($this_store->design_attributes->template=="theme-01")?"checked":"" ?>></div>
+				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-01" name="theme_select" value="theme-01" <?php echo ($this_store->design_attributes->template=="theme-001")?"checked":"" ?>></div>
 				<div class="div-block-9">
 					<div class="st-myshop-theme-name">DESIGN 1</div>
 					<img src="<?php echo st_locate_file("/images/theme-01.png"); ?>" loading="lazy" alt="<?php echo $shop_theme ?>" class="st-myshop-theme-img">
 				</div>
 			</div>
 			<div class="st-myshop-theme">
-				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-02" name="theme_select" value="theme-02" <?php echo $this_store->design_attributes->template=="theme-02"?"checked":"" ?>></div>
+				<div class="st-myshop-theme-select"><input class="st-shop-select" type="radio" id="theme-02" name="theme_select" value="theme-02" <?php echo $this_store->design_attributes->template=="theme-002"?"checked":"" ?>></div>
 				<div class="div-block-9">
 					<div class="st-myshop-theme-name">DESIGN 2</div>
 					<img src="<?php echo st_locate_file("/images/theme-02.png"); ?>" loading="lazy" alt="" class="st-myshop-theme-img">
@@ -398,10 +398,10 @@ $theme_url = get_template_directory_uri();
 		saveStore();
 	}
 	
-	function moveState(){
+	function moveState(save=true){
 		switch(st_shop_state+1) {
 			case 0:
-				moveToDetails();
+				moveToDetails(save);
 			break;
 			case 1:
 				if(document.getElementById("myshop-name").value == ""){
@@ -416,7 +416,7 @@ $theme_url = get_template_directory_uri();
 					ShoptypeUI.showError("Shop Icon cannot be empty.");
 					return;
 				}
-				moveToTheme();
+				moveToTheme(save);
 			break;
 			case 2:
 				var selectedTheme = document.querySelector('input[name="theme_select"]:checked').value;
@@ -426,10 +426,12 @@ $theme_url = get_template_directory_uri();
 				}
 				if(!mini_store.design_attributes){mini_store.design_attributes={};}
 				mini_store.design_attributes.template=selectedTheme;
-				moveToProducts();
+				moveToProducts(save);
 			break;
 			case 3:
-				addToShop(mini_store);
+				if(save){
+					addToShop(mini_store);
+				}
 				moveToComplete();
 			break;
 		}
@@ -443,7 +445,7 @@ $theme_url = get_template_directory_uri();
 				}else{
 					ShoptypeUI.showInnerError(x);
 					st_shop_state--;
-					moveState();
+					moveState(false);
 				}
 			});
 		}else{
@@ -516,7 +518,7 @@ $theme_url = get_template_directory_uri();
 		showTab(".st-my-shop-details");
 	}
 	
-	function moveToTheme(){
+	function moveToTheme(save){
 		clearTimeout(debounce_timer);
 		mini_store.name = document.getElementById("myshop-name").value;
 		mini_store.attributes.bio = document.getElementById("myshop-bio").value;
@@ -526,13 +528,17 @@ $theme_url = get_template_directory_uri();
 		mini_store.attributes.twitter_url = document.getElementById("myshop-twitter").value;
 		mini_store.attributes.instagram_url = document.getElementById("myshop-instagram").value;
 		mini_store.attributes.youtube_url = document.getElementById("myshop-youtube").value;
-		saveStore();
+		if(save){
+			saveStore();
+		}
 		showTab(".st-myshop-style");
 	}
 
-	function moveToProducts(){
+	function moveToProducts(save){
 		searchProducts();
-		saveStore();
+		if(save){
+			saveStore();
+		}
 		showTab(".st-myshop-products");
 	}
 	
@@ -691,9 +697,9 @@ $theme_url = get_template_directory_uri();
 		document.getElementById("fb_link").href = "https://www.facebook.com/sharer/sharer.php?u=" + shopUrl;
 		document.getElementById("wa_link").href = "whatsapp://send?text=<?php echo "$sharetxt" ?> " + shopUrl;
 		document.getElementById("tw_link").href = "http://twitter.com/share?text=<?php echo $sharetxt ?>&url=" + shopUrl;
-		document.getElementById("pi_link").href = "https://pinterest.com/pin/create/link/?url=" + shopUrl + "<?php echo "{$encodedShopUrl}&media={$group_img}&description={$sharetxt}" ?>";
+		document.getElementById("pi_link").href = "https://pinterest.com/pin/create/link/?url=" + shopUrl + `&media=${mini_store.attributes.profile_img}&description=${mini_store.attributes.bio}`;
 		document.getElementById("tgram_link").href = "https://telegram.me/share/url?url=" + shopUrl + "<?php echo "&TEXT={$sharetxt}" ?>";
-		document.getElementById("ln_link").href = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + shopUrl + "<?php echo "&title={$group->name}&summary={$sharetxt}" ?>";
+		document.getElementById("ln_link").href = "https://www.linkedin.com/shareArticle?mini=true&source=LinkedIn&url=" + shopUrl + `&title=${mini_store.name}&summary=${mini_store.attributes.bio}`;
 		document.getElementById("goto_shop_btn").href = shopUrl;
 	}
 

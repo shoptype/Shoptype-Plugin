@@ -7,31 +7,10 @@
 
 global $stCurrency;
 
-
-$mini_store = $args['mini_store'];
-
-add_action('wp_head', function () use ($st_user_products) {
-      $description = substr($st_user_products->shop_bio, 0, 160);
-      echo "<meta name='description' content='$description'>";
-      echo "<meta property='og:title' content='$st_user_products->shop_name' />";
-      echo "<meta property='og:description' content='$st_user_products->shop_bio' />";
-      echo "<meta property='og:image' content='{$st_user_products->avatar}' />";
-    }, 1);
-   
-wp_enqueue_style( 'my-shop-css', st_locate_file('css/st-my-shop.css' ));
-
-ob_start();
-get_header('shop');
-$header = ob_get_clean();
-$header = preg_replace('#<title>(.*?)<\/title>#', "<title>$mini_store->name</title>", $header);
-echo $header;
-
-
+$mini_store = $data['mini_store'];
 $cover=(empty($mini_store->attributes->BG_img)) ? st_locate_file('images/shop-banner.jpg') : $mini_store->attributes->BG_img ;
-
-$user_name= $mini_store->attributes->username;
 ?>
-  <div class='wrapper my-shop-wrapper' id='main'>
+   <div class='wrapper my-shop-wrapper' id='main'>
     <div id="content-main">
     <div class="st-myshop-head">
   <div class="st-header-container">
@@ -172,5 +151,4 @@ img.attachment-st-product-archive.size-st-product-archive.wp-post-image{align-it
 @media only screen and (max-width: 767px){
 	h3.store-name{display: block;white-space: normal;white-space: wrap;text-align: center;word-break: break-all}
 }
-
  </style>
