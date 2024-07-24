@@ -745,14 +745,7 @@ function ecs_add_post_state( $post_states, $post ) {
 
 	return $post_states;
 }
-//Admin notice for buddypress requirement
-// 	if ( ! class_exists( 'BuddyPress' ) ) {
-// 		add_action( 'admin_notices', function() {
-// 			echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'Shoptype requires BuddyPress to be installed and active. You can download %s here.', 'Shoptype' ), '<a href="https://wordpress.org/plugins/buddypress/" target="_blank">BuddyPress</a>' ) . '</strong></p></div>';
-// 		} );
-// 		return;
-// }
-//Add custom Search templet templates/search.php
+
 add_filter('template_include','custom_search_template', 10, 3);
 
 function custom_search_template($template){

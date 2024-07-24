@@ -73,17 +73,17 @@ try {
 wp_enqueue_script( 'jquery_min', '//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
 get_header();
 
-get_template_part( 
-    'templates/parts/st-product-part.php', 
-    null, 
-    array( 
-        'my_data' => array(
+st_locate_template( 
+  "parts/st-product-part.php", 
+  true, 
+  array( 
+        'data' => array(
             'st_product' => $st_product,
             'commission' => $commission,
             'prodCurrency' => $prodCurrency,
             'vendor' => $vendor,
         )
-    )
+  )
 );
 ?>
 
